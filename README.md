@@ -6,8 +6,8 @@ This repository is used to host and track current progress on the Kisley Lab fcs
 * Customized Gpufit library (Gpufit_build-64-YYYYMMDD)
 * Folder containing external functions called in script (fcsSOFI External Functions)
 * README guide for fcsSOFI GUI (GUI_README.txt)
-* GPU-accelerated fcsSOFI GUI (fcsSOFI_GUI_WSYYMMDD.mlapp) 
-* GPU-accelerated fcsSOFI script (fcsSOFI_script_WSYYMMDD.m)
+* GPU-accelerated fcsSOFI GUI (fcsSOFI_GUI.mlapp) 
+* GPU-accelerated fcsSOFI script (fcsSOFI_script.m)
 
 Contact Will Schmid (william.schmid@case.edu) with questions/concerns. 
 
