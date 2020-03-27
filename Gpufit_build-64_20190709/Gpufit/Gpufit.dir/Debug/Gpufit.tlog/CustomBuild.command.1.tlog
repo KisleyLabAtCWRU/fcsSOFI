@@ -1,0 +1,90 @@
+^C:\USERS\WILL_\DROPBOX\KISLEY LAB\GPUFIT\SOURCE\GPUFIT_SOURCE_20190624\GPUFIT\LM_FIT_CUDA.CU
+setlocal
+cd "C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\Gpufit\CMakeFiles\Gpufit.dir"
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory "C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/CMakeFiles/Gpufit.dir//Debug"
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -D verbose:BOOL=OFF -D "CCBIN:PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools/MSVC/14.21.27702/bin/Hostx64/x64" -D build_configuration:STRING=Debug -D "generated_file:STRING=C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/CMakeFiles/Gpufit.dir//Debug/Gpufit_generated_lm_fit_cuda.cu.obj" -D "generated_cubin_file:STRING=C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/CMakeFiles/Gpufit.dir//Debug/Gpufit_generated_lm_fit_cuda.cu.obj.cubin.txt" -P "C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/CMakeFiles/Gpufit.dir//Gpufit_generated_lm_fit_cuda.cu.obj.Debug.cmake"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\WILL_\DROPBOX\KISLEY LAB\GPUFIT\SOURCE\GPUFIT_SOURCE_20190624\GPUFIT\CUDA_KERNELS.CU
+setlocal
+cd "C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\Gpufit\CMakeFiles\Gpufit.dir"
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory "C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/CMakeFiles/Gpufit.dir//Debug"
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -D verbose:BOOL=OFF -D "CCBIN:PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools/MSVC/14.21.27702/bin/Hostx64/x64" -D build_configuration:STRING=Debug -D "generated_file:STRING=C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/CMakeFiles/Gpufit.dir//Debug/Gpufit_generated_cuda_kernels.cu.obj" -D "generated_cubin_file:STRING=C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/CMakeFiles/Gpufit.dir//Debug/Gpufit_generated_cuda_kernels.cu.obj.cubin.txt" -P "C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/CMakeFiles/Gpufit.dir//Gpufit_generated_cuda_kernels.cu.obj.Debug.cmake"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\WILL_\DROPBOX\KISLEY LAB\GPUFIT\SOURCE\GPUFIT_SOURCE_20190624\GPUFIT\INFO.CU
+setlocal
+cd "C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\Gpufit\CMakeFiles\Gpufit.dir"
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory "C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/CMakeFiles/Gpufit.dir//Debug"
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -D verbose:BOOL=OFF -D "CCBIN:PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools/MSVC/14.21.27702/bin/Hostx64/x64" -D build_configuration:STRING=Debug -D "generated_file:STRING=C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/CMakeFiles/Gpufit.dir//Debug/Gpufit_generated_info.cu.obj" -D "generated_cubin_file:STRING=C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/CMakeFiles/Gpufit.dir//Debug/Gpufit_generated_info.cu.obj.cubin.txt" -P "C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/CMakeFiles/Gpufit.dir//Gpufit_generated_info.cu.obj.Debug.cmake"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\WILL_\DROPBOX\KISLEY LAB\GPUFIT\SOURCE\GPUFIT_SOURCE_20190624\GPUFIT\GPU_DATA.CU
+setlocal
+cd "C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\Gpufit\CMakeFiles\Gpufit.dir"
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory "C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/CMakeFiles/Gpufit.dir//Debug"
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -D verbose:BOOL=OFF -D "CCBIN:PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools/MSVC/14.21.27702/bin/Hostx64/x64" -D build_configuration:STRING=Debug -D "generated_file:STRING=C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/CMakeFiles/Gpufit.dir//Debug/Gpufit_generated_gpu_data.cu.obj" -D "generated_cubin_file:STRING=C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/CMakeFiles/Gpufit.dir//Debug/Gpufit_generated_gpu_data.cu.obj.cubin.txt" -P "C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/CMakeFiles/Gpufit.dir//Gpufit_generated_gpu_data.cu.obj.Debug.cmake"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\WILL_\DROPBOX\KISLEY LAB\GPUFIT\SOURCE\GPUFIT_SOURCE_20190624\GPUFIT\CUDA_GAUSSJORDAN.CU
+setlocal
+cd "C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\Gpufit\CMakeFiles\Gpufit.dir"
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory "C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/CMakeFiles/Gpufit.dir//Debug"
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -D verbose:BOOL=OFF -D "CCBIN:PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools/MSVC/14.21.27702/bin/Hostx64/x64" -D build_configuration:STRING=Debug -D "generated_file:STRING=C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/CMakeFiles/Gpufit.dir//Debug/Gpufit_generated_cuda_gaussjordan.cu.obj" -D "generated_cubin_file:STRING=C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/CMakeFiles/Gpufit.dir//Debug/Gpufit_generated_cuda_gaussjordan.cu.obj.cubin.txt" -P "C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/CMakeFiles/Gpufit.dir//Gpufit_generated_cuda_gaussjordan.cu.obj.Debug.cmake"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\WILL_\DROPBOX\KISLEY LAB\GPUFIT\SOURCE\GPUFIT_SOURCE_20190624\GPUFIT\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/will_/Dropbox/Kisley Lab/Gpufit/Source/Gpufit_source_20190624" "-BC:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709" --check-stamp-file "C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

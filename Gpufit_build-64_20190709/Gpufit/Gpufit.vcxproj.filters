@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\gpufit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\info.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\lm_fit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\lm_fit_cuda.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\interface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\gpufit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\definitions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\info.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\lm_fit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\lm_fit_cuda.cu">
+      <Filter>CUDA Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\cuda_kernels.cu">
+      <Filter>CUDA Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\info.cu">
+      <Filter>CUDA Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\gpu_data.cu">
+      <Filter>CUDA Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\cuda_gaussjordan.cu">
+      <Filter>CUDA Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\Gpufit.def">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\cuda_kernels.cuh">
+      <Filter>CUDA Header Files</Filter>
+    </None>
+    <None Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\gpu_data.cuh">
+      <Filter>CUDA Header Files</Filter>
+    </None>
+    <None Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\cuda_gaussjordan.cuh">
+      <Filter>CUDA Header Files</Filter>
+    </None>
+    <None Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\models\anomalous.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\models\brown_dennis.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\models\brownian_1comp.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\models\brownian_2comp.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\models\cauchy_2d_elliptic.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\models\exponential.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\models\fletcher_powell_helix.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\models\gauss_1d.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\models\gauss_2d.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\models\gauss_2d_elliptic.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\models\gauss_2d_rotated.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\models\linear_1d.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\models\models.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\estimators\estimators.cuh">
+      <Filter>CUDA Estimator Files</Filter>
+    </None>
+    <None Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\estimators\lse.cuh">
+      <Filter>CUDA Estimator Files</Filter>
+    </None>
+    <None Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\Gpufit\estimators\mle.cuh">
+      <Filter>CUDA Estimator Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\Gpufit\CMakeFiles\Gpufit.dir\$(Configuration)\Gpufit_generated_lm_fit_cuda.cu.obj">
+      <Filter>Object Files</Filter>
+    </Object>
+    <Object Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\Gpufit\CMakeFiles\Gpufit.dir\$(Configuration)\Gpufit_generated_cuda_kernels.cu.obj">
+      <Filter>Object Files</Filter>
+    </Object>
+    <Object Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\Gpufit\CMakeFiles\Gpufit.dir\$(Configuration)\Gpufit_generated_info.cu.obj">
+      <Filter>Object Files</Filter>
+    </Object>
+    <Object Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\Gpufit\CMakeFiles\Gpufit.dir\$(Configuration)\Gpufit_generated_gpu_data.cu.obj">
+      <Filter>Object Files</Filter>
+    </Object>
+    <Object Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\Gpufit\CMakeFiles\Gpufit.dir\$(Configuration)\Gpufit_generated_cuda_gaussjordan.cu.obj">
+      <Filter>Object Files</Filter>
+    </Object>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CUDA Estimator Files">
+      <UniqueIdentifier>{8B95ACEC-100B-3846-A4E9-5CEE4E13406B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CUDA Header Files">
+      <UniqueIdentifier>{BEA5BA0E-6EBE-3016-BF69-B111274FA711}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CUDA Model Files">
+      <UniqueIdentifier>{D7717039-2D0F-3B45-B1EE-66AA603C07C7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CUDA Source Files">
+      <UniqueIdentifier>{9464F38D-EF00-3455-BCA5-9998D94B6F6E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{70E84028-C15F-33D1-986D-F866DBA5554B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object Files">
+      <UniqueIdentifier>{3EC7F93C-7D6C-3234-AE47-4580D38173BD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{A2E05C67-6DC7-35E3-9F58-11B8D9FEDFA2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

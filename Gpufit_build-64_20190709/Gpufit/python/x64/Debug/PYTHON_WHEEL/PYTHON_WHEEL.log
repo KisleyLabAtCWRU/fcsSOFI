@@ -1,0 +1,11 @@
+﻿  Preparing Python Wheel
+  running clean
+  'build\lib' does not exist -- can't clean it
+  'build\bdist.win-amd64' does not exist -- can't clean it
+  'build\scripts-3.7' does not exist -- can't clean it
+  usage: setup.py [global_opts] cmd1 [cmd1_opts] [cmd2 [cmd2_opts] ...]
+     or: setup.py --help [cmd1 cmd2 ...]
+     or: setup.py --help-commands
+     or: setup.py cmd --help
+  
+CUSTOMBUILD : error : invalid command 'bdist_wheel'

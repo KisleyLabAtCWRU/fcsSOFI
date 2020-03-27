@@ -1,0 +1,254 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{903B0342-D784-3357-B0AE-9A5B40E8A652}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>x64</Platform>
+    <ProjectName>ALL_BUILD</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Source\Gpufit_source_20190624\CMakeLists.txt">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Source/Gpufit_source_20190624/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/will_/Dropbox/Kisley Lab/Gpufit/Source/Gpufit_source_20190624" "-BC:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709" --check-stamp-file "C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeCheckCompilerFlagCommonPatterns.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CTest.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CTestTargets.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CTestUseLaunchers.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CheckCCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CheckCXXCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CheckCXXSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\DartConfiguration.tcl.in;C:\Program Files\CMake\share\cmake-3.15\Modules\FindBoost.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\FindLATEX.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\FindMatlab.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\FindPythonInterp.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Platform\WindowsPaths.cmake;C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\CMakeFiles\3.15.0-rc1\CMakeCCompiler.cmake;C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\CMakeFiles\3.15.0-rc1\CMakeCXXCompiler.cmake;C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\CMakeFiles\3.15.0-rc1\CMakeRCCompiler.cmake;C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\CMakeFiles\3.15.0-rc1\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Source/Gpufit_source_20190624/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/will_/Dropbox/Kisley Lab/Gpufit/Source/Gpufit_source_20190624" "-BC:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709" --check-stamp-file "C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeCheckCompilerFlagCommonPatterns.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CTest.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CTestTargets.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CTestUseLaunchers.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CheckCCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CheckCXXCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CheckCXXSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\DartConfiguration.tcl.in;C:\Program Files\CMake\share\cmake-3.15\Modules\FindBoost.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\FindLATEX.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\FindMatlab.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\FindPythonInterp.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Platform\WindowsPaths.cmake;C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\CMakeFiles\3.15.0-rc1\CMakeCCompiler.cmake;C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\CMakeFiles\3.15.0-rc1\CMakeCXXCompiler.cmake;C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\CMakeFiles\3.15.0-rc1\CMakeRCCompiler.cmake;C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\CMakeFiles\3.15.0-rc1\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Source/Gpufit_source_20190624/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/will_/Dropbox/Kisley Lab/Gpufit/Source/Gpufit_source_20190624" "-BC:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709" --check-stamp-file "C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeCheckCompilerFlagCommonPatterns.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CTest.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CTestTargets.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CTestUseLaunchers.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CheckCCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CheckCXXCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CheckCXXSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\DartConfiguration.tcl.in;C:\Program Files\CMake\share\cmake-3.15\Modules\FindBoost.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\FindLATEX.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\FindMatlab.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\FindPythonInterp.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Platform\WindowsPaths.cmake;C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\CMakeFiles\3.15.0-rc1\CMakeCCompiler.cmake;C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\CMakeFiles\3.15.0-rc1\CMakeCXXCompiler.cmake;C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\CMakeFiles\3.15.0-rc1\CMakeRCCompiler.cmake;C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\CMakeFiles\3.15.0-rc1\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Source/Gpufit_source_20190624/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/will_/Dropbox/Kisley Lab/Gpufit/Source/Gpufit_source_20190624" "-BC:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709" --check-stamp-file "C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeCheckCompilerFlagCommonPatterns.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CTest.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CTestTargets.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CTestUseLaunchers.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CheckCCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CheckCXXCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\CheckCXXSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\DartConfiguration.tcl.in;C:\Program Files\CMake\share\cmake-3.15\Modules\FindBoost.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\FindLATEX.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\FindMatlab.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\FindPythonInterp.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.15\Modules\Platform\WindowsPaths.cmake;C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\CMakeFiles\3.15.0-rc1\CMakeCCompiler.cmake;C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\CMakeFiles\3.15.0-rc1\CMakeCXXCompiler.cmake;C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\CMakeFiles\3.15.0-rc1\CMakeRCCompiler.cmake;C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\CMakeFiles\3.15.0-rc1\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\ZERO_CHECK.vcxproj">
+      <Project>{9342A979-60B3-39F3-945F-0639EACE9833}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\Gpufit\examples\CUDA_Interface_Example.vcxproj">
+      <Project>{18007A61-1D30-32D6-B02C-580DCFC9C73A}</Project>
+      <Name>CUDA_Interface_Example</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\Cpufit\Cpufit.vcxproj">
+      <Project>{BC4718B8-AC84-3074-AE67-6C92BA053765}</Project>
+      <Name>Cpufit</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\Cpufit\matlab\CpufitMex.vcxproj">
+      <Project>{169ADF4F-27B4-31DE-988F-7BFE89016902}</Project>
+      <Name>CpufitMex</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\Gpufit\examples\Gauss_Fit_2D_Example.vcxproj">
+      <Project>{C9800236-7C6F-35AE-B32E-9DC4285EACDB}</Project>
+      <Name>Gauss_Fit_2D_Example</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\Gpufit\Gpufit.vcxproj">
+      <Project>{126BF049-AE1F-3F6F-89C8-367B8B02B2C5}</Project>
+      <Name>Gpufit</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\Gpufit\matlab\GpufitCudaAvailableMex.vcxproj">
+      <Project>{6424EA3E-8A61-3BE1-8486-C92E55CD0510}</Project>
+      <Name>GpufitCudaAvailableMex</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\Gpufit\matlab\GpufitMex.vcxproj">
+      <Project>{4A1F9583-1D47-3E8B-A2FF-B3CD52D88790}</Project>
+      <Name>GpufitMex</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\examples\Gpufit_Cpufit_Nvidia_Profiler_Test.vcxproj">
+      <Project>{61D5ECB3-02A3-3AAF-A9D6-F9A4ED447C33}</Project>
+      <Name>Gpufit_Cpufit_Nvidia_Profiler_Test</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\examples\Gpufit_Cpufit_Performance_Comparison.vcxproj">
+      <Project>{65CA58C2-C6CF-31BB-9A37-DEE02BFFC021}</Project>
+      <Name>Gpufit_Cpufit_Performance_Comparison</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\Gpufit\examples\Linear_Regression_Example.vcxproj">
+      <Project>{D969F8CA-9108-3CFC-AB2F-073DA4061E7D}</Project>
+      <Name>Linear_Regression_Example</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\Cpufit\matlab\MATLAB_CPUFIT_GPUFIT_PACKAGE.vcxproj">
+      <Project>{E50417A1-ACD9-315D-9D12-EB28BF2DE652}</Project>
+      <Name>MATLAB_CPUFIT_GPUFIT_PACKAGE</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\Gpufit\python\PYTHON_WHEEL.vcxproj">
+      <Project>{635D6367-5886-35FB-8563-4210B8EA091D}</Project>
+      <Name>PYTHON_WHEEL</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\will_\Dropbox\Kisley Lab\Gpufit\Builds\Gpufit_build-64_20190709\Gpufit\examples\Simple_Example.vcxproj">
+      <Project>{8F64772D-9FFF-3436-8B00-AAEF3B805EFF}</Project>
+      <Name>Simple_Example</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

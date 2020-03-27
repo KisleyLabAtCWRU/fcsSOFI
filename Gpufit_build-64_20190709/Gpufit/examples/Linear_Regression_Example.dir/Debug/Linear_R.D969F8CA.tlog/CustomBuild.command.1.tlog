@@ -1,0 +1,10 @@
+^C:\USERS\WILL_\DROPBOX\KISLEY LAB\GPUFIT\SOURCE\GPUFIT_SOURCE_20190624\GPUFIT\EXAMPLES\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/will_/Dropbox/Kisley Lab/Gpufit/Source/Gpufit_source_20190624" "-BC:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709" --check-stamp-file "C:/Users/will_/Dropbox/Kisley Lab/Gpufit/Builds/Gpufit_build-64_20190709/Gpufit/examples/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
