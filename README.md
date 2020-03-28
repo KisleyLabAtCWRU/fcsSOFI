@@ -1,6 +1,6 @@
 # fcsSOFI
 
-This repository is used to host and track current progress on the Kisley Lab fcsSOFI update project. 
+This repository hosts and tracks current progress on the Kisley Lab fcsSOFI update project.
 
 **Files and folders maintained on this repository:**
 * Customized Gpufit library (Gpufit_build-64-YYYYMMDD)
