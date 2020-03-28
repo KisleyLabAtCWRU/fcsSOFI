@@ -4,8 +4,7 @@ Version 1.5: 12 March 2020
 
 Will Schmid (william.schmid@case.edu)
 
-Based on Kisley et al., ACS Nano 9, 9158-9166 (2015). 
-Original ACS Nano publication: https://pubs.acs.org/doi/abs/10.1021/acsnano.5b03430
+Based on Kisley et al., ACS Nano 9, 9158-9166 (2015). https://pubs.acs.org/doi/abs/10.1021/acsnano.5b03430
 
 **Instructions for Use**
 
