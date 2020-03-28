@@ -4,6 +4,10 @@ Version 1.5: 12 March 2020
 
 Based on Kisley et al., ACS Nano 9, 9158-9166 (2015). https://pubs.acs.org/doi/abs/10.1021/acsnano.5b03430
 
+Gpufit is an open source software library for GPU-parallelized curve fitting developed by Mark Bates, Adrian Przybylski, Björn Thiel, and Jan Keller-Findeisen. The relevant 2017 Scientific Reports publication describing Gpufit can be found here: https://www.nature.com/articles/s41598-017-15313-9#Ack1
+
+Gpufit homepage: https://github.com/gpufit/Gpufit
+
 **Instructions for Use**
 
 1) Prepare Data for Analysis
