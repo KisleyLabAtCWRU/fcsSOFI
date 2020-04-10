@@ -33,25 +33,25 @@ type = 3;
 alpha_stp = 0.7;
 
 %%%NEW alpha threshold
-alpha_thresh = 2; % maximum value of alpha allowed to appear on alpha map
+alpha_max = 2; % maximum value of alpha allowed to appear on alpha map
 alpha_min = 0;
 
-SOFI_thresh = 0.01;
-
-%%%NEW set SOFI saturation limits
+%set SOFI saturation limits
 cminAC=0; % line 853 in GUI code
 cmaxAC=3e8;
 
-%%%NEW set caxis limits for fcsSOFI diffusion map (color scaling)
+% set caxis limits for fcsSOFI diffusion map (color scaling)
 cmin=2; %line
 cmax=6;
+
+% set PSF for deconvolution     
+FWHM=2.7; %FWHM of PSF in pixels
 
 %plot figures? (1 = yes)
 plotfigures = 1;
 
 %save data files? (1 = yes)
 savethedata = 0; 
-%%%NEW
 manipulatable_data = 0; % 1 = "I want to be able to scale color later" 
 
 %number of fits per pixel
@@ -78,8 +78,7 @@ column_index = 18; %pixel column index
 
 %% Paths
 addpath(strcat(pwd,'\Gpufit_build-64_20190709\Debug\matlab'))
-addpath(strcat(pwd,'\Functions'))
-addpath(strcat(pwd,'\Data'))
+addpath(strcat(pwd,'\fcsSOFI_external_functions'))
 
 %% %%%%%%%%%%%%%%%%%%%% STEP 1: blink_AConly (SOFI) %%%%%%%%%%%%%%%%%%%%%%%%%
 before = clock;
@@ -145,9 +144,9 @@ for j = 1:numel(trialnos)
     avgim=avgimage;
     im=AC_G2_im;
     % define the PSF 
-    std=2.7; %FWHM of PSF in pixels
+
     intensity = 1;
-    gauss1=customgauss([100 100],std,std,0,0,intensity,[5 5]); %create a 2D PSF
+    gauss1=customgauss([100 100],FWHM,FWHM,0,0,intensity,[5 5]); %create a 2D PSF
 %%%%%%%%%%%%% OPTION TO INPUT PSF
 PSF=gauss1(45:65,45:65); %only use the center where the PSF is located at
 
@@ -354,25 +353,25 @@ Dmap=reshape([D],rowdim,coldim);
 
 % alpha map (anomalous diffusion)
 if type == 3    
-    
     alpha_corrected = zeros(1,numel(alpha));
     % remove bad alphas
     for i=1:numel(alpha)
-        if alpha(i) > alpha_thresh
+        if fitresult(1,i).rsquare<0.5
             alpha_corrected(i)=0;
         elseif alpha(i) < 0
             alpha_corrected(i)=0;
         elseif alpha(i)< alpha_min
+            alpha_corrected(i)=0;
+        elseif alpha(i) > alpha_max
             alpha_corrected(i)=0;
         else
             alpha_corrected(i)=abs(alpha(i));
         end
     end
     alphamap=reshape([alpha_corrected],rowdim,coldim);
-    
-
 end
 
+% create tauD map
 tauDmap=reshape([tauD],rowdim,coldim);
 
 % remove poor fits
@@ -539,8 +538,6 @@ hsvmap(1:szmap1,1:szmap2,2)=norm_ca_AC;
 hsvmap(1:szmap1,1:szmap2,3)=ones(szmap1,szmap2); %set brightness
 hsv2rgbmap=1-hsv2rgb(real(hsvmap)); %convert to rgb
 
-
-alphamap(srmap_hsv < SOFI_thresh) = 0;
 %% computation time
 Combine_after = clock;
 clc;fprintf('Image fusion complete, execution time: %6.2f seconds\n',etime(Combine_after,Combine_before));
@@ -668,8 +665,8 @@ if plotfigures == 1
 %     % CombineTempSpat subplots
 %     h3 = figure;
 %     
-      l=subplot(1,2,1); % log(D) map
-figure;
+    l=subplot(1,2,1); % log(D) map
+    figure;
     subplot(1,2,1);
     imagesc(dmap_hsv);
     axis image
@@ -685,9 +682,8 @@ figure;
     ylabel('log(D) (nm^2/s)')
     axis xy
     set(findall(gcf,'-property','FontSize'),'FontSize',14)
-%     
-%     m=subplot(1,4,2); % super resolution image
-figure;
+
+    figure;
     imagesc(srmap_hsv);
     axis image
     title('SOFI super-resolution')
