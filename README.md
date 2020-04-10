@@ -9,7 +9,7 @@ Kisley, L.; Higgins, D.; Weiss, S.; Landes, C.F.; et al. Characterization of Por
 
 **Files and folders maintained on this repository:**
 * Customized Gpufit library (Gpufit_build-64-YYYYMMDD)
-* Folder containing external functions called in script (fcsSOFI External Functions)
+* Folder containing external functions called in script (fcsSOFI_External_Functions)
 * README guide for fcsSOFI GUI (GUI_README.md)
 * Test data set: simulation of two diffusing pores (dataset77.mat)
 * GPU-accelerated fcsSOFI GUI (fcsSOFI_GUI.mlapp) 
