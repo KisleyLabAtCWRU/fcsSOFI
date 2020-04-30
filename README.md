@@ -1,6 +1,6 @@
 # fcsSOFI
 
-This repository hosts and tracks current progress on the Kisley Lab fcsSOFI update project.
+This repository hosts and tracks current progress on the Kisley Lab fcsSOFI update project. Please cite: doi:10.1021/acsnano.5b03430.
 
 fcsSOFI combines the correlation techniques of fluorescence correlation spectroscopy (FCS) and super-resolution optical fluctuation imaging (SOFI) to produce to produce super-resolution spatial maps of diffusion coefficients. This has been applied thus far to understand diffusion and spatial properties of porous and complex materials, including agarose hydrogels, liquid crystals, and liquid-liquid phase-separated polymer and biomolecule condensates. 
 
