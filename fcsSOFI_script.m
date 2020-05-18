@@ -527,28 +527,25 @@ clc;fprintf('Image fusion complete, execution time: %6.2f seconds\n',etime(Combi
 %% Figures
 
 if plotfigures == 1
-fprintf('\nPlotting...');
-%%%%%% blinkAConly %%%%%% 
+    fprintf('\nPlotting...');
+    
     % blinkAConly Subplots
-    figure % average image
+    figure% average image
     subplot(2,2,1)
     imagesc(avgim);
     axis image
     title('Average image')
     set(gca,'xtick',[],'ytick',[])
-
     subplot(2,2,2)
     imagesc(im) %autocorrelation
     axis image
     title('AC G^2(0+\tau)')
     set(gca,'xtick',[],'ytick',[])
-
     subplot(2,2,3)
     imagesc(filtim) %deconvolved
     axis image
     title('Deconvolved')
     set(gca,'xtick',[],'ytick',[])
-
     subplot(2,2,4) %line sections
     hold on
     plot(avgim(25,:)./max(avgim(25,:)),'-b')
@@ -556,41 +553,38 @@ fprintf('\nPlotting...');
     plot(filtim(25,:)./max(filtim(25,:)),'-k')
     axis square
     title('Line sections')
-	ylim([0 1])
-	xlim([0 size(im(25,:),2)])
+    ylim([0 1])
+    xlim([0 size(im(25,:),2)])
 
-%%%%%% BinFitData %%%%%%
-    % super resolution image
-    h = figure;
-    imagesc(AC_im2);
-    title('SOFI super res figure')
-    
+%     %%%%%% BinFitData %%%%%%
+%     % super resolution image
+%     h = figure;
+%     imagesc(AC_im2);
+%     title('SOFI super res figure')
+
     % BinFitData subplots 
     figure %tauDmap
     subplot(2,2,1)
     imagesc(tauDmap);
     axis image
     title('\tau_D map')
-    
     subplot(2,2,2) % figure of D with nothing removed 
     imagesc(Dmap);
     caxis([0 max(max((Dmap)))])
     axis image
     title('D map, nothing removed')
-    
     subplot(2,2,3) % figure of D with poor fits removed
     imagesc(Dmap_corrected)
     caxis([0 max(max(Dmap_corrected))])
     axis image
     title('Fits of R^2 < 0.5 removed')
-    
     subplot(2,2,4) % figure of D on log scale
     Dmap2log=log10(Dmap_corrected);
     imagesc(Dmap2log)
     caxis([0 max(max(Dmap2log))])
     axis image
     title('log scale c axis')
-    
+
     % second set of BinFitData subplots if using 2-comp model
     if type == 2
         figure % tauD map
@@ -598,19 +592,16 @@ fprintf('\nPlotting...');
         imagesc(tauD2map);
         axis image
         title('D2: \tau_D map')
-        
         subplot(2,2,2)
         imagesc(D2map); % figure of D with nothing removed
         caxis([0 max(max((D2map)))])
         axis image
         title('D2: D map, nothing removed')
-        
         subplot(2,2,3) % figure of D2 with poor fits removed
         imagesc(D2map_corrected)
         caxis([0 max(max(D2map_corrected))])
         axis image
         title('D2: Fits of R^2 < 0.5 removed')
-
         subplot(2,2,4) % figure of D2 on log scale
         D2map2log=log10(D2map_corrected);
         imagesc(D2map2log)
@@ -618,42 +609,36 @@ fprintf('\nPlotting...');
         axis image
         title('D2: log scale c axis')
     end
-    %%
+    
     % alpha map if using anomalous model
     if type == 3
         figure
         imagesc(alphamap);
         caxis([0 max(max((alphamap)))])
         axis image
-%         title('\alpha map')
+        title('\alpha map')
         c=colorbar;
         c.Label.String = '\alpha';
         c.Label.FontSize = 20;
         set(gca,'xtick',[],'ytick',[])
-        
     end
-%%
 
     % R-square Map
-    h2 = figure;
+    h2 = figure(4);
     imagesc(R2map)
     caxis([0 1])
     axis image
     title('R^2 map')
     colorbar
 
-%%%%%% BinFitData %%%%%%
-%     % CombineTempSpat subplots
-%     h3 = figure;
-%     
+    % CombineTempSpat subplots
+    h3 = figure;
     l=subplot(1,2,1); % log(D) map
-    figure;
     subplot(1,2,1);
     imagesc(dmap_hsv);
     axis image
     title('FCS: log(D)')
     set(gca,'xtick',[],'ytick',[])
-    
     c=subplot(1,2,2); %colormap
     imagesc(rgb_cmap)
     sz2=get(l,'position');
@@ -670,7 +655,7 @@ fprintf('\nPlotting...');
     title('SOFI super-resolution')
     set(gca,'xtick',[],'ytick',[])
     colormap(gray)
-    
+
     figure;
     k=subplot(1,2,1);
     imagesc(hsv2rgbmap) % combined
@@ -678,7 +663,6 @@ fprintf('\nPlotting...');
     axis image
     title('Combined')
     set(gca,'xtick',[],'ytick',[])
-   
     c=subplot(1,2,2); %colormap
     imagesc(rgb_cmap)
     sz2=get(l,'position');
@@ -697,7 +681,7 @@ end
     if examplecf == 1
         i=row_index; %row index
         j=column_index; %column index
-        figure
+        figure;
         x2=fitresult2(i,j).rawdata(:,1);
         y2=fitresult2(i,j).rawdata(:,2);
         N = max(y2);
