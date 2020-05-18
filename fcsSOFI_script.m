@@ -8,7 +8,7 @@ clear; close all; clc
 %% User Input
 
 %data file name
-fname = 'dataset82.mat';
+fname = 'dataset77';
 
 %diffusion coefficient parameters
 pixelsize=50; %in nm; needed to accurately calculate D
@@ -27,10 +27,10 @@ tmin = 1;
 tmax= 1000;
     
 %choose type of diffusion (1 = Brownian, 2 = 2-Comp Brownian, 3 = Anomalous)
-type = 3;
+type = 1;
 
 %choose alpha start point (Anomalous diffusion model only)
-alpha_stp = 0.7;
+alpha_stp = 1;
 
 %%%NEW alpha threshold
 alpha_max = 2; % maximum value of alpha allowed to appear on alpha map
@@ -51,8 +51,8 @@ FWHM=2.7; %FWHM of PSF in pixels
 plotfigures = 1;
 
 %save data files? (1 = yes)
-savethedata = 0; 
-manipulatable_data = 0; % 1 = "I want to be able to scale color later" 
+savethedata = 1; 
+manipulatable_data = 1; % 1 = "I want to be able to scale color later" 
 
 %number of fits per pixel
 number_fits = 1000;
@@ -63,111 +63,95 @@ row_index = 8; %pixel row index
 column_index = 18; %pixel column index
 
 
-%%%% END USER INPUT %%%%
-
-
-
-
-
-
-
-
-
-
-
-
+%%%% END USER INPUT %%
 %% Paths
 addpath(strcat(pwd,'\Gpufit_build-64_20190709\Debug\matlab'))
 addpath(strcat(pwd,'\fcsSOFI_external_functions'))
 
 %% %%%%%%%%%%%%%%%%%%%% STEP 1: blink_AConly (SOFI) %%%%%%%%%%%%%%%%%%%%%%%%%
+% start global timer
 before = clock;
+
+% start timer for SOFI step
 blink_before = clock;
 
 trialnos = 1;
-% parameter = 'dataset'; %generic data set file name extension
-% trialnos=[77]; %data set number (can analyze multiple data sets by entering multiple numbers)
-for j = 1:numel(trialnos)
-    %% %%%%%%%%%%%%%%%% start code/load and setup data %%%%%%%%%%%%%%%%%%%%
-    fprintf('Running...');
-%     fname = strcat(parameter,num2str(trialnos(j)));
-    simpath=[fname];
-
-    %determine length of trajectory
-    intlength = tmax-tmin+1;
-
-    % Load data
-    load(fname); clc;fprintf(strcat(fname,'.mat loaded\n'));
-    DataCombined=Data;
-
-    % Set ROI
-    DataCombined=DataCombined(ymin:ymax,xmin:xmax,tmin:tmax);
-    size(DataCombined);
-
-    % produce average image
-    avgimage=sum(DataCombined(:,:,:),3)./size(DataCombined,3);
-
-    % Reshape 2D image to 1D for analysis
-    % shapes columnwise into a 1x(ymax-ymin+1)(xmax-xmin+1)
-    DataVector = zeros(tmax,(xmax-xmin+1)*(ymax-ymin+1));
-    for i=1:size(DataCombined,3)
-        DataVector(i,:)=reshape(DataCombined(:,:,i),1,size(DataCombined(:,:,i),1)*...
-            size(DataCombined(:,:,i),2));
-    end
-
-    % part of distance factor-- c = sigma    
-      c = 3.5; %experimentally based
-
-    % only upper left points are run through analysis to avoid repetition
-    [innerpts] = getUpperLeft(ymax-ymin+1, xmax-xmin+1, 1);
-    L = ymax-ymin;
-    W = xmax-xmin;
-
-    %% %%%%%%%%%% Calculate the correlation (2-4th orders, AC and XC) %%%%%% %%
-    rcSOFItime=tic;
-    [ACXC_all]=CalcCorr(innerpts,DataVector,c,L); %calculate 
 
 
-    %% %%%%%%%%%% Calculate intensity for images by different methods %%%%%%%%      
-    AC_G2 = zeros(1,numel(ACXC_all));
-    for i=1:numel(ACXC_all)
-        % AC only - first point of different orders
-        AC_G2(i) = ACXC_all(1,i).Order2(1,2);
-    end
+%% start code/load and setup data 
+fprintf('Running...');
 
-    %% %%%%%%%%%%%%%%%%%%% Reshape matrices for images %%%%%%%%%%%%%%%%%%%%% %%
-    % reshape easy ones first
-    AC_G2_im=[0,AC_G2,0];% pad matrices with first points, so back to original size
-    AC_G2_im=reshape(AC_G2_im,L,W);% reshape
+simpath=[fname];
 
-    %% Deconvolution
-    avgim=avgimage;
-    im=AC_G2_im;
-    % define the PSF 
+%determine length of trajectory
+intlength = tmax-tmin+1;
 
-    intensity = 1;
-    gauss1=customgauss([100 100],FWHM,FWHM,0,0,intensity,[5 5]); %create a 2D PSF
-%%%%%%%%%%%%% OPTION TO INPUT PSF
+% Load data
+load(fname); clc;fprintf(strcat(fname,'.mat loaded\n'));
+DataCombined=Data;
+
+% Set ROI
+DataCombined=DataCombined(ymin:ymax,xmin:xmax,tmin:tmax);
+size(DataCombined);
+
+% produce average image
+avgimage=sum(DataCombined(:,:,:),3)./size(DataCombined,3);
+
+% Reshape 2D image to 1D for analysis
+% shapes columnwise into a 1x(ymax-ymin+1)(xmax-xmin+1)
+DataVector = zeros(tmax,(xmax-xmin+1)*(ymax-ymin+1));
+for i=1:size(DataCombined,3)
+    DataVector(i,:)=reshape(DataCombined(:,:,i),1,size(DataCombined(:,:,i),1)*...
+        size(DataCombined(:,:,i),2));
+end
+
+% part of distance factor-- c = sigma    
+  c = 3.5; %experimentally based
+
+% only upper left points are run through analysis to avoid repetition
+[innerpts] = getUpperLeft(ymax-ymin+1, xmax-xmin+1, 1);
+L = ymax-ymin;
+W = xmax-xmin;
+
+%% Calculate the correlation (2-4th orders, AC and XC)
+rcSOFItime=tic;
+[ACXC_all]=CalcCorr(innerpts,DataVector,c,L); %calculate 
+
+%% Calculate intensity for images by different methods     
+AC_G2 = zeros(1,numel(ACXC_all));
+for i=1:numel(ACXC_all)
+    % AC only - first point of different orders
+    AC_G2(i) = ACXC_all(1,i).Order2(1,2);
+end
+
+%% Reshape matrices for images
+% reshape easy ones first
+AC_G2_im=[0,AC_G2,0];% pad matrices with first points, so back to original size
+AC_G2_im=reshape(AC_G2_im,L,W);% reshape
+
+%% Deconvolution
+avgim=avgimage;
+im=AC_G2_im;
+
+% define the PSF 
+intensity = 1;
+gauss1=customgauss([100 100],FWHM,FWHM,0,0,intensity,[5 5]); %create a 2D PSF
 PSF=gauss1(45:65,45:65); %only use the center where the PSF is located at
 
-    filtim=deconvlucy(im,PSF); % Based on Geissbuehler bSOFI paper
+filtim=deconvlucy(im,PSF); % Based on Geissbuehler bSOFI paper
     
-end
+% display execution time of SOFI step
 blink_after = clock;
 clc;fprintf('SOFI complete, execution time: %6.2f seconds\n',etime(blink_after,blink_before));
 
-%% %%%%%%%%%%%%%%%%%%%% STEP 2: BinFitData (SOFI) %%%%%%%%%%%%%%%%%%%%%%%%%
+%% %%%%%%%%%%%%%%%%%%%% STEP 2: BinFitData (fcs) %%%%%%%%%%%%%%%%%%%%%%%%%
 
-% can we parallelize this further? MATLAB packages?
-for index = 1:numel(trialnos)
-% load(strcat(parameter,num2str(trialnos(index)),'analyzed.mat'));
+% start timer for fcs step
 Bin_before = clock;
 
 % ROI pixels of image to analyze
 xmn=1; xmx=xmax-xmin;
 ymn=1; ymx=ymax-ymin;
-
-
 
 %% load data 
 
@@ -175,7 +159,7 @@ uplind=sub2ind(size(AC_G2_im),ymn,xmn);
 uprind=sub2ind(size(AC_G2_im),ymn,xmx);
 dwlind=sub2ind(size(AC_G2_im),ymx,xmn);
 dwrind=sub2ind(size(AC_G2_im),ymx,xmx);
-    
+
 %reshape ACXC_all to get ROI
 ACXC_all2=[ACXC_all,ACXC_all(1,1),ACXC_all(1,1)];
 ACXC_all_reshape=reshape(ACXC_all2,size(AC_G2_im));
@@ -191,17 +175,17 @@ end
 
 %% log bin the averaged data
 for i=1:numel(AC_all(1,1).curves)
-    
+
     AC_aver=(AC_avg(1,i).curves);
     max_lag=numel(AC_avg(1,i).curves);
     lags=1:max_lag;
     ddwell=1;
 
     [new_lags, new_AC] = logbindata(lags,AC_aver,ddwell,max_lag);
-    
+
     AC_logbin(i,:)=new_AC;
     AC_loglag(i,:)=new_lags;
-    
+
 end
 
 % take first lag point to create super-resolution image
@@ -225,7 +209,7 @@ number_parameters = [3; 5; 4]; number_parameters = number_parameters(type);
 
 % estimator id
 estimator_id = EstimatorID.LSE;
-    
+
 % model ID
 model_id = [ModelID.BROWNIAN_1COMP; ModelID.BROWNIAN_2COMP; ModelID.ANOMALOUS]; model_id = model_id(type);
 
@@ -240,7 +224,8 @@ tauD = zeros(1,xmx*ymx); tauD2 = tauD; D = tauD; D2 = tauD; alpha = tauD;
 
 %% Perform curve fitting
 for i=1:size(AC_logbin,1)
-    
+
+    % display progress at 25%, 50%, and 75% complete
     if i == ceil(size(AC_logbin,1)/4)
         clc; fprintf('Curve-fitting 25%% complete');
     end
@@ -250,40 +235,43 @@ for i=1:size(AC_logbin,1)
     if i == ceil(3/4*size(AC_logbin,1))
         clc; fprintf('Curve-fitting 75%% complete');
     end
-    
+
+    % extract auto correlation curve 
     ACcurve=AC_logbin(i,:);
     timelag=AC_loglag(i,:);     
-    
+
+    % convert to x and y variables
     x=timelag.*dT; %convert x values to seconds   
     y=ACcurve;
-    
-    %remove first timelag point tau=lag
+
+    % remove first timelag point tau=lag
     ind=numel(x);
     x=x(2:ind);
     y=y(2:ind);
 
-%     td_stp = max(x)/2;
-    td_stp = 0.3678795;
+    % choose startpoint tau_D
+    td_stp = max(x)/2;
+    %td_stp = 0.3678795;
 
 
-   %declare start points based on diffusion type
+    % declare start points based on diffusion type
     sp_struct = struct; % start point structure
     sp_struct.brownian = [max(y)*2,mean(y(round((3*numel(y)/4)):numel(y))),td_stp];
     sp_struct.brownian2comp = [max(y),max(y),mean(y(round((3*numel(y)/4)):numel(y))),1/2*td_stp,1/2*td_stp];
     sp_struct.anomalous = [max(y)*2,mean(y(round((3*numel(y)/4)):numel(y))), td_stp, alpha_stp];
     sp_cell = struct2cell(sp_struct);
     start_points = sp_cell{type};
-    
+
     % initial parameters
     initial_parameters = repmat(single(single(start_points)'), [1, number_fits]);
 
-    % fit data
+    % convert raw data to single precision and format for GPU fitting
     data = single(y); data = repmat(data(:), [1, number_fits]);
 
     % user info (independent variables)
     user_info = single(x);
 
-    % Run Gpufit
+    % run Gpufit
     [parameters, states, chi_squares, n_iterations, gputime] = gpufit(data, [], ...
      model_id, initial_parameters, tolerance, max_n_iterations, [], estimator_id, user_info);
 
@@ -291,19 +279,18 @@ for i=1:size(AC_logbin,1)
     converged = states == 0; 
     converged_parameters = parameters(:, converged);
 
+    % if parameters do not converge, use last iteration
     if isempty(converged_parameters) == 1
         model_coefs = parameters(1:number_parameters);
     else
         model_coefs = converged_parameters(1:number_parameters);
     end
-    
-    len_x = numel(x);
-    
+
     % construct fit result curve
     n_struct = struct('brownian',3,'brownian2comp',[4; 5],'anomalous',3);
     n_cell = struct2cell(n_struct);
     n = n_cell{type};
-    
+    len_x = numel(x);
     if type == 1
         model_fit(1:len_x) = model_coefs(1).* (1./(1+(x(1:len_x)./model_coefs(3)))) + model_coefs(2);
     elseif type == 2
@@ -311,33 +298,33 @@ for i=1:size(AC_logbin,1)
     elseif type == 3
         model_fit(1:len_x) = model_coefs(1).* (1./(1+(x(1:len_x)./model_coefs(3)).^model_coefs(4))) + model_coefs(2); 
     end
-    
-    % R-Square
+
+    % r-square
     residuals = y - model_fit;
     a = (y - model_fit).^2./model_fit;
     a(isinf(a)) = 0;
     rsquare = 1-sum(residuals.^2)/sum(y.^2);
-    
+
     % fit result structure
     fitresult(1,i)=struct('rawdata',[x',y'],'rsquare',rsquare,'model_fit',model_fit);
-    
+
     % characteristic time
     tauD(i)=model_coefs(n(1))*dT; % in in seconds
-  
+
     % diffusion coefficient
     D(i)=(pixelsize.^2)/(4*tauD(i)); %in nm^2/s
-    
+
     % second diffusion coefficient if using 2-component model
     if type == 2
         tauD2(i)=model_coefs(n(2))*dT; % in in seconds
         D2(i)=(pixelsize.^2)/(4*tauD(i));
     end
-    
+
     % alpha map if using anomalous model
     if type == 3
         alpha(i)= model_coefs(4);
     end
-    
+
     % compute total Gpufit time
     fit_time = fit_time + gputime;
 end
@@ -349,7 +336,35 @@ fitresult2=reshape(fitresult,rowdim,coldim);
 
 %Diffusion coefficient map
 Dmap=reshape([D],rowdim,coldim);
-% Dmap = abs(Dmap);
+
+% create tauD map
+tauDmap=reshape([tauD],rowdim,coldim);
+
+% remove poor fits
+D_corrected = zeros(1,numel(D));
+for i=1:numel(D)
+    if fitresult(1,i).rsquare<0.5
+        D_corrected(i)=0;
+    else
+        D_corrected(i)=abs(D(i));
+    end
+end
+Dmap_corrected=reshape([D_corrected],rowdim,coldim);
+
+% second diffusion coefficeint map if 2-component brownian model
+if type == 2
+    D2map=reshape([D2],rowdim,coldim);
+    tauD2map=reshape([tauD2],rowdim,coldim);
+    D2_corrected = zeros(1,numel(D2));
+    for i=1:numel(D2)
+        if fitresult(1,i).rsquare<0.5
+            D2_corrected(i)=0;
+        else
+            D2_corrected(i)=abs(D2(i));
+        end
+    end
+D2map_corrected=reshape([D2_corrected],rowdim,coldim);
+end
 
 % alpha map (anomalous diffusion)
 if type == 3    
@@ -371,57 +386,24 @@ if type == 3
     alphamap=reshape([alpha_corrected],rowdim,coldim);
 end
 
-% create tauD map
-tauDmap=reshape([tauD],rowdim,coldim);
-
-% remove poor fits
-D_corrected = zeros(1,numel(D));
-for i=1:numel(D)
-    if fitresult(1,i).rsquare<0.5
-        D_corrected(i)=0;
-    else
-        D_corrected(i)=abs(D(i));
-    end
-end
-Dmap_corrected=reshape([D_corrected],rowdim,coldim);
-
-% second diffusion coefficeint map if 2-component brownian model
-if type == 2
-    D2map=reshape([D2],rowdim,coldim);
-    tauD2map=reshape([tauD2],rowdim,coldim);
-    
-    D2_corrected = zeros(1,numel(D2));
-for i=1:numel(D2)
-    if fitresult(1,i).rsquare<0.5
-        D2_corrected(i)=0;
-    else
-        D2_corrected(i)=abs(D2(i));
-    end
-end
-D2map_corrected=reshape([D2_corrected],rowdim,coldim);
-end
-
-% make map of R^2 values
+% make map of r-2 values
 R2 = zeros(1,numel(fitresult));
 for i=1:numel(fitresult)
     R2(i)=fitresult(1,i).rsquare;
 end
 R2map=reshape(R2,rowdim,coldim);
 
-name = ["Brownian","2-Component Brownian","Anomalous"];name = name(type);
+% name = ["Brownian","2-Component Brownian","Anomalous"];name = name(type);
 
+% display execution time of fcs step
 Bin_after = clock;
 fprintf('FCS complete, execution time: %6.2f seconds\n',etime(Bin_after,Bin_before));
-end
 
+%% %%%%%%%%%%%%%%%%%%%% STEP 3: CombineTempSpat (fcsSOFI) %%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% %%%%%%%%%%%%%%%%%%%% STEP 3: CombineTempSpat (fcs) %%%%%%%%%%%%%%%%%%%%%%%%%
-%% load data
-for index = 1:numel(trialnos)
-% load(strcat(parameter,num2str(trialnos(index)),'Dmap.mat'))
-% load(strcat(parameter,num2str(trialnos(index)),'analyzed.mat'))
-
+% start timer for fcsSOFI combination
 Combine_before = clock;
+    
 %% Diffusion map
 szmap1=size(Dmap,1);
 szmap2=size(Dmap,2);
@@ -538,15 +520,14 @@ hsvmap(1:szmap1,1:szmap2,2)=norm_ca_AC;
 hsvmap(1:szmap1,1:szmap2,3)=ones(szmap1,szmap2); %set brightness
 hsv2rgbmap=1-hsv2rgb(real(hsvmap)); %convert to rgb
 
-%% computation time
+% display execution time of fcsSOFI combination
 Combine_after = clock;
 clc;fprintf('Image fusion complete, execution time: %6.2f seconds\n',etime(Combine_after,Combine_before));
-fprintf('\nPlotting...');
-
-end
 
 %% Figures
+
 if plotfigures == 1
+fprintf('\nPlotting...');
 %%%%%% blinkAConly %%%%%% 
     % blinkAConly Subplots
     figure % average image
@@ -710,6 +691,7 @@ if plotfigures == 1
 end
 
 %% Single Pixel Results
+    name = ["Brownian","2-Component Brownian","Anomalous"];name = name(type);
 
     % optional single pixel curve fit result figure
     if examplecf == 1
