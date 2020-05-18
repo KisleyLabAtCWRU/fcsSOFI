@@ -77,9 +77,6 @@ before = clock;
 % start timer for SOFI step
 blink_before = clock;
 
-trialnos = 1;
-
-
 %% start code/load and setup data 
 fprintf('Running...');
 
@@ -252,9 +249,8 @@ for i=1:size(AC_logbin,1)
     y=y(2:ind);
 
     % choose startpoint tau_D
-    td_stp = max(x)/2;
-    %td_stp = 0.3678795;
-
+    %td_stp = max(x)/2;
+    td_stp = 0.3678795;
 
     % declare start points based on diffusion type
     sp_struct = struct; % start point structure
@@ -337,10 +333,10 @@ end
 fitresult2=reshape(fitresult,rowdim,coldim);
 
 %Diffusion coefficient map
-Dmap=reshape([D],rowdim,coldim);
+Dmap=reshape(D,rowdim,coldim);
 
 % create tauD map
-tauDmap=reshape([tauD],rowdim,coldim);
+tauDmap=reshape(tauD,rowdim,coldim);
 
 % remove poor fits
 D_corrected = zeros(1,numel(D));
@@ -355,8 +351,8 @@ Dmap_corrected=reshape([D_corrected],rowdim,coldim);
 
 % second diffusion coefficeint map if 2-component brownian model
 if type == 2
-    D2map=reshape([D2],rowdim,coldim);
-    tauD2map=reshape([tauD2],rowdim,coldim);
+    D2map=reshape(D2,rowdim,coldim);
+    tauD2map=reshape(tauD2,rowdim,coldim);
     D2_corrected = zeros(1,numel(D2));
     for i=1:numel(D2)
         if fitresult(1,i).rsquare<0.5
@@ -365,7 +361,7 @@ if type == 2
             D2_corrected(i)=abs(D2(i));
         end
     end
-D2map_corrected=reshape([D2_corrected],rowdim,coldim);
+D2map_corrected=reshape(D2_corrected,rowdim,coldim);
 end
 
 % alpha map (anomalous diffusion)
@@ -477,7 +473,6 @@ cmap(1:steps+1,1,2)=ones(steps+1,1); %set saturation ("gray")
 cmap(1:steps+1,1,3)=ones(steps+1,1); %set brightness
 rgb_cmap=1-hsv2rgb(cmap); %convert to rgb
 
-
 dmap_hsv(1:szmap1,1:szmap2,1)=normDmap2log; %set hue = color
 dmap_hsv(1:szmap1,1:szmap2,2)=ones(szmap1,szmap2); %set saturation ("gray")
 dmap_hsv(1:szmap1,1:szmap2,3)=ones(szmap1,szmap2); %set brightness
@@ -528,10 +523,10 @@ clc;fprintf('Image fusion complete, execution time: %6.2f seconds\n',etime(Combi
 
 %% Figures
 
-if plotfigures == 1
+if plotfigures == 1 
     fprintf('\nPlotting...');
     
-    % blinkAConly Subplots
+    % blinkAConly Subplots (SOFI)
     figure% average image
     subplot(2,2,1)
     imagesc(avgim);
@@ -558,7 +553,7 @@ if plotfigures == 1
     ylim([0 1])
     xlim([0 size(im(25,:),2)])
 
-    % BinFitData subplots 
+    % BinFitData subplots (fcs) 
     figure %tauDmap
     subplot(2,2,1)
     imagesc(tauDmap);
@@ -645,6 +640,7 @@ if plotfigures == 1
     axis xy
     set(findall(gcf,'-property','FontSize'),'FontSize',14)
 
+    % SOFI super resolution image
     figure;
     imagesc(srmap_hsv);
     axis image
@@ -652,12 +648,13 @@ if plotfigures == 1
     set(gca,'xtick',[],'ytick',[])
     colormap(gray)
 
+    % Combined fcsSOFI image
     figure;
     k=subplot(1,2,1);
     imagesc(hsv2rgbmap) % combined
     sz=get(l,'position');
     axis image
-    title('Combined')
+    title('Combined fcsSOFI image')
     set(gca,'xtick',[],'ytick',[])
     c=subplot(1,2,2); %colormap
     imagesc(rgb_cmap)
@@ -668,6 +665,7 @@ if plotfigures == 1
     ylabel('log(D) (nm^2/s)')
     axis xy
     set(findall(gcf,'-property','FontSize'),'FontSize',14)
+
 end
 
 %% Single Pixel Results
@@ -692,7 +690,7 @@ end
 
         % error bars
         number_parameters = [3; 5; 4];
-        [rsq,chisq,J,MSE,ci] = gof_stats(type,...%type
+        [rsq,chisq,J,MSE,ci] = gofStats(type,...%type
             converged_parameters(1:number_parameters(type)),... %parameter values
             fitresult2(row_index,column_index).model_fit,...    %fit curve
             fitresult2(row_index,column_index).rawdata(:,1)',... %x data
@@ -716,21 +714,18 @@ end
           fprintf('a =    %6.2e ± %6.2e\n',converged_parameters(1),ebars(1));
           fprintf('b =    %6.2e ± %6.2e\n',converged_parameters(2),ebars(2));
           fprintf('tauD =     %6.2e ± %6.2e\n',converged_parameters(3),ebars(3));
-
           fprintf('\n')
-
           fprintf('D =         %6.3e\n',Dmap_corrected(row_index,column_index ))
           fprintf('log10(D):  %6.3f\n\n',Dmap2log(row_index,column_index ))
           fprintf('R-square:  %6.4f\n',R2map(row_index,column_index ));
+        
         elseif type == 2
           fprintf('a1 =    %6.2e ± %6.2e\n',converged_parameters(1),ebars(1));
           fprintf('a2 =    %6.2e ± %6.2e\n',converged_parameters(2),ebars(2));
           fprintf('b =     %6.2e ± %6.2e\n',converged_parameters(3),ebars(3));
           fprintf('tauD1 = %6.4f ± %6.4e\n',converged_parameters(4),ebars(4));
           fprintf('tauD2 = %6.4f ± %6.4e\n',converged_parameters(5),ebars(5));  
-
           fprintf('\n')
-
           fprintf('D1:         %6.3e\n',Dmap_corrected(row_index,column_index ))
           fprintf('D2:         %6.3e\n',D2map_corrected(row_index,column_index ))
           fprintf('log10(D1):  %6.3f\n',Dmap2log(row_index,column_index ))
@@ -742,16 +737,12 @@ end
           fprintf('b =    %6.2e ± %6.2e\n',converged_parameters(2),ebars(2));
           fprintf('tauD =     %6.2e ± %6.2e\n',converged_parameters(3),ebars(3));
           fprintf('alpha = %6.4f ± %6.4f\n',converged_parameters(4),ebars(4));
-
           fprintf('\n')
-
           fprintf('D =         %6.3e\n',Dmap_corrected(row_index,column_index ))
           fprintf('log10(D):  %6.3f\n\n',Dmap2log(row_index,column_index ))
           fprintf('alpha:     %6.4f\n\n',alphamap(row_index,column_index ))
           fprintf('R-square:  %6.4f\n',R2map(row_index,column_index ));
-
         end             
-
     end
 
 %% save data
@@ -797,69 +788,4 @@ if store_execution_times == 1
     fprintf(fid, ['Total execution time:' ' ' num2str(totaltime/60) ' ' 'minutes (' num2str(totaltime) ' ' 'seconds)\n']);
     fprintf(fid, ['Total GPU Only time:' ' ' num2str(fit_time) ' ' 'seconds\n\n']);
     fclose(fid);
-end
-
-
-%% Goodness of fit statistics
-function [rsq,chisq,J,MSE,ci] = gof_stats(type,parameters,fitresult,x,y)
-
-%% Residuals
-residuals = y - fitresult;
-a = (y - fitresult).^2./fitresult;
-a(isinf(a)) = 0;
-
-%% Chi-square
-chisq = sum(a);
-
-%% R-square
-rsq = 1-sum(residuals.^2)/sum(y.^2);
-
-%% Partial Derivatives and Jacobian Matrix
-% Brownian
-if type == 1
-    % partial derivatives
-    dGda = parameters(3)./(parameters(3)+x);
-    dGdb = ones(size(x));
-    dGdtau = (parameters(1).*x)./(parameters(3)+x).^2;
-    
-    % Jacobian
-    J = [dGda dGdb dGdtau];J = reshape(J,[length(x),length(parameters)]);
-    
-% 2-Componenet Brownian
-elseif type == 2
-    % partial derivatives
-    dGda1 = parameters(4)./(parameters(4)+x);
-    dGda2 = parameters(5)./(parameters(5)+x);
-    dGdb = ones(size(x));
-    dGdtau1 = (parameters(1).*x)./(parameters(4)+x).^2;
-    dGdtau2 = (parameters(2).*x)./(parameters(5)+x).^2;
-    
-    % Jacobian
-    J = [dGda1 dGda2 dGdb dGdtau1 dGdtau2];J = reshape(J,[length(x),length(parameters)]);
-    
-% Anomalous
-elseif type == 3
-    %partial derivatives
-    dGda = 1./((x./parameters(3)).^(parameters(4)+1));
-    dGdb = ones(size(x));
-    dGdtau = parameters(1)*parameters(4).*(x./parameters(3)).^(parameters(4))./(parameters(3).*((x/parameters(3)).^(parameters(4))).^2);
-    dGdalpha = (parameters(1)*(x./parameters(3)).^(parameters(4)).*log(x./parameters(3)))./((x./parameters(3)).^(parameters(4)+1)).^2;
-
-    % Jacobian
-    J = [dGda dGdb dGdtau dGdalpha];J = reshape(J,[length(x),length(parameters)]);
-    
-end
-%% Covariance matrix
-
-%Mean squared error
-MSE = sum((y - fitresult).^2)/length(y); 
-
-% ci = 1;
-%% Confidence intervals
-disp(size(parameters))
-disp(size(residuals))
-disp(size(J))
-
-ci = nlparci(parameters,residuals,'jacobian',J);
-
 end
