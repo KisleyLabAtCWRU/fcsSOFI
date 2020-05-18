@@ -1,4 +1,4 @@
-%fcsSOFI_WS200131
+%GPU-parallelized fcsSOFI script
 %Will Schmid
 %Kisley Lab
 
@@ -8,11 +8,14 @@ clear; close all; clc
 %% User Input
 
 %data file name
-fname = 'dataset77';
+fname = 'dataset77'; % don't include ".mat" in file name
 
 %diffusion coefficient parameters
 pixelsize=50; %in nm; needed to accurately calculate D
 dT=0.04; %in s; needed to accurately calculate D
+
+% set PSF for deconvolution     
+FWHM=2.7; %FWHM of PSF in pixels
 
 %caxis scale for simulated data
 minScale = 0;
@@ -41,29 +44,28 @@ cminAC=0; % line 853 in GUI code
 cmaxAC=3e8;
 
 % set caxis limits for fcsSOFI diffusion map (color scaling)
-cmin=2; %line
+cmin=2; 
 cmax=6;
 
-% set PSF for deconvolution     
-FWHM=2.7; %FWHM of PSF in pixels
+%number of fit iterations per pixel
+number_fits = 1000;
 
 %plot figures? (1 = yes)
 plotfigures = 1;
 
+% store execution times in external text file? (1 = yes);
+store_execution_times = 0;
+
 %save data files? (1 = yes)
 savethedata = 1; 
-manipulatable_data = 1; % 1 = "I want to be able to scale color later" 
-
-%number of fits per pixel
-number_fits = 1000;
 
 %optional example single pixel curve fit plot
 examplecf = 1; %plot example curve fit plot for single pixel?
 row_index = 8; %pixel row index
 column_index = 18; %pixel column index
 
+% END USER INPUT
 
-%%%% END USER INPUT %%
 %% Paths
 addpath(strcat(pwd,'\Gpufit_build-64_20190709\Debug\matlab'))
 addpath(strcat(pwd,'\fcsSOFI_external_functions'))
@@ -556,12 +558,6 @@ if plotfigures == 1
     ylim([0 1])
     xlim([0 size(im(25,:),2)])
 
-%     %%%%%% BinFitData %%%%%%
-%     % super resolution image
-%     h = figure;
-%     imagesc(AC_im2);
-%     title('SOFI super res figure')
-
     % BinFitData subplots 
     figure %tauDmap
     subplot(2,2,1)
@@ -771,35 +767,20 @@ if savethedata == 1
     fcsSOFI = hsv2rgbmap;
     fcsSOFI_cmap = rgb_cmap;
     
-
-if manipulatable_data == 1
     if type == 1
-         save(strcat(fname,'_analyzed_brownian_manipulatable_',date),'fit_curves','fit_parameters','SOFI','D_map','D_map_corrected','Rsquare_map','fcsSOFI','fcsSOFI_cmap',...
+         save(strcat(fname,'_analyzed_brownian_',date),'fit_curves','fit_parameters','SOFI','D_map','D_map_corrected','Rsquare_map','fcsSOFI','fcsSOFI_cmap',...
              'normDmap2log','normcoef','filtim','type','szmap1','szmap2');
     elseif type == 2
         D2_map = D2map;
         D2_map_corrected = D2map_corrected;
-        save(strcat(fname,'_analyzed_2comp_brown_manipulatable_',date),'fit_curves','fit_parameters','SOFI','D_map','D_map_corrected','D2_map','D2_map_corrected','Rsquare_map','fcsSOFI','fcsSOFI_cmap',...
+        save(strcat(fname,'_analyzed_2comp_',date),'fit_curves','fit_parameters','SOFI','D_map','D_map_corrected','D2_map','D2_map_corrected','Rsquare_map','fcsSOFI','fcsSOFI_cmap',...
             'normDmap2log','normcoef','filtim','type','szmap1','szmap2');
     elseif type == 3
         alpha_map = alphamap;
-        save(strcat(fname,'_analyzed_anomalous_manipulatable_',date),'fit_curves','fit_parameters','SOFI','D_map','D_map_corrected','alpha_map','Rsquare_map','fcsSOFI','fcsSOFI_cmap',...
+        save(strcat(fname,'_analyzed_anomalous_',date),'fit_curves','fit_parameters','SOFI','D_map','D_map_corrected','alpha_map','Rsquare_map','fcsSOFI','fcsSOFI_cmap',...
             'normDmap2log','normcoef','filtim','type','szmap1','szmap2');
-    end
-    
-else
-    if type == 1
-         save(strcat(fname,'_analyzed_brownian_',date),'fit_curves','fit_parameters','SOFI','D_map','D_map_corrected','Rsquare_map','fcsSOFI','fcsSOFI_cmap','cmin','cmax','steps','type');
-    elseif type == 2
-        D2_map = D2map;
-        D2_map_corrected = D2map_corrected;
-        save(strcat(fname,'_analyzed_2comp_brown_',date),'fit_curves','fit_parameters','SOFI','D_map','D_map_corrected','D2_map','D2_map_corrected','Rsquare_map','fcsSOFI','fcsSOFI_cmap','cmin','cmax','steps','type');
-    elseif type == 3
-        alpha_map = alphamap;
-        save(strcat(fname,'_analyzed_anomalous_',date),'fit_curves','fit_parameters','SOFI','D_map','D_map_corrected','alpha_map','Rsquare_map','fcsSOFI','fcsSOFI_cmap','cmin','cmax','steps','type');
     end
 
-end
 end   
 
 %% total computation time
@@ -807,14 +788,16 @@ totaltime = etime(clock,before);
 fprintf(['\nTotal fcsSOFI execution time:' ' ' num2str(totaltime/60) ' ' 'minutes (' num2str(totaltime) ' ' 'seconds)\n\n']);
 
 % write computation time to text file for remote access
-DateString = datestr(datetime);
-xdim = num2str((xmax-xmin+1)); ydim = num2str((ymax-ymin+1));
-fid = fopen('Execution_Time_March.txt','at');
-fprintf(fid, [DateString '\n']);
-fprintf(fid, ['Data File:' ' ' fname '.m' ' (' xdim 'x' ydim ' ' 'image)\n']); 
-fprintf(fid, ['Total execution time:' ' ' num2str(totaltime/60) ' ' 'minutes (' num2str(totaltime) ' ' 'seconds)\n']);
-fprintf(fid, ['Total GPU Only time:' ' ' num2str(fit_time) ' ' 'seconds\n\n']);
-fclose(fid);
+if store_execution_times == 1
+    DateString = datestr(datetime);
+    xdim = num2str((xmax-xmin+1)); ydim = num2str((ymax-ymin+1));
+    fid = fopen('fcsSOFI_execution_times.txt','at');
+    fprintf(fid, [DateString '\n']);
+    fprintf(fid, ['Data File:' ' ' fname '.m' ' (' xdim 'x' ydim ' ' 'image)\n']); 
+    fprintf(fid, ['Total execution time:' ' ' num2str(totaltime/60) ' ' 'minutes (' num2str(totaltime) ' ' 'seconds)\n']);
+    fprintf(fid, ['Total GPU Only time:' ' ' num2str(fit_time) ' ' 'seconds\n\n']);
+    fclose(fid);
+end
 
 
 %% Goodness of fit statistics
