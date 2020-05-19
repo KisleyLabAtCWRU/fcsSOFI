@@ -80,18 +80,11 @@ blink_before = clock;
 %% start code/load and setup data 
 fprintf('Running...');
 
-simpath=[fname];
-
-%determine length of trajectory
-intlength = tmax-tmin+1;
-
 % Load data
 load(fname); clc;fprintf(strcat(fname,'.mat loaded\n'));
-DataCombined=Data;
 
 % Set ROI
 DataCombined=DataCombined(ymin:ymax,xmin:xmax,tmin:tmax);
-size(DataCombined);
 
 % produce average image
 avgimage=sum(DataCombined(:,:,:),3)./size(DataCombined,3);
@@ -113,7 +106,6 @@ L = ymax-ymin;
 W = xmax-xmin;
 
 %% Calculate the correlation (2-4th orders, AC and XC)
-rcSOFItime=tic;
 [ACXC_all]=CalcCorr(innerpts,DataVector,c,L); %calculate 
 
 %% Calculate intensity for images by different methods     
@@ -153,11 +145,6 @@ xmn=1; xmx=xmax-xmin;
 ymn=1; ymx=ymax-ymin;
 
 %% load data 
-
-uplind=sub2ind(size(AC_G2_im),ymn,xmn);
-uprind=sub2ind(size(AC_G2_im),ymn,xmx);
-dwlind=sub2ind(size(AC_G2_im),ymx,xmn);
-dwrind=sub2ind(size(AC_G2_im),ymx,xmx);
 
 %reshape ACXC_all to get ROI
 ACXC_all2=[ACXC_all,ACXC_all(1,1),ACXC_all(1,1)];
@@ -391,7 +378,7 @@ for i=1:numel(fitresult)
 end
 R2map=reshape(R2,rowdim,coldim);
 
-% name = ["Brownian","2-Component Brownian","Anomalous"];name = name(type);
+name = ["Brownian","2-Component Brownian","Anomalous"];name = name(type);
 
 % display execution time of fcs step
 Bin_after = clock;
@@ -428,10 +415,6 @@ end
 
 normcoef=10; %instead set to standard here
 normDmap2log=Dmap2log./normcoef;
-
-%set caxis limits for diffusion map % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%!!!!!!!!!!!!!
-% cmin=2; % USER INPUT set limits log(D) colorscale
-% cmax=6;
 
 for i=1:size(normDmap2log,1)
     for j=1:size(normDmap2log,2)
@@ -487,10 +470,7 @@ end
 
 %% make super resolution only map
 % set caxis limits for SR map
-% cscaleACim=AC_im2;
 cscaleACim=filtim;
-% cminAC=0; %USER INPUT of SOFI image limits
-% cmaxAC=1e9;
 for i=1:size(cscaleACim,1) %filter out values above/below, change to limits
     for j=1:size(cscaleACim,2)
         if cscaleACim(i,j)<cminAC
