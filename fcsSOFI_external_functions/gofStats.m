@@ -47,7 +47,6 @@ elseif type == 3
     J = [dGda dGdb dGdtau dGdalpha];J = reshape(J,[length(x),length(parameters)]);
     
 end
-%% Covariance matrix
 
 %Mean squared error
 MSE = sum((y - fitresult).^2)/length(y); 
