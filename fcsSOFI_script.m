@@ -284,7 +284,7 @@ for i=1:size(AC_logbin,1)
         model_fit(1:len_x) = model_coefs(1).* (1./(1+(x(1:len_x)./model_coefs(3)).^model_coefs(4))) + model_coefs(2); 
     end
 
-    % r-square
+    % R-square
     residuals = y - model_fit;
     a = (y - model_fit).^2./model_fit;
     a(isinf(a)) = 0;
@@ -371,7 +371,7 @@ if type == 3
     alphamap=reshape([alpha_corrected],rowdim,coldim);
 end
 
-% make map of r-2 values
+% make map of R^2 values
 R2 = zeros(1,numel(fitresult));
 for i=1:numel(fitresult)
     R2(i)=fitresult(1,i).rsquare;
@@ -393,7 +393,7 @@ Combine_before = clock;
 szmap1=size(Dmap,1);
 szmap2=size(Dmap,2);
 
-Dmap2log=log10(Dmap); %actually use Dmap, unfiltered R^2; filter in this code
+Dmap2log=log10(Dmap); 
 
 for i=1:size(Dmap2log,1)
     for j=1:size(Dmap2log,2)
@@ -432,7 +432,7 @@ end
 %changing shift, scale will change the colormap colors, range
 maxvalue=cmax/normcoef; %this is the max value on the colormap
 shift=0.0;%shift left right
-scale=0.7;%factor to multiply everything by %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%!!!!!!!!!!!!!
+scale=0.7;%factor to multiply everything by 
 
 for i=1:size(normDmap2log,1)
     for j=1:size(normDmap2log,2)
@@ -737,7 +737,6 @@ if savethedata == 1
     Rsquare_map = R2map;
     fcsSOFI = hsv2rgbmap;
     fcsSOFI_cmap = rgb_cmap;
-    
     if type == 1
          save(strcat(fname,'_analyzed_brownian_',date),'fit_curves','fit_parameters','SOFI','D_map','D_map_corrected','Rsquare_map','fcsSOFI','fcsSOFI_cmap',...
              'normDmap2log','normcoef','filtim','type','szmap1','szmap2');
