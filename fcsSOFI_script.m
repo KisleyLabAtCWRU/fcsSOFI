@@ -35,7 +35,7 @@ type = 1;
 %choose alpha start point (Anomalous diffusion model only)
 alpha_stp = 1;
 
-%%%NEW alpha threshold
+% alpha threshold
 alpha_max = 2; % maximum value of alpha allowed to appear on alpha map
 alpha_min = 0;
 
