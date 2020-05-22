@@ -1,4 +1,4 @@
-%GPU-parallelized fcsSOFI script
+`%GPU-parallelized fcsSOFI script
 %Will Schmid
 %Kisley Lab
 
@@ -82,6 +82,7 @@ fprintf('Running...');
 
 % Load data
 load(fname); clc;fprintf(strcat(fname,'.mat loaded\n'));
+DataCombined = Data;
 
 % Set ROI
 DataCombined=DataCombined(ymin:ymax,xmin:xmax,tmin:tmax);
