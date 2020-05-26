@@ -1,8 +1,8 @@
 # GPU-Accelerated fcsSOFI GUI
 
-Version 1.5: 12 March 2020
+Version 1.9: 22 May 2020
 
-Based on Kisley et al., ACS Nano 9, 9158-9166 (2015). https://pubs.acs.org/doi/abs/10.1021/acsnano.5b03430
+Based on Kisley, L.; Higgins, D.; Weiss, S.; Landes, C.F.; et al. Characterization of Porous Materials by Fluorescence Correlation Spectroscopy Super-resolution Optical Fluctuation Imaging. ACS Nano 2015, 9, 9158–9166. doi:10.1021/acsnano.5b03430. PMID 26235127.
 
 Gpufit is an open source software library for GPU-parallelized curve fitting developed by Mark Bates, Adrian Przybylski, Björn Thiel, and Jan Keller-Findeisen. The relevant 2017 Scientific Reports publication describing Gpufit can be found here: https://www.nature.com/articles/s41598-017-15313-9#Ack1
 
