@@ -1,4 +1,4 @@
-`%GPU-parallelized fcsSOFI script
+%GPU-parallelized fcsSOFI script
 %Will Schmid
 %Kisley Lab
 
@@ -239,7 +239,8 @@ for i=1:size(AC_logbin,1)
     % choose startpoint tau_D
     %td_stp = max(x)/2;
     td_stp = 0.3678795;
-
+                
+                %D = (pixelsize.^2)/(4*0.36787)
     % declare start points based on diffusion type
     sp_struct = struct; % start point structure
     sp_struct.brownian = [max(y)*2,mean(y(round((3*numel(y)/4)):numel(y))),td_stp];
