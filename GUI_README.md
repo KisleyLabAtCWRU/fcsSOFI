@@ -26,13 +26,12 @@ NOTE: To be analyzed by this preliminary GUI, your 3D array must be named 'Data'
 'Data'. If this is not the case, redefine your movie as 'Data' in MATLAB and save your .mat file again. Your
 .mat file can contain other arrays/components/data than just your 'Data' array - the GUI extracts the array 'Data' automatically from any .mat file.*
 
-
 2) Open GUI
 
-* Simply double click on the 'fcsSOFI_GUI_WSYYMMDD' MATLAB App file. Assuming you have MATLAB 
+* Simply double click on the 'fcsSOFI_GUI' MATLAB App file. Assuming you have MATLAB 
 installed on your computer, the GUI should open and be immediately ready for use.
 
-NOTE: Make sure the GUI (fcsSOFI_GUI_WSYYMMDD.mlapp), the custom Gpufit library folder (Gpufit_build-64_20190709), and your 
+NOTE: Make sure the GUI (fcsSOFI_GUI.mlapp), the custom Gpufit library folder (Gpufit_build-64_20190709), and your 
 data exist in the same directory, and make that you are working in that directory in MATLAB.
 
 3) Load Data 
@@ -40,28 +39,26 @@ data exist in the same directory, and make that you are working in that director
 * Data can be loaded in two ways: either with the "Browse" button or the "Manual Load" text-input boxes.
 The Browse button opens your file explorer, from which you can select a .mat data file. If you know the 
 file name (and the file is in the same directory as the fcsSOFI GUI), you can manually input that 
-name as a combination of the "File name ext." and "Trial number(s)" inputs. 
+name as a combination of the "File name ext." and "Trial number" inputs. 
 For example, the inputs
 	File name ext. = 'dataset'
 	Trial number(s) = 4
 Loads the file
 	'dataset4.mat'
-The manual input is intended to allow the analysis of multiple data sets at once. This functionality
-is limited/full of bugs as of March 2020 and is not reccomended.
 
-* After you load the data with either 'Browse' or 'Load Data' buttons, the first frame of your 'Data1' array 
+* After you load the data with either 'Browse' or 'Load Data' buttons, the first frame of your 'Data' array 
 should appear on the GUI axis. From here you can choose a specific region of interest (ROI) with the input boxes
 under 'Region of Interest in Pixels.' The x and y inputs crop the image on a specific range of pixels, and 
 the t inputs select specific frames. Click 'Display ROI' to display the ROI on the first frame.
 
 * The 32x32x5000 simulated data file 'dataset77.mat' is included in this repository. The default inputs to
-'File name ext.' and 'Trial number(s)' are already set to load 'dataset77.mat'. As long as your MATLAB path is 
-set to the extracted zip folder, you can just press 'Run' right away and the GUI will load and analyze the array
+'File name ext.' and 'Trial number' are already set to load 'dataset77.mat'. As long as your MATLAB path is 
+set to the extracted zip folder for the fcsSOFI repository, you can just press 'Run' right away and the GUI will load and analyze the array
 contained in 'dataset77.mat'.
 
 4) Run fcsSOFI analysis
 
-* Once data is loaded, simply press the 'Run' button and the fcsSOFI analysis will commence. Once complete, the
+* Once your data is loaded, simply press the 'Run' button and the fcsSOFI analysis will commence. Once complete, the
 fcsSOFI GUI will print execution times in the top white panel and the combined fcsSOFI image will display on the
 GUI axes. Toggle through the figures with the 'Display Figure' dropdown menu below the axes.
 
@@ -85,19 +82,18 @@ GUI axes. Toggle through the figures with the 'Display Figure' dropdown menu bel
 * Microscopy Parameters
 'Pixel size (nm)' text input: physical pixel size of microscope in nm
 'dT (s)' text input: time interval between each captured frame in seconds
-
-* C-axis Scale (for Simulated Data)
-'Min scale' text input: minimum scale for C-axis
-'Max scale' text input: maximum scale for C-axis
+'FWHM of PSF (pixels)' text input: full width at half maximum of microscope point spread function in pixels
 
 * 'Diffusion Type' button group: select diffusion curve-fitting model
 	'Brownian' button: single-component brownian diffusion
 	'2-Comp Brownian' button: two-component brownian diffusion
 	'Anomalous' button: anomalous diffusion 
 
-* 'Alpha start point' text input: choose start point for anomalous stretch factor alpha (anomalous diffusion model only)
+* 'alpha start point' text input: choose start point for anomalous stretch factor alpha (anomalous diffusion model only)
 
-* 'Save figures?' button group: select yes to save figures as .png files
+* 'Save figures?' button group: select yes to save figures as .fig files in a new subfolder
+
+* 'Store exec. times?' button group: select yes to create a text file to remotely store execution times
 
 * 'Save data?' button group: select yes to save analyzed data in a .mat file
 
@@ -116,3 +112,7 @@ GUI axes. Toggle through the figures with the 'Display Figure' dropdown menu bel
 relevant parameters, and g.o.f indicators
 
 * Top right text area: displays curve fit diffusion coefficient estimates, relevant parameters, and g.o.f indicators
+
+* C-axis Scale (for Simulated Data)
+'Min scale' text input: minimum scale for C-axis
+'Max scale' text input: maximum scale for C-axis
