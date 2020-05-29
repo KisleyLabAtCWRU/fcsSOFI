@@ -4,9 +4,7 @@ Version 1.10: 27 May 2020
 
 Based on Kisley, L.; Higgins, D.; Weiss, S.; Landes, C.F.; et al. Characterization of Porous Materials by Fluorescence Correlation Spectroscopy Super-resolution Optical Fluctuation Imaging. ACS Nano 2015, 9, 9158–9166. doi:10.1021/acsnano.5b03430. PMID 26235127.
 
-Gpufit is an open source software library for GPU-parallelized curve fitting developed by Mark Bates, Adrian Przybylski, Björn Thiel, and Jan Keller-Findeisen. The relevant 2017 Scientific Reports publication describing Gpufit can be found here: https://www.nature.com/articles/s41598-017-15313-9#Ack1
-
-Gpufit homepage: https://github.com/gpufit/Gpufit
+Gpufit is an open source software library for GPU-parallelized curve fitting developed by Mark Bates, Adrian Przybylski, Björn Thiel, and Jan Keller-Findeisen. The relevant 2017 Scientific Reports publication describing Gpufit can be found here: https://www.nature.com/articles/s41598-017-15313-9#Ack1. Gpufit GitHub homepage: https://github.com/gpufit/Gpufit
 
 **Instructions for Use**
 
@@ -42,7 +40,7 @@ file name (and the file is in the same directory as the fcsSOFI GUI), you can ma
 name as a combination of the "File name ext." and "Trial number" inputs. 
 For example, the inputs
 	File name ext. = 'dataset'
-	Trial number(s) = 4
+	Trial number = 4
 Loads the file
 	'dataset4.mat'
 
@@ -69,7 +67,7 @@ GUI axes. Toggle through the figures with the 'Display Figure' dropdown menu bel
 
 * Manual Load
 'File name ext.' text input: specifies generic file name common to your data files (i.e 'dataset')
-'Trial number(s) text input: specifies data file corresponding to specific trial number, will soon be able to handle multiple trials at once
+'Trial number text input: specifies data file corresponding to specific trial number
 
 * Region of Interest in Pixels
 'xmin' text input: minimum horizontal position/pixel of ROI
