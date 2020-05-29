@@ -94,7 +94,7 @@ GUI axes. Toggle through the figures with the 'Display Figure' dropdown menu bel
 'D2 start point' text input: choose start point for the average diffusion coefficient D2 of the second brownian component (2-Comp model only)
 'alpha start point' text input: choose start point for anomalous stretch factor alpha (anomalous diffusion model only)
 
-'Alpha Map Settings
+* Alpha Map Settings
 'maximum alpha allowed' text input: choose maximum value of alpha to be displayed on the alpha map (values exceeding this threshold will be zeroed-out
 
 * 'Save figures?' button group: select yes to save figures as .fig files in a new subfolder
