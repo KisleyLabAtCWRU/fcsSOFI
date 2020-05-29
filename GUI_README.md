@@ -1,6 +1,6 @@
 # GPU-Accelerated fcsSOFI GUI
 
-Version 1.9: 22 May 2020
+Version 1.10: 27 May 2020
 
 Based on Kisley, L.; Higgins, D.; Weiss, S.; Landes, C.F.; et al. Characterization of Porous Materials by Fluorescence Correlation Spectroscopy Super-resolution Optical Fluctuation Imaging. ACS Nano 2015, 9, 9158–9166. doi:10.1021/acsnano.5b03430. PMID 26235127.
 
@@ -85,11 +85,17 @@ GUI axes. Toggle through the figures with the 'Display Figure' dropdown menu bel
 'FWHM of PSF (pixels)' text input: full width at half maximum of microscope point spread function in pixels
 
 * 'Diffusion Type' button group: select diffusion curve-fitting model
-	'Brownian' button: single-component brownian diffusion
-	'2-Comp Brownian' button: two-component brownian diffusion
-	'Anomalous' button: anomalous diffusion 
+'Brownian' button: single-component brownian diffusion
+'2-Comp Brownian' button: two-component brownian diffusion
+'Anomalous' button: anomalous diffusion 
 
-* 'alpha start point' text input: choose start point for anomalous stretch factor alpha (anomalous diffusion model only)
+* Model Parameter Settings
+'D start point' text input: choose start point for the average diffusion coefficient D 
+'D2 start point' text input: choose start point for the average diffusion coefficient D2 of the second brownian component (2-Comp model only)
+'alpha start point' text input: choose start point for anomalous stretch factor alpha (anomalous diffusion model only)
+
+'Alpha Map Settings
+'maximum alpha allowed' text input: choose maximum value of alpha to be displayed on the alpha map (values exceeding this threshold will be zeroed-out
 
 * 'Save figures?' button group: select yes to save figures as .fig files in a new subfolder
 
@@ -105,14 +111,20 @@ GUI axes. Toggle through the figures with the 'Display Figure' dropdown menu bel
 
 * 'Display Figure' dropdown menu: once fcsSOFI analysis is complete, toggle between result figures
 
+* Top right text area: displays curve fit diffusion coefficient estimates, relevant parameters, and g.o.f indicators
+
 * Single-Pixel Fit Results
 'Row Index' text input: select the row index of the desired pixel
 'Column Index' text input: select the column index of the desired pixel
 'Display' button: display visual curve fit results on GUI axis and displays curve-fit diffusion coefficient estimates, 
 relevant parameters, and g.o.f indicators
 
-* Top right text area: displays curve fit diffusion coefficient estimates, relevant parameters, and g.o.f indicators
+* C-axis limits
+'min' text input: minimum diffusion coefficient to appear on fcsSOFI image color bar in powers of 10
+'max' text input: maximum diffusion coefficient to appear on fcsSOFI image color bar in powers of 10
 
-* C-axis Scale (for Simulated Data)
-'Min scale' text input: minimum scale for C-axis
-'Max scale' text input: maximum scale for C-axis
+* SOFI Saturation Limits
+'min' text input: minimum SOFI saturation to scale saturation of fcsSOFI image
+'max' text input: maximum SOFI saturation to scale saturation of fcsSOFI image
+
+* 'Redraw fcsSOFI' button: redraw and resave fcsSOFI image with specified C-axis and SOFI Saturation limits
