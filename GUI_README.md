@@ -85,17 +85,17 @@ GUI axes. Toggle through the figures with the 'Display Figure' dropdown menu bel
 'FWHM of PSF (pixels)' text input: full width at half maximum of microscope point spread function in pixels
 
 * 'Diffusion Type' button group: select diffusion curve-fitting model
-'Brownian' button: single-component brownian diffusion
-'2-Comp Brownian' button: two-component brownian diffusion
-'Anomalous' button: anomalous diffusion 
+	'Brownian' button: single-component brownian diffusion
+	'2-Comp Brownian' button: two-component brownian diffusion
+	'Anomalous' button: anomalous diffusion 
 
 * Model Parameter Settings
-'D start point' text input: choose start point for the average diffusion coefficient D 
-'D2 start point' text input: choose start point for the average diffusion coefficient D2 of the second brownian component (2-Comp model only)
-'alpha start point' text input: choose start point for anomalous stretch factor alpha (anomalous diffusion model only)
+	'D start point' text input: choose start point for the average diffusion coefficient D 
+	'D2 start point' text input: choose start point for the average diffusion coefficient D2 of the second brownian component (2-Comp model only)
+	'alpha start point' text input: choose start point for anomalous stretch factor alpha (anomalous diffusion model only)
 
 * Alpha Map Settings
-'maximum alpha allowed' text input: choose maximum value of alpha to be displayed on the alpha map (values exceeding this threshold will be zeroed-out
+	'maximum alpha allowed' text input: choose maximum value of alpha to be displayed on the alpha map (values exceeding this threshold will be zeroed-out
 
 * 'Save figures?' button group: select yes to save figures as .fig files in a new subfolder
 
@@ -114,17 +114,16 @@ GUI axes. Toggle through the figures with the 'Display Figure' dropdown menu bel
 * Top right text area: displays curve fit diffusion coefficient estimates, relevant parameters, and g.o.f indicators
 
 * Single-Pixel Fit Results
-'Row Index' text input: select the row index of the desired pixel
-'Column Index' text input: select the column index of the desired pixel
-'Display' button: display visual curve fit results on GUI axis and displays curve-fit diffusion coefficient estimates, 
-relevant parameters, and g.o.f indicators
+	'Row Index' text input: select the row index of the desired pixel
+	'Column Index' text input: select the column index of the desired pixel
+	'Display' button: display visual curve fit results on GUI axis and displays curve-fit diffusion coefficient estimates, relevant parameters, and g.o.f indicators
 
 * C-axis limits
-'min' text input: minimum diffusion coefficient to appear on fcsSOFI image color bar in powers of 10
-'max' text input: maximum diffusion coefficient to appear on fcsSOFI image color bar in powers of 10
+	'min' text input: minimum diffusion coefficient to appear on fcsSOFI image color bar in powers of 10
+	'max' text input: maximum diffusion coefficient to appear on fcsSOFI image color bar in powers of 10
 
 * SOFI Saturation Limits
-'min' text input: minimum SOFI saturation to scale saturation of fcsSOFI image
-'max' text input: maximum SOFI saturation to scale saturation of fcsSOFI image
+	'min' text input: minimum SOFI saturation to scale saturation of fcsSOFI image
+	'max' text input: maximum SOFI saturation to scale saturation of fcsSOFI image
 
 * 'Redraw fcsSOFI' button: redraw and resave fcsSOFI image with specified C-axis and SOFI Saturation limits
