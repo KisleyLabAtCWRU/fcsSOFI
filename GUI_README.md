@@ -73,7 +73,11 @@ contained in 'dataset77.mat'.
 fcsSOFI GUI will print execution times in the top white panel and the combined fcsSOFI image will display on the
 GUI axes. Toggle through the figures with the 'Display Figure' dropdown menu below the axes.
 
-**GUI Inputs/Components**
+**Description of GUI Inputs and Components**
+
+The inputs and UI components of the fcsSOFI GUI are listed and described below.
+
+**Pre-Processing User Inputs and Components for Running fcsSOFI**
 
 * Load Data
 'Browse' button: opens file explorer and allows user to select a .mat data file
@@ -115,6 +119,8 @@ GUI axes. Toggle through the figures with the 'Display Figure' dropdown menu bel
 * 'Save data?' button group: select yes to save analyzed data in a .mat file
 
 * 'Run' button: run fcsSOFI analysis for current text/button inputs
+
+**Post-Processing Inputs and Components for Display and Manipulation of Completed Analysis**
 
 * Top text area: prints completed actions, curve fitting progress (25% to 100%), and execution times
 
