@@ -135,12 +135,12 @@ The inputs and UI components of the fcsSOFI GUI are listed and described below.
 	* 'Column Index' text input: select the column index of the desired pixel
 	* 'Display' button: display visual curve fit results on GUI axis and displays curve-fit diffusion coefficient estimates, relevant parameters, and g.o.f indicators
 
-* C-axis limits
+* C-axis limits *coming soon*
 	* 'min' text input: minimum diffusion coefficient to appear on fcsSOFI image color bar in powers of 10
 	* 'max' text input: maximum diffusion coefficient to appear on fcsSOFI image color bar in powers of 10
 
-* SOFI Saturation Limits
+* SOFI Saturation Limits *coming soon*
 	* 'min' text input: minimum SOFI saturation to scale saturation of fcsSOFI image
 	* 'max' text input: maximum SOFI saturation to scale saturation of fcsSOFI image
 
-* 'Redraw fcsSOFI' button: redraw and resave fcsSOFI image with specified C-axis and SOFI Saturation limits
+* 'Redraw fcsSOFI' button: redraw and resave fcsSOFI image with specified C-axis and SOFI Saturation limits *coming soon*
