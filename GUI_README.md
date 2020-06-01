@@ -8,6 +8,17 @@ Based on Kisley, L.; Higgins, D.; Weiss, S.; Landes, C.F.; et al. Characterizati
 
 Gpufit is an open source software library for GPU-parallelized curve fitting developed by Mark Bates, Adrian Przybylski, Björn Thiel, and Jan Keller-Findeisen. The relevant 2017 Scientific Reports publication describing Gpufit can be found here: https://www.nature.com/articles/s41598-017-15313-9#Ack1. Gpufit GitHub homepage: https://github.com/gpufit/Gpufit
 
+**Requirements**
+
+* NVIDIA graphics card
+* CUDA Toolkit version 6.5 or later (https://developer.nvidia.com/cuda-toolkit)
+* MATLAB version 2012a or later
+* C/C++ compiler
+
+NOTE: CUDA is Nvidia's proprietary GPU-computing development environment and CUDA-based applications, like Gpufit, cannot be run on non-Nvidia hardware (i.e., AMD graphics cards). An Nvidia brand graphics card is required to run the GPU-parallelized fcsSOFI GUI/script. 
+
+At this time, there is no option to operate the fcsSOFI GUI completely serially/on a CPU. A toggle switch between GPU and CPU fitting is a feature that will be added to the GUI in the future. 
+
 **Instructions for Use**
 
 1) Prepare Data for Analysis
