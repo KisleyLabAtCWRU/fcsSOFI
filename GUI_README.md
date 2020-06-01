@@ -1,12 +1,23 @@
 # GPU-Accelerated fcsSOFI GUI
 
-Version 1.9: 22 May 2020
+Version 1.10: 27 May 2020
+
+fcsSOFI combines the correlation techniques of fluorescence correlation spectroscopy (FCS) and super-resolution optical fluctuation imaging (SOFI) to produce to produce super-resolution spatial maps of diffusion coefficients. This has been applied thus far to understand diffusion and spatial properties of porous and complex materials, including agarose and PNIPAM hydrogels, liquid crystals, and liquid-liquid phase-separated polymer and biomolecule condensates. The GPU-accelerated fcsSOFI GUI is designed to make the analysis accessible with a reasonable analysis time so that other scientists can apply fcsSOFI to their data.
 
 Based on Kisley, L.; Higgins, D.; Weiss, S.; Landes, C.F.; et al. Characterization of Porous Materials by Fluorescence Correlation Spectroscopy Super-resolution Optical Fluctuation Imaging. ACS Nano 2015, 9, 9158–9166. doi:10.1021/acsnano.5b03430. PMID 26235127.
 
-Gpufit is an open source software library for GPU-parallelized curve fitting developed by Mark Bates, Adrian Przybylski, Björn Thiel, and Jan Keller-Findeisen. The relevant 2017 Scientific Reports publication describing Gpufit can be found here: https://www.nature.com/articles/s41598-017-15313-9#Ack1
+Gpufit is an open source software library for GPU-parallelized curve fitting developed by Mark Bates, Adrian Przybylski, Björn Thiel, and Jan Keller-Findeisen. The relevant 2017 Scientific Reports publication describing Gpufit can be found here: https://www.nature.com/articles/s41598-017-15313-9#Ack1. Gpufit GitHub homepage: https://github.com/gpufit/Gpufit
 
-Gpufit homepage: https://github.com/gpufit/Gpufit
+**Requirements**
+
+* NVIDIA graphics card
+* CUDA Toolkit version 6.5 or later (https://developer.nvidia.com/cuda-toolkit)
+* MATLAB version 2012a or later
+* C/C++ compiler
+
+NOTE: CUDA is Nvidia's proprietary GPU-computing development environment and CUDA-based applications, like Gpufit, cannot be run on non-Nvidia hardware (i.e., AMD graphics cards). An Nvidia brand graphics card is required to run the GPU-parallelized fcsSOFI GUI/script. 
+
+At this time, there is no option to operate the fcsSOFI GUI completely serially/on a CPU. A toggle switch between GPU and CPU fitting is a feature that will be added to the GUI in the future. 
 
 **Instructions for Use**
 
@@ -42,7 +53,7 @@ file name (and the file is in the same directory as the fcsSOFI GUI), you can ma
 name as a combination of the "File name ext." and "Trial number" inputs. 
 For example, the inputs
 	File name ext. = 'dataset'
-	Trial number(s) = 4
+	Trial number = 4
 Loads the file
 	'dataset4.mat'
 
@@ -62,14 +73,18 @@ contained in 'dataset77.mat'.
 fcsSOFI GUI will print execution times in the top white panel and the combined fcsSOFI image will display on the
 GUI axes. Toggle through the figures with the 'Display Figure' dropdown menu below the axes.
 
-**GUI Inputs/Components**
+**Description of GUI Inputs and Components**
+
+The inputs and UI components of the fcsSOFI GUI are listed and described below.
+
+**Pre-Processing User Inputs and Components for Running fcsSOFI**
 
 * Load Data
 'Browse' button: opens file explorer and allows user to select a .mat data file
 
 * Manual Load
 'File name ext.' text input: specifies generic file name common to your data files (i.e 'dataset')
-'Trial number(s) text input: specifies data file corresponding to specific trial number, will soon be able to handle multiple trials at once
+'Trial number text input: specifies data file corresponding to specific trial number
 
 * Region of Interest in Pixels
 'xmin' text input: minimum horizontal position/pixel of ROI
@@ -80,16 +95,22 @@ GUI axes. Toggle through the figures with the 'Display Figure' dropdown menu bel
 'tmax' text input: last frame to analyze
 
 * Microscopy Parameters
-'Pixel size (nm)' text input: physical pixel size of microscope in nm
-'dT (s)' text input: time interval between each captured frame in seconds
-'FWHM of PSF (pixels)' text input: full width at half maximum of microscope point spread function in pixels
+	* 'Pixel size (nm)' text input: physical pixel size of microscope in nm
+	* 'dT (s)' text input: time interval between each captured frame in seconds
+	* 'FWHM of PSF (pixels)' text input: full width at half maximum of microscope point spread function in pixels
 
 * 'Diffusion Type' button group: select diffusion curve-fitting model
-	'Brownian' button: single-component brownian diffusion
-	'2-Comp Brownian' button: two-component brownian diffusion
-	'Anomalous' button: anomalous diffusion 
+	* 'Brownian' button: single-component brownian diffusion
+	* '2-Comp Brownian' button: two-component brownian diffusion
+	* 'Anomalous' button: anomalous diffusion 
 
-* 'alpha start point' text input: choose start point for anomalous stretch factor alpha (anomalous diffusion model only)
+* Model Parameter Settings
+	* 'D start point' text input: choose start point for the average diffusion coefficient D 
+	* 'D2 start point' text input: choose start point for the average diffusion coefficient D2 of the second brownian component (2-Comp model only)
+	'alpha start point' text input: choose start point for anomalous stretch factor alpha (anomalous diffusion model only)
+
+* Alpha Map Settings
+	'maximum alpha allowed' text input: choose maximum value of alpha to be displayed on the alpha map (values exceeding this threshold will be zeroed-out
 
 * 'Save figures?' button group: select yes to save figures as .fig files in a new subfolder
 
@@ -99,20 +120,27 @@ GUI axes. Toggle through the figures with the 'Display Figure' dropdown menu bel
 
 * 'Run' button: run fcsSOFI analysis for current text/button inputs
 
+**Post-Processing Inputs and Components for Display and Manipulation of Completed Analysis**
+
 * Top text area: prints completed actions, curve fitting progress (25% to 100%), and execution times
 
 * Axes: displays figures
 
 * 'Display Figure' dropdown menu: once fcsSOFI analysis is complete, toggle between result figures
 
-* Single-Pixel Fit Results
-'Row Index' text input: select the row index of the desired pixel
-'Column Index' text input: select the column index of the desired pixel
-'Display' button: display visual curve fit results on GUI axis and displays curve-fit diffusion coefficient estimates, 
-relevant parameters, and g.o.f indicators
-
 * Top right text area: displays curve fit diffusion coefficient estimates, relevant parameters, and g.o.f indicators
 
-* C-axis Scale (for Simulated Data)
-'Min scale' text input: minimum scale for C-axis
-'Max scale' text input: maximum scale for C-axis
+* Single-Pixel Fit Results
+	* 'Row Index' text input: select the row index of the desired pixel
+	* 'Column Index' text input: select the column index of the desired pixel
+	* 'Display' button: display visual curve fit results on GUI axis and displays curve-fit diffusion coefficient estimates, relevant parameters, and g.o.f indicators
+
+* C-axis limits
+	* 'min' text input: minimum diffusion coefficient to appear on fcsSOFI image color bar in powers of 10
+	* 'max' text input: maximum diffusion coefficient to appear on fcsSOFI image color bar in powers of 10
+
+* SOFI Saturation Limits
+	* 'min' text input: minimum SOFI saturation to scale saturation of fcsSOFI image
+	* 'max' text input: maximum SOFI saturation to scale saturation of fcsSOFI image
+
+* 'Redraw fcsSOFI' button: redraw and resave fcsSOFI image with specified C-axis and SOFI Saturation limits
