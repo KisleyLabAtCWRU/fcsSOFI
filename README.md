@@ -12,6 +12,7 @@ Kisley, L.; Higgins, D.; Weiss, S.; Landes, C.F.; et al. Characterization of Por
 * GPU-accelerated fcsSOFI GUI (fcsSOFI_GUI.mlapp) 
 * GPU-accelerated fcsSOFI script (fcsSOFI_script.m)
 * Test data set: simulation of two diffusing pores (dataset77.mat)
+* Colorscale script: Change fcsSOFI colorscale external to GUI (SOFI_ColorScale.m)
 * Folder containing external functions called in script (fcsSOFI_External_Functions)
 * Customized Gpufit library (Gpufit_build-64-YYYYMMDD)
 
