@@ -1,5 +1,7 @@
 # GPU-Accelerated fcsSOFI GUI
 
+Please see the PDF user guide for most recent updates: fcsSOFI_user_guide.pdf
+
 Version 1.10: 27 May 2020
 
 fcsSOFI combines the correlation techniques of fluorescence correlation spectroscopy (FCS) and super-resolution optical fluctuation imaging (SOFI) to produce to produce super-resolution spatial maps of diffusion coefficients. This has been applied thus far to understand diffusion and spatial properties of porous and complex materials, including agarose and PNIPAM hydrogels, liquid crystals, and liquid-liquid phase-separated polymer and biomolecule condensates. The GPU-accelerated fcsSOFI GUI is designed to make the analysis accessible with a reasonable analysis time so that other scientists can apply fcsSOFI to their data.
