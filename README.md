@@ -8,10 +8,12 @@ More details can be found at:
 Kisley, L.; Higgins, D.; Weiss, S.; Landes, C.F.; et al. Characterization of Porous Materials by Fluorescence Correlation Spectroscopy Super-resolution Optical Fluctuation Imaging. ACS Nano 2015, 9, 9158–9166. doi:10.1021/acsnano.5b03430. PMID 26235127.
 
 **Files and folders maintained on this repository:**
-* GUI_README - a detailed guide for the fcsSOFI GUI (GUI_README.md)
+* README: Description of the fcsSOFI repository (README.md - the file you are reading now!)
+* fcsSOFI User Guide - a detailed guide for the fcsSOFI GUI (fcsSOFI_user_guide.pdf)
 * GPU-accelerated fcsSOFI GUI (fcsSOFI_GUI.mlapp) 
 * GPU-accelerated fcsSOFI script (fcsSOFI_script.m)
-* Test data set: simulation of two diffusing pores (dataset77.mat)
+* Test data set: simulation of two pores with emitters undergoing Brownian diffusion (dataset77.mat)
+* Colorscale script: Change fcsSOFI colorscale external to GUI (SOFI_ColorScale.m)
 * Folder containing external functions called in script (fcsSOFI_External_Functions)
 * Customized Gpufit library (Gpufit_build-64-YYYYMMDD)
 
