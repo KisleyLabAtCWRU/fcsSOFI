@@ -6,7 +6,7 @@ clear all
 %20200415LK
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%% USER INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%% %%
-fname='dataset77'; %string ending in .mat of your file of data in the current directory
+fname='dataset77_analyzed_brownian_08-11-2020_09-55'; %string ending in .mat of your file of data in the current directory
 %%% DIFFUSION CONSTANTS  - Set range of D plotted in fcsSOFI diffusion map
 % select these STRATEGICALLY based on your expect diffusion coefficients
 % defaults are from  fcsSOFI of 100 nm beads in 1% agarose from original

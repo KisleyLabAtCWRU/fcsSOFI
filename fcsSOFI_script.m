@@ -8,11 +8,11 @@ clear; close all; clc
 %% User Input
 
 %data file name
-fname = 'dataset77'; % don't include ".mat" in file name
+fname = 'dataset0-8CODD'; % don't include ".mat" in file name
 
 %diffusion coefficient parameters
-pixelsize=50; %in nm; needed to accurately calculate D
-dT=0.04; %in s; needed to accurately calculate D
+pixelsize=47.6; %in nm; needed to accurately calculate D
+dT=0.001; %in s; needed to accurately calculate D
 
 % set PSF for deconvolution     
 FWHM=2.7; %FWHM of PSF in pixels
@@ -23,17 +23,17 @@ maxScale = 15000;
 
 %region of interest in pixels
 ymin=1; 
-ymax=30;
+ymax=50;%173;
 xmin=1;
-xmax=30;
+xmax=50;%258;
 tmin = 1;
-tmax= 1000;
+tmax= 50;
     
 %choose type of diffusion (1 = Brownian, 2 = 2-Comp Brownian, 3 = Anomalous)
-type = 1;
+type = 3;
 
 %choose alpha start point (Anomalous diffusion model only)
-alpha_stp = 1;
+alpha_stp = 0.8;
 
 % alpha threshold
 alpha_max = 2; % maximum value of alpha allowed to appear on alpha map
@@ -44,8 +44,8 @@ cminAC=0; % line 853 in GUI code
 cmaxAC=3e8;
 
 % set caxis limits for fcsSOFI diffusion map (color scaling)
-cmin=2; 
-cmax=6;
+cmin=4; 
+cmax=8;
 
 %number of fit iterations per pixel
 number_fits = 1000;
@@ -241,11 +241,12 @@ for i=1:size(AC_logbin,1)
     td_stp = 0.3678795;
                 
                 %D = (pixelsize.^2)/(4*0.36787)
-    % declare start points based on diffusion type
+     % declare start points based on diffusion type
     sp_struct = struct; % start point structure
     sp_struct.brownian = [max(y)*2,mean(y(round((3*numel(y)/4)):numel(y))),td_stp];
     sp_struct.brownian2comp = [max(y),max(y),mean(y(round((3*numel(y)/4)):numel(y))),1/2*td_stp,1/2*td_stp];
     sp_struct.anomalous = [max(y)*2,mean(y(round((3*numel(y)/4)):numel(y))), td_stp, alpha_stp];
+    sp_struct.browniannorm = [max(y)*2,mean(y(round((1*numel(y)/4)):numel(y))),td_stp];
     sp_cell = struct2cell(sp_struct);
     start_points = sp_cell{type};
 
@@ -274,7 +275,7 @@ for i=1:size(AC_logbin,1)
     end
 
     % construct fit result curve
-    n_struct = struct('brownian',3,'brownian2comp',[4; 5],'anomalous',3);
+    n_struct = struct('brownian',3,'brownian2comp',[4; 5],'anomalous',3,'brownian_norm',1);
     n_cell = struct2cell(n_struct);
     n = n_cell{type};
     len_x = numel(x);
@@ -284,6 +285,8 @@ for i=1:size(AC_logbin,1)
         model_fit(1:len_x)= model_coefs(1).* (1./(1+(x(1:len_x)./model_coefs(4)))) + model_coefs(2).* (1./(1+(x(1:len_x)./model_coefs(5)))) + model_coefs(3);
     elseif type == 3
         model_fit(1:len_x) = model_coefs(1).* (1./(1+(x(1:len_x)./model_coefs(3)).^model_coefs(4))) + model_coefs(2); 
+    elseif type == 4
+        model_fit(1:len_x) = 1./(1+(x(1:len_x)./model_coefs(1)));
     end
 
     % R-square
@@ -669,7 +672,7 @@ end
         ylabel('G(\tau)')
         legend('Raw Data','Fit Result');
         title(strcat(name,' Diffusion Curve Fit with Gpufit')); 
-
+        %{
         % error bars
         number_parameters = [3; 5; 4];
         [rsq,chisq,J,MSE,ci] = gofStats(type,...%type
@@ -724,7 +727,9 @@ end
           fprintf('log10(D):  %6.3f\n\n',Dmap2log(row_index,column_index ))
           fprintf('alpha:     %6.4f\n\n',alphamap(row_index,column_index ))
           fprintf('R-square:  %6.4f\n',R2map(row_index,column_index ));
-        end             
+          
+        end
+        %}
     end
 
 %% save data
