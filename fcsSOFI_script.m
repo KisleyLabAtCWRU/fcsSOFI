@@ -811,20 +811,20 @@ end
         
         % print error bars
         if type == 1
-          fprintf('a =    %6.2e ± %6.2e\n',converged_parameters(1),ebars(1));
-          fprintf('b =    %6.2e ± %6.2e\n',converged_parameters(2),ebars(2));
-          fprintf('tauD =     %6.2e ± %6.2e\n',converged_parameters(3),ebars(3));
+          fprintf('a =    %6.2e Â± %6.2e\n',converged_parameters(1),ebars(1));
+          fprintf('b =    %6.2e Â± %6.2e\n',converged_parameters(2),ebars(2));
+          fprintf('tauD =     %6.2e Â± %6.2e\n',converged_parameters(3),ebars(3));
           fprintf('\n')
           fprintf('D =         %6.3e\n',Dmap_corrected(row_index,column_index ))
           fprintf('log10(D):  %6.3f\n\n',Dmap2log(row_index,column_index ))
           fprintf('R-square:  %6.4f\n',R2map(row_index,column_index ));
         
         elseif type == 2
-          fprintf('a1 =    %6.2e ± %6.2e\n',converged_parameters(1),ebars(1));
-          fprintf('a2 =    %6.2e ± %6.2e\n',converged_parameters(2),ebars(2));
-          fprintf('b =     %6.2e ± %6.2e\n',converged_parameters(3),ebars(3));
-          fprintf('tauD1 = %6.4f ± %6.4e\n',converged_parameters(4),ebars(4));
-          fprintf('tauD2 = %6.4f ± %6.4e\n',converged_parameters(5),ebars(5));  
+          fprintf('a1 =    %6.2e Â± %6.2e\n',converged_parameters(1),ebars(1));
+          fprintf('a2 =    %6.2e Â± %6.2e\n',converged_parameters(2),ebars(2));
+          fprintf('b =     %6.2e Â± %6.2e\n',converged_parameters(3),ebars(3));
+          fprintf('tauD1 = %6.4f Â± %6.4e\n',converged_parameters(4),ebars(4));
+          fprintf('tauD2 = %6.4f Â± %6.4e\n',converged_parameters(5),ebars(5));  
           fprintf('\n')
           fprintf('D1:         %6.3e\n',Dmap_corrected(row_index,column_index ))
           fprintf('D2:         %6.3e\n',D2map_corrected(row_index,column_index ))
@@ -833,10 +833,10 @@ end
           fprintf('R-square:  %6.4f\n',R2map(row_index,column_index ));   
 
         elseif type == 3
-          fprintf('a =    %6.2e ± %6.2e\n',converged_parameters(1),ebars(1));
-          fprintf('b =    %6.2e ± %6.2e\n',converged_parameters(2),ebars(2));
-          fprintf('tauD =     %6.2e ± %6.2e\n',converged_parameters(3),ebars(3));
-          fprintf('alpha = %6.4f ± %6.4f\n',converged_parameters(4),ebars(4));
+          fprintf('a =    %6.2e Â± %6.2e\n',converged_parameters(1),ebars(1));
+          fprintf('b =    %6.2e Â± %6.2e\n',converged_parameters(2),ebars(2));
+          fprintf('tauD =     %6.2e Â± %6.2e\n',converged_parameters(3),ebars(3));
+          fprintf('alpha = %6.4f Â± %6.4f\n',converged_parameters(4),ebars(4));
           fprintf('\n')
           fprintf('D =         %6.3e\n',Dmap_corrected(row_index,column_index ))
           fprintf('log10(D):  %6.3f\n\n',Dmap2log(row_index,column_index ))
@@ -844,23 +844,23 @@ end
           fprintf('R-square:  %6.4f\n',R2map(row_index,column_index ));
           
         elseif type == 4
-          fprintf('tauD =     %6.2e ± %6.2e\n',converged_parameters(1),ebars(1));
+          fprintf('tauD =     %6.2e Â± %6.2e\n',converged_parameters(1),ebars(1));
           fprintf('\n')
           fprintf('D =         %6.3e\n',Dmap_corrected(row_index,column_index ))
           fprintf('log10(D):  %6.3f\n\n',Dmap2log(row_index,column_index ))
           fprintf('R-square:  %6.4f\n',R2map(row_index,column_index ));    
         
         elseif type == 5
-          fprintf('a =    %6.2e ± %6.2e\n',converged_parameters(1),ebars(1));
-          fprintf('tauD =     %6.2e ± %6.2e\n',converged_parameters(3),ebars(3));
+          fprintf('a =    %6.2e Â± %6.2e\n',converged_parameters(1),ebars(1));
+          fprintf('tauD =     %6.2e Â± %6.2e\n',converged_parameters(3),ebars(3));
           fprintf('\n')
           fprintf('D =         %6.3e\n',Dmap_corrected(row_index,column_index ))
           fprintf('log10(D):  %6.3f\n\n',Dmap2log(row_index,column_index ))
           fprintf('R-square:  %6.4f\n',R2map(row_index,column_index ));
           
        elseif type == 6
-          fprintf('tauD =     %6.2e ± %6.2e\n',converged_parameters(1),ebars(1));
-          fprintf('alpha = %6.4f ± %6.4f\n',converged_parameters(2),ebars(2));
+          fprintf('tauD =     %6.2e Â± %6.2e\n',converged_parameters(1),ebars(1));
+          fprintf('alpha = %6.4f Â± %6.4f\n',converged_parameters(2),ebars(2));
           fprintf('\n')
           fprintf('D =         %6.3e\n',Dmap_corrected(row_index,column_index ))
           fprintf('log10(D):  %6.3f\n\n',Dmap2log(row_index,column_index ))
