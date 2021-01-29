@@ -32,7 +32,7 @@ tmax= 5000;
 %choose type of diffusion (1 = Brownian, 2 = 2-Comp Brownian, 3 = Anomalous, ...
         ... 4 = Brownian 1 Comp with tau, 5 = 1-comp Brownian with tau and A, ...
         ... 6 = Anomalous with Tau and alpha)
-type = 1;
+type = 4;
 
 %choose alpha start point (Anomalous diffusion model only)
 A_stp = 1;
@@ -260,7 +260,7 @@ for i=1:size(AC_logbin,1)
     y=y./max(y);
     
     % choose startpoint tau_D
-    td_stp = (pixelsize^2)/(D_stp*4)/dT; %Shawn
+    td_stp = (pixelsize^2)/(D_stp*4); %Shawn
     td2_stp = (pixelsize^2)/(D2_stp*4);
     %td_stp_test = (pixelsize^2)/(4*D_stp_test);
     %td_stp = 0.3;            
@@ -765,7 +765,7 @@ end
         title(strcat(name,' Diffusion Curve Fit with Gpufit')); 
         
         %______________________________________
-        
+        %{
         i=row_index2; %row index
         j=column_index2; %column index
         figure;
@@ -780,7 +780,7 @@ end
         td_stp_test = (pixelsize^2)/(4*1*10^5)/dT;
         alpha_stp_test = 1;
         plot(x2,1.5./(1+(x2./td_stp_test).^alpha_stp_test),'--b','LineWidth',2)
-        
+        %}
         set(gca,'xscale','log')
         xlabel('\tau')
         ylabel('G(\tau)')

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\examples\Simple_Example.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\examples\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{514D5B31-BE27-38F5-BE95-6C3706991C62}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

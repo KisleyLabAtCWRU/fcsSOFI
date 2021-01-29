@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Cpufit\cpufit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Cpufit\info.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Cpufit\lm_fit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Cpufit\lm_fit_cpp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Cpufit\interface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Cpufit\cpufit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Cpufit\info.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Cpufit\lm_fit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Cpufit\interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Cpufit\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Cpufit\Cpufit.def">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{E36ABAD0-3D7B-3401-AE98-7876EABF37FB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{514D5B31-BE27-38F5-BE95-6C3706991C62}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

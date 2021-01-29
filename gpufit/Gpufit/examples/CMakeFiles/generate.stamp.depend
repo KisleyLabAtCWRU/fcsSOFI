@@ -1,0 +1,5 @@
+# CMake generation dependency list for this directory.
+F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/examples/CMakeFiles/CUDA_Interface_Example.dir/CUDA_Interface_Example_generated_CUDA_Interface_Example.cu.obj.cmake.pre-gen
+F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/examples/CMakeFiles/CUDA_Interface_Example.dir/CUDA_Interface_Example_generated_CUDA_Interface_Example.cu.obj.depend
+F:/Homework/Physics/KisleyLab/cmake-3.18.1-win64-x64/share/cmake-3.18/Modules/FindCUDA/run_nvcc.cmake
+F:/Homework/Physics/KisleyLab/fcsSOFI_SourceCode_NamVo_20202408/Gpufit/examples/CMakeLists.txt

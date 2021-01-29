@@ -1,0 +1,17 @@
+# CMake generation dependency list for this directory.
+F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir/Gpufit_generated_cuda_gaussjordan.cu.obj.cmake.pre-gen
+F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir/Gpufit_generated_cuda_gaussjordan.cu.obj.depend
+F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir/Gpufit_generated_cuda_kernels.cu.obj.cmake.pre-gen
+F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir/Gpufit_generated_cuda_kernels.cu.obj.depend
+F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir/Gpufit_generated_gpu_data.cu.obj.cmake.pre-gen
+F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir/Gpufit_generated_gpu_data.cu.obj.depend
+F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir/Gpufit_generated_info.cu.obj.cmake.pre-gen
+F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir/Gpufit_generated_info.cu.obj.depend
+F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir/Gpufit_generated_lm_fit_cuda.cu.obj.cmake.pre-gen
+F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir/Gpufit_generated_lm_fit_cuda.cu.obj.depend
+F:/Homework/Physics/KisleyLab/cmake-3.18.1-win64-x64/share/cmake-3.18/Modules/FindCUDA.cmake
+F:/Homework/Physics/KisleyLab/cmake-3.18.1-win64-x64/share/cmake-3.18/Modules/FindCUDA/run_nvcc.cmake
+F:/Homework/Physics/KisleyLab/cmake-3.18.1-win64-x64/share/cmake-3.18/Modules/FindCUDA/select_compute_arch.cmake
+F:/Homework/Physics/KisleyLab/cmake-3.18.1-win64-x64/share/cmake-3.18/Modules/FindPackageHandleStandardArgs.cmake
+F:/Homework/Physics/KisleyLab/cmake-3.18.1-win64-x64/share/cmake-3.18/Modules/FindPackageMessage.cmake
+F:/Homework/Physics/KisleyLab/fcsSOFI_SourceCode_NamVo_20202408/Gpufit/CMakeLists.txt

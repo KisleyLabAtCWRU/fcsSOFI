@@ -1,0 +1,4 @@
+﻿  Building Custom Rule F:/Homework/Physics/KisleyLab/fcsSOFI_SourceCode_NamVo_20202408/Gpufit/matlab/CMakeLists.txt
+  GpufitCudaAvailableMex.cpp
+     Creating library F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/matlab/Debug/GpufitCudaAvailableMex.lib and object F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/matlab/Debug/GpufitCudaAvailableMex.exp
+  GpufitCudaAvailableMex.vcxproj -> F:\Homework\Physics\KisleyLab\BUILD\gpufit\Debug\GpufitCudaAvailableMex.mexw64

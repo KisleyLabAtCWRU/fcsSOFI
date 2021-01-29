@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\gpufit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\info.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\lm_fit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\lm_fit_cuda.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\interface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\gpufit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\definitions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\info.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\lm_fit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\lm_fit_cuda.cu">
+      <Filter>CUDA Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\cuda_kernels.cu">
+      <Filter>CUDA Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\info.cu">
+      <Filter>CUDA Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\gpu_data.cu">
+      <Filter>CUDA Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\cuda_gaussjordan.cu">
+      <Filter>CUDA Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\Gpufit.def">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\cuda_kernels.cuh">
+      <Filter>CUDA Header Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\gpu_data.cuh">
+      <Filter>CUDA Header Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\cuda_gaussjordan.cuh">
+      <Filter>CUDA Header Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\models\anomalous.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\models\anomalous_2param_taua.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\models\brown_dennis.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\models\brownian_1comp.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\models\brownian_1comp_norm.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\models\brownian_1comp_taua.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\models\brownian_2comp.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\models\cauchy_2d_elliptic.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\models\exponential.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\models\fletcher_powell_helix.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\models\gauss_1d.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\models\gauss_2d.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\models\gauss_2d_elliptic.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\models\gauss_2d_rotated.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\models\linear_1d.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\models\models.cuh">
+      <Filter>CUDA Model Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\estimators\estimators.cuh">
+      <Filter>CUDA Estimator Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\estimators\lse.cuh">
+      <Filter>CUDA Estimator Files</Filter>
+    </None>
+    <None Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Gpufit\estimators\mle.cuh">
+      <Filter>CUDA Estimator Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\CMakeFiles\Gpufit.dir\$(Configuration)\Gpufit_generated_lm_fit_cuda.cu.obj">
+      <Filter>Object Files</Filter>
+    </Object>
+    <Object Include="F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\CMakeFiles\Gpufit.dir\$(Configuration)\Gpufit_generated_cuda_kernels.cu.obj">
+      <Filter>Object Files</Filter>
+    </Object>
+    <Object Include="F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\CMakeFiles\Gpufit.dir\$(Configuration)\Gpufit_generated_info.cu.obj">
+      <Filter>Object Files</Filter>
+    </Object>
+    <Object Include="F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\CMakeFiles\Gpufit.dir\$(Configuration)\Gpufit_generated_gpu_data.cu.obj">
+      <Filter>Object Files</Filter>
+    </Object>
+    <Object Include="F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\CMakeFiles\Gpufit.dir\$(Configuration)\Gpufit_generated_cuda_gaussjordan.cu.obj">
+      <Filter>Object Files</Filter>
+    </Object>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CUDA Estimator Files">
+      <UniqueIdentifier>{CE82537D-EC5D-3D5F-A172-2207C14A50C7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CUDA Header Files">
+      <UniqueIdentifier>{A5C0B877-9F40-39D7-B6EF-2815CBE3D8D1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CUDA Model Files">
+      <UniqueIdentifier>{F5782416-9C76-3903-89CE-011FD79F754D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CUDA Source Files">
+      <UniqueIdentifier>{B13F5209-12D6-399C-A168-FBC8FCC7A948}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{E36ABAD0-3D7B-3401-AE98-7876EABF37FB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object Files">
+      <UniqueIdentifier>{5F5B0C8A-36E1-33CD-B93A-07BD3FA316FC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{514D5B31-BE27-38F5-BE95-6C3706991C62}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

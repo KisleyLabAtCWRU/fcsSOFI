@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Site BuildName="Win32-MSBuild"
+	BuildStamp="20200919-0400-Nightly"
+	Name="DESKTOP-7C0S4RF"
+	Generator="ctest-3.18.1"
+	CompilerName="C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.27.29110/bin/Hostx64/x64/cl.exe"
+	CompilerVersion="19.27.29110.0"
+	OSName="Windows"
+	Hostname="DESKTOP-7C0S4RF"
+	OSRelease=" Personal"
+	OSVersion=" (Build 18362)"
+	OSPlatform="AMD64"
+	Is64Bits="1"
+	VendorString="GenuineIntel"
+	VendorID="Intel Corporation"
+	FamilyID="6"
+	ModelID="14"
+	ProcessorCacheSize="-1"
+	NumberOfLogicalCPU="8"
+	NumberOfPhysicalCPU="4"
+	TotalVirtualMemory="17626"
+	TotalPhysicalMemory="8037"
+	LogicalProcessorsPerPhysical="2"
+	ProcessorClockFrequency="2399"
+	>
+	<Configure>
+		<StartDateTime>Sep 19 14:54 Eastern Daylight Time</StartDateTime>
+		<StartConfigureTime>1600541680</StartConfigureTime>
+		<ConfigureCommand>"F:/Homework/Physics/KisleyLab/cmake-3.18.1-win64-x64/bin/cmake.exe" "F:/Homework/Physics/KisleyLab/fcsSOFI_SourceCode_NamVo_20202408"</ConfigureCommand>
+		<Log>-- Could NOT find Boost (missing: Boost_INCLUDE_DIR) (Required is at least version "1.58.0")
+CMake Warning at CMakeLists.txt:86 (message):
+  Boost NOT found - skipping tests! (set BOOST_ROOT manually)
+
+
+-- CUDA_ARCHITECTURES=3.0;3.5;5.0;5.2;3.2;3.7;5.3;6.0;6.1;6.2;7.0+PTX
+-- CUDA_NVCC_FLAGS=-gencode;arch=compute_30,code=sm_30;-gencode;arch=compute_35,code=sm_35;-gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_52,code=sm_52;-gencode;arch=compute_32,code=sm_32;-gencode;arch=compute_37,code=sm_37;-gencode;arch=compute_53,code=sm_53;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_61,code=sm_61;-gencode;arch=compute_62,code=sm_62;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_70,code=compute_70
+-- Could NOT find Java (missing: Java_JAVA_EXECUTABLE Java_JAVAC_EXECUTABLE Java_JAR_EXECUTABLE Java_JAVADOC_EXECUTABLE Java_JAVAH_EXECUTABLE Development) (Required is at least version "1.8")
+JAVA JDK NOT found - skipping Gpufit Java binding!
+-- Configuring done
+-- Generating done
+-- Build files have been written to: F:/Homework/Physics/KisleyLab/BUILD/gpufit
+</Log>
+		<ConfigureStatus>0</ConfigureStatus>
+		<EndDateTime>Sep 19 14:54 Eastern Daylight Time</EndDateTime>
+		<EndConfigureTime>1600541690</EndConfigureTime>
+		<ElapsedMinutes>0</ElapsedMinutes>
+	</Configure>
+</Site>

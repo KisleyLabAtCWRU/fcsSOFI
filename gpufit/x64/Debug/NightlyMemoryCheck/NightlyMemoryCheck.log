@@ -1,0 +1,34 @@
+﻿     Site: DESKTOP-7C0S4RF
+     Build name: Win32-MSBuild
+  Determine Nightly Start Time
+     Specified time: 00:00:00 EDT
+  Create new tag: 20200919-0400 - Nightly
+     Updating the repository: F:/Homework/Physics/KisleyLab/fcsSOFI_SourceCode_NamVo_20202408
+  Cannot find UpdateCommand  configuration key.
+  Configure project
+     Each . represents 1024 bytes of output
+      .. Size of output: 1K
+  Build project
+     Each symbol represents 1024 bytes of output.
+     '!' represents an error and '*' a warning.
+      ..... Size of output: 5K
+     1 Compiler errors
+  Error(s) when building project
+     1 Compiler warnings
+  Performing coverage
+   Cannot find any coverage files. Ignoring Coverage request.
+  Memory check project F:/Homework/Physics/KisleyLab/BUILD/gpufit
+  Memory checker (MemoryCheckCommand) not set, or cannot find the specified program.
+  Submit files
+     SubmitURL: http://
+     Submit failed, waiting 5 seconds...
+     Retry submission: Attempt 1 of 3
+     Submit failed, waiting 5 seconds...
+     Retry submission: Attempt 2 of 3
+     Submit failed, waiting 5 seconds...
+     Retry submission: Attempt 3 of 3
+     Error when uploading file: F:/Homework/Physics/KisleyLab/BUILD/gpufit/Testing/20200919-0400/Configure.xml
+     Error message was: 
+     Problems when submitting via HTTP
+  Errors while running CTest
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppCommon.targets(234,5): error MSB6006: "cmd.exe" exited with code 81.

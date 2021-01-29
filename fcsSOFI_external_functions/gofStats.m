@@ -14,7 +14,7 @@ rsq = 1-sum(residuals.^2)/sum(y.^2);
 
 %% Partial Derivatives and Jacobian Matrix
 % Brownian
-if type == 1
+if type == 1 
     % partial derivatives
     dGda = parameters(3)./(parameters(3)+x);
     dGdb = ones(size(x));
@@ -45,6 +45,15 @@ elseif type == 3
 
     % Jacobian
     J = [dGda dGdb dGdtau dGdalpha];J = reshape(J,[length(x),length(parameters)]);
+    
+
+% Brownian 1 Comp 1 Parameter
+elseif type == 4
+    %partial derivatives
+    dGdtau = (x)./(parameters(1)+x).^2;
+    
+    %Jacobian
+    J = [dGdtau];J = reshape(J,[length(x),length(parameters)]);    
     
 end
 

@@ -1,0 +1,9 @@
+﻿  Building Custom Rule F:/Homework/Physics/KisleyLab/fcsSOFI_SourceCode_NamVo_20202408/Cpufit/CMakeLists.txt
+  cpufit.cpp
+  info.cpp
+  lm_fit.cpp
+  lm_fit_cpp.cpp
+  interface.cpp
+  Generating Code...
+     Creating library F:/Homework/Physics/KisleyLab/BUILD/gpufit/Cpufit/Debug/Cpufit.lib and object F:/Homework/Physics/KisleyLab/BUILD/gpufit/Cpufit/Debug/Cpufit.exp
+  Cpufit.vcxproj -> F:\Homework\Physics\KisleyLab\BUILD\gpufit\Debug\Cpufit.dll

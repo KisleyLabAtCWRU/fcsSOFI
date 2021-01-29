@@ -1,0 +1,90 @@
+^F:\HOMEWORK\PHYSICS\KISLEYLAB\FCSSOFI_SOURCECODE_NAMVO_20202408\GPUFIT\LM_FIT_CUDA.CU
+setlocal
+cd F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\CMakeFiles\Gpufit.dir
+if %errorlevel% neq 0 goto :cmEnd
+F:
+if %errorlevel% neq 0 goto :cmEnd
+F:\Homework\Physics\KisleyLab\cmake-3.18.1-win64-x64\bin\cmake.exe -E make_directory F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir//Debug
+if %errorlevel% neq 0 goto :cmEnd
+F:\Homework\Physics\KisleyLab\cmake-3.18.1-win64-x64\bin\cmake.exe -D verbose:BOOL=OFF -D "CCBIN:PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools/MSVC/14.27.29110/bin/Hostx64/x64" -D build_configuration:STRING=Debug -D generated_file:STRING=F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir//Debug/Gpufit_generated_lm_fit_cuda.cu.obj -D generated_cubin_file:STRING=F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir//Debug/Gpufit_generated_lm_fit_cuda.cu.obj.cubin.txt -P F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir//Gpufit_generated_lm_fit_cuda.cu.obj.Debug.cmake
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^F:\HOMEWORK\PHYSICS\KISLEYLAB\FCSSOFI_SOURCECODE_NAMVO_20202408\GPUFIT\CUDA_KERNELS.CU
+setlocal
+cd F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\CMakeFiles\Gpufit.dir
+if %errorlevel% neq 0 goto :cmEnd
+F:
+if %errorlevel% neq 0 goto :cmEnd
+F:\Homework\Physics\KisleyLab\cmake-3.18.1-win64-x64\bin\cmake.exe -E make_directory F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir//Debug
+if %errorlevel% neq 0 goto :cmEnd
+F:\Homework\Physics\KisleyLab\cmake-3.18.1-win64-x64\bin\cmake.exe -D verbose:BOOL=OFF -D "CCBIN:PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools/MSVC/14.27.29110/bin/Hostx64/x64" -D build_configuration:STRING=Debug -D generated_file:STRING=F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir//Debug/Gpufit_generated_cuda_kernels.cu.obj -D generated_cubin_file:STRING=F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir//Debug/Gpufit_generated_cuda_kernels.cu.obj.cubin.txt -P F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir//Gpufit_generated_cuda_kernels.cu.obj.Debug.cmake
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^F:\HOMEWORK\PHYSICS\KISLEYLAB\FCSSOFI_SOURCECODE_NAMVO_20202408\GPUFIT\INFO.CU
+setlocal
+cd F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\CMakeFiles\Gpufit.dir
+if %errorlevel% neq 0 goto :cmEnd
+F:
+if %errorlevel% neq 0 goto :cmEnd
+F:\Homework\Physics\KisleyLab\cmake-3.18.1-win64-x64\bin\cmake.exe -E make_directory F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir//Debug
+if %errorlevel% neq 0 goto :cmEnd
+F:\Homework\Physics\KisleyLab\cmake-3.18.1-win64-x64\bin\cmake.exe -D verbose:BOOL=OFF -D "CCBIN:PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools/MSVC/14.27.29110/bin/Hostx64/x64" -D build_configuration:STRING=Debug -D generated_file:STRING=F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir//Debug/Gpufit_generated_info.cu.obj -D generated_cubin_file:STRING=F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir//Debug/Gpufit_generated_info.cu.obj.cubin.txt -P F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir//Gpufit_generated_info.cu.obj.Debug.cmake
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^F:\HOMEWORK\PHYSICS\KISLEYLAB\FCSSOFI_SOURCECODE_NAMVO_20202408\GPUFIT\GPU_DATA.CU
+setlocal
+cd F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\CMakeFiles\Gpufit.dir
+if %errorlevel% neq 0 goto :cmEnd
+F:
+if %errorlevel% neq 0 goto :cmEnd
+F:\Homework\Physics\KisleyLab\cmake-3.18.1-win64-x64\bin\cmake.exe -E make_directory F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir//Debug
+if %errorlevel% neq 0 goto :cmEnd
+F:\Homework\Physics\KisleyLab\cmake-3.18.1-win64-x64\bin\cmake.exe -D verbose:BOOL=OFF -D "CCBIN:PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools/MSVC/14.27.29110/bin/Hostx64/x64" -D build_configuration:STRING=Debug -D generated_file:STRING=F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir//Debug/Gpufit_generated_gpu_data.cu.obj -D generated_cubin_file:STRING=F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir//Debug/Gpufit_generated_gpu_data.cu.obj.cubin.txt -P F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir//Gpufit_generated_gpu_data.cu.obj.Debug.cmake
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^F:\HOMEWORK\PHYSICS\KISLEYLAB\FCSSOFI_SOURCECODE_NAMVO_20202408\GPUFIT\CUDA_GAUSSJORDAN.CU
+setlocal
+cd F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\CMakeFiles\Gpufit.dir
+if %errorlevel% neq 0 goto :cmEnd
+F:
+if %errorlevel% neq 0 goto :cmEnd
+F:\Homework\Physics\KisleyLab\cmake-3.18.1-win64-x64\bin\cmake.exe -E make_directory F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir//Debug
+if %errorlevel% neq 0 goto :cmEnd
+F:\Homework\Physics\KisleyLab\cmake-3.18.1-win64-x64\bin\cmake.exe -D verbose:BOOL=OFF -D "CCBIN:PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools/MSVC/14.27.29110/bin/Hostx64/x64" -D build_configuration:STRING=Debug -D generated_file:STRING=F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir//Debug/Gpufit_generated_cuda_gaussjordan.cu.obj -D generated_cubin_file:STRING=F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir//Debug/Gpufit_generated_cuda_gaussjordan.cu.obj.cubin.txt -P F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/Gpufit.dir//Gpufit_generated_cuda_gaussjordan.cu.obj.Debug.cmake
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^F:\HOMEWORK\PHYSICS\KISLEYLAB\FCSSOFI_SOURCECODE_NAMVO_20202408\GPUFIT\CMAKELISTS.TXT
+setlocal
+F:\Homework\Physics\KisleyLab\cmake-3.18.1-win64-x64\bin\cmake.exe -SF:/Homework/Physics/KisleyLab/fcsSOFI_SourceCode_NamVo_20202408 -BF:/Homework/Physics/KisleyLab/BUILD/gpufit --check-stamp-file F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

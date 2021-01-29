@@ -1,0 +1,10 @@
+^F:\HOMEWORK\PHYSICS\KISLEYLAB\FCSSOFI_SOURCECODE_NAMVO_20202408\GPUFIT\EXAMPLES\CMAKELISTS.TXT
+setlocal
+F:\Homework\Physics\KisleyLab\cmake-3.18.1-win64-x64\bin\cmake.exe -SF:/Homework/Physics/KisleyLab/fcsSOFI_SourceCode_NamVo_20202408 -BF:/Homework/Physics/KisleyLab/BUILD/gpufit --check-stamp-file F:/Homework/Physics/KisleyLab/BUILD/gpufit/Gpufit/examples/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

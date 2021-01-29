@@ -1,0 +1,26 @@
+^F:\HOMEWORK\PHYSICS\KISLEYLAB\BUILD\GPUFIT\CMAKEFILES\DDB424C9F021533DE8ECAA8242B6910E\MATLAB_CPUFIT_GPUFIT_PACKAGE.RULE
+setlocal
+F:\Homework\Physics\KisleyLab\cmake-3.18.1-win64-x64\bin\cmake.exe -E make_directory F:/Homework/Physics/KisleyLab/BUILD/gpufit/Debug/matlab
+if %errorlevel% neq 0 goto :cmEnd
+F:\Homework\Physics\KisleyLab\cmake-3.18.1-win64-x64\bin\cmake.exe -E copy_if_different F:/Homework/Physics/KisleyLab/fcsSOFI_SourceCode_NamVo_20202408/Cpufit/matlab/cpufit.m F:/Homework/Physics/KisleyLab/BUILD/gpufit/Debug/matlab
+if %errorlevel% neq 0 goto :cmEnd
+F:\Homework\Physics\KisleyLab\cmake-3.18.1-win64-x64\bin\cmake.exe -E copy_if_different F:/Homework/Physics/KisleyLab/BUILD/gpufit/Debug/Cpufit.dll F:/Homework/Physics/KisleyLab/BUILD/gpufit/Debug/matlab
+if %errorlevel% neq 0 goto :cmEnd
+F:\Homework\Physics\KisleyLab\cmake-3.18.1-win64-x64\bin\cmake.exe -E copy_if_different F:/Homework/Physics/KisleyLab/BUILD/gpufit/Debug/CpufitMex.mexw64 F:/Homework/Physics/KisleyLab/BUILD/gpufit/Debug/matlab
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^F:\HOMEWORK\PHYSICS\KISLEYLAB\FCSSOFI_SOURCECODE_NAMVO_20202408\CPUFIT\MATLAB\CMAKELISTS.TXT
+setlocal
+F:\Homework\Physics\KisleyLab\cmake-3.18.1-win64-x64\bin\cmake.exe -SF:/Homework/Physics/KisleyLab/fcsSOFI_SourceCode_NamVo_20202408 -BF:/Homework/Physics/KisleyLab/BUILD/gpufit --check-stamp-file F:/Homework/Physics/KisleyLab/BUILD/gpufit/Cpufit/matlab/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

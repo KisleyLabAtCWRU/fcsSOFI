@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="F:\Homework\Physics\KisleyLab\BUILD\gpufit\CMakeFiles\ddb424c9f021533de8ecaa8242b6910e\MATLAB_CPUFIT_GPUFIT_PACKAGE.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="F:\Homework\Physics\KisleyLab\fcsSOFI_SourceCode_NamVo_20202408\Cpufit\matlab\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="F:\Homework\Physics\KisleyLab\BUILD\gpufit\Cpufit\matlab\CMakeFiles\MATLAB_CPUFIT_GPUFIT_PACKAGE" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{342C3C84-8B73-3741-80FA-FF60A1B1CFE7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
