@@ -8,11 +8,11 @@ clear; close all; clc
 %% User Input
 
 %data file name
-fname = 'datasetCEEC_fib_1e6'; % don't include ".mat" in file name
+fname = 'dataset77'; % don't include ".mat" in file name
 
 %diffusion coefficient parameters
-pixelsize=47.6; %47.6in nm; needed to accurately calculate D
-dT=0.01; %in s; needed to accurately calculate D
+pixelsize=50; %47.6in nm; needed to accurately calculate D
+dT=0.04; %in s; needed to accurately calculate D
 
 % set PSF for deconvolution     
 FWHM=2.7; %FWHM of PSF in pixels
@@ -23,21 +23,21 @@ maxScale = 15000;
 
 %region of interest in pixels
 ymin=1;%98; 
-ymax=173;%173;
+ymax=30;%173;
 xmin=1;%98;
-xmax=258;%258;
+xmax=30;%258;
 tmin = 1;
 tmax= 5000;
     
 %choose type of diffusion (1 = Brownian, 2 = 2-Comp Brownian, 3 = Anomalous, ...
         ... 4 = Brownian 1 Comp with tau, 5 = 1-comp Brownian with tau and A, ...
         ... 6 = Anomalous with Tau and alpha)
-type = 6;
+type = 1;
 
 %choose alpha start point (Anomalous diffusion model only)
-A_stp = 2;
+A_stp = 1;
 alpha_stp = .9;
-D_stp = 5e5;
+D_stp = 1e5;
 D2_stp = 1e6;
 
 A_stp_test = 1;
@@ -53,7 +53,7 @@ cminAC=0; % line 853 in GUI code
 cmaxAC=3e8;
 
 % set caxis limits for fcsSOFI diffusion map (color scaling)
-cmin=4; 
+cmin=2; 
 cmax=6;
 
 %number of fit iterations per pixel
@@ -66,17 +66,17 @@ plotfigures = 1;
 store_execution_times = 0;
 
 %save data files? (1 = yes)
-savethedata = 1; 
+savethedata = 0; 
 
 %optional example single pixel curve fit plot
 examplecf = 1; %plot example curve fit plot for single pixel?
-row_index = 7; %pixel row index
-column_index = 5; %pixel column index
-row_index2 = 18;
-column_index2 = 18;
+row_index = 15; %pixel row index
+column_index = 20; %pixel column index
+row_index2 = 15;
+column_index2 = 10;
 
 %SOFI scaling
-satmax = .05;
+satmax = .5;
 satmin = 0;
 
 
@@ -491,8 +491,8 @@ end
 %% Create scaling/stretching/shifting factor to create colormap
 %changing shift, scale will change the colormap colors, range
 maxvalue=cmax/normcoef; %this is the max value on the colormap
-shift=0.;%shift left right
-scale=0.6;%factor to multiply everything by 
+shift=0.05;%shift left right
+scale=0.7;%factor to multiply everything by 
 
 for i=1:size(normDmap2log,1)
     for j=1:size(normDmap2log,2)
@@ -765,7 +765,7 @@ end
         title(strcat(name,' Diffusion Curve Fit with Gpufit')); 
         
         %______________________________________
-        %{
+        
         i=row_index2; %row index
         j=column_index2; %column index
         figure;
@@ -775,14 +775,18 @@ end
         hold on
         plot(x2,fitresult2(i,j).model_fit,'--k','LineWidth',2)
         hold on
-        %plot(x2,1./(1+(x2./td_stp_test).^alpha_stp_test),'--b','LineWidth',2)
+        
+        %Making a sample plot to test D accuracy
+        td_stp_test = (pixelsize^2)/(4*1*10^5)/dT;
+        alpha_stp_test = 1;
+        plot(x2,1.5./(1+(x2./td_stp_test).^alpha_stp_test),'--b','LineWidth',2)
         
         set(gca,'xscale','log')
         xlabel('\tau')
         ylabel('G(\tau)')
         legend('Raw Data','Fit Result');
         title(strcat(name,' Diffusion Curve Fit with Gpufit')); 
-        %}
+        
         %______________________________________
         
         % error bars
