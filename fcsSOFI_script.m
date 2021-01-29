@@ -8,11 +8,11 @@ clear; close all; clc
 %% User Input
 
 %data file name
-fname = 'dataset0-8CODD'; % don't include ".mat" in file name
+fname = 'datasetCEEC_fib_1e6'; % don't include ".mat" in file name
 
 %diffusion coefficient parameters
-pixelsize=47.6; %in nm; needed to accurately calculate D
-dT=0.001; %in s; needed to accurately calculate D
+pixelsize=47.6; %47.6in nm; needed to accurately calculate D
+dT=0.01; %in s; needed to accurately calculate D
 
 % set PSF for deconvolution     
 FWHM=2.7; %FWHM of PSF in pixels
@@ -22,21 +22,31 @@ minScale = 0;
 maxScale = 15000;
 
 %region of interest in pixels
-ymin=1; 
-ymax=50;%173;
-xmin=1;
-xmax=50;%258;
+ymin=1;%98; 
+ymax=173;%173;
+xmin=1;%98;
+xmax=258;%258;
 tmin = 1;
-tmax= 50;
+tmax= 5000;
     
-%choose type of diffusion (1 = Brownian, 2 = 2-Comp Brownian, 3 = Anomalous)
-type = 3;
+%choose type of diffusion & number of fit variables (1 = Brownian [A, tau, offset], 2 = 2-Comp Brownian [A1,...
+        ... tau1, A2, taus2, offset], 3 = Anomalous [A, tau, alpha, offset], ...
+        ... 4 = Brownian 1 Comp with tau only [tau], 5 = 1-comp Brownian with tau and A [A, tau], ...
+        ... 6 = Anomalous with Tau and alpha [tau, alpha])
+type = 6;
 
 %choose alpha start point (Anomalous diffusion model only)
-alpha_stp = 0.8;
+A_stp = 2;
+alpha_stp = .9;
+D_stp = 5e5;
+D2_stp = 1e6;
+
+A_stp_test = 1;
+alpha_stp_test = 1;
+D_stp_test = 1e4;
 
 % alpha threshold
-alpha_max = 2; % maximum value of alpha allowed to appear on alpha map
+alpha_max = 1.2; % maximum value of alpha allowed to appear on alpha map
 alpha_min = 0;
 
 %set SOFI saturation limits
@@ -45,7 +55,7 @@ cmaxAC=3e8;
 
 % set caxis limits for fcsSOFI diffusion map (color scaling)
 cmin=4; 
-cmax=8;
+cmax=6;
 
 %number of fit iterations per pixel
 number_fits = 1000;
@@ -61,13 +71,20 @@ savethedata = 1;
 
 %optional example single pixel curve fit plot
 examplecf = 1; %plot example curve fit plot for single pixel?
-row_index = 8; %pixel row index
-column_index = 18; %pixel column index
+row_index = 7; %pixel row index
+column_index = 5; %pixel column index
+row_index2 = 18;
+column_index2 = 18;
+
+%SOFI scaling
+satmax = .05;
+satmin = 0;
+
 
 % END USER INPUT
 
 %% Paths
-addpath(strcat(pwd,'\Gpufit_build-64_20190709\Debug\matlab'))
+addpath(strcat(pwd,'\gpufit\Debug\matlab'))
 addpath(strcat(pwd,'\fcsSOFI_external_functions'))
 
 %% %%%%%%%%%%%%%%%%%%%% STEP 1: blink_AConly (SOFI) %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -121,6 +138,11 @@ end
 AC_G2_im=[0,AC_G2,0];% pad matrices with first points, so back to original size
 AC_G2_im=reshape(AC_G2_im,L,W);% reshape
 
+M = zeros(size(AC_G2_im));
+M(1:end-1,:) = AC_G2_im(2:end,:);
+M(end,:) = circshift(AC_G2_im(1,:),numel(AC_G2_im(1,:))-1);
+AC_G2_im = M;
+
 %% Deconvolution
 avgim=avgimage;
 im=AC_G2_im;
@@ -131,7 +153,7 @@ gauss1=customgauss([100 100],FWHM,FWHM,0,0,intensity,[5 5]); %create a 2D PSF
 PSF=gauss1(45:65,45:65); %only use the center where the PSF is located at
 
 filtim=deconvlucy(im,PSF); % Based on Geissbuehler bSOFI paper
-    
+%filtim=im;
 % display execution time of SOFI step
 blink_after = clock;
 clc;fprintf('SOFI complete, execution time: %6.2f seconds\n',etime(blink_after,blink_before));
@@ -192,19 +214,21 @@ AC_im2=reshape([AC_im],rowdim,coldim);
 fit_time = 0;
 
 % number of parameters
-number_parameters = [3; 5; 4]; number_parameters = number_parameters(type);
+number_parameters = [3; 5; 4; 1; 2; 2]; number_parameters = number_parameters(type);
 
 % estimator id
 estimator_id = EstimatorID.LSE;
 
 % model ID
-model_id = [ModelID.BROWNIAN_1COMP; ModelID.BROWNIAN_2COMP; ModelID.ANOMALOUS]; model_id = model_id(type);
+model_id = [ModelID.BROWNIAN_1COMP; ModelID.BROWNIAN_2COMP; ModelID.ANOMALOUS;...
+    ModelID.BROWNIAN_1COMP_NORM; ModelID.BROWNIAN_1COMP_TAUA; ...
+    ModelID.ANOMALOUS_2PARAM_TAUA]; model_id = model_id(type);
 
 % tolerance
 tolerance = 1e-3;
 
 % maximum number of iterations per pixel
-max_n_iterations = 1000;
+max_n_iterations = 10000;
 
 % preallocate variables 
 tauD = zeros(1,xmx*ymx); tauD2 = tauD; D = tauD; D2 = tauD; alpha = tauD;
@@ -228,25 +252,29 @@ for i=1:size(AC_logbin,1)
     timelag=AC_loglag(i,:);     
 
     % convert to x and y variables
-    x=timelag.*dT; %convert x values to seconds   
+    x=(timelag.*dT); %convert x values to seconds   SHAWN 
     y=ACcurve;
-
     % remove first timelag point tau=lag
     ind=numel(x);
     x=x(2:ind);
     y=y(2:ind);
-
+    y=y./max(y);
+    
     % choose startpoint tau_D
-    %td_stp = max(x)/2;
-    td_stp = 0.3678795;
-                
-                %D = (pixelsize.^2)/(4*0.36787)
-     % declare start points based on diffusion type
+    td_stp = (pixelsize^2)/(D_stp*4)/dT; %Shawn
+    td2_stp = (pixelsize^2)/(D2_stp*4);
+    %td_stp_test = (pixelsize^2)/(4*D_stp_test);
+    %td_stp = 0.3;            
+    %D = (pixelsize.^2)/(4*0.36787)
+    
+    % declare start points based on diffusion type
     sp_struct = struct; % start point structure
-    sp_struct.brownian = [max(y)*2,mean(y(round((3*numel(y)/4)):numel(y))),td_stp];
+    sp_struct.brownian = [A_stp,mean(y(round((3*numel(y)/4)):numel(y))),td_stp];
     sp_struct.brownian2comp = [max(y),max(y),mean(y(round((3*numel(y)/4)):numel(y))),1/2*td_stp,1/2*td_stp];
     sp_struct.anomalous = [max(y)*2,mean(y(round((3*numel(y)/4)):numel(y))), td_stp, alpha_stp];
-    sp_struct.browniannorm = [max(y)*2,mean(y(round((1*numel(y)/4)):numel(y))),td_stp];
+    sp_struct.browniannorm = td_stp;
+    sp_struct.browniantaua = [A_stp,td_stp];
+    sp_struct.anomalous2paramtaua = [td_stp, alpha_stp];
     sp_cell = struct2cell(sp_struct);
     start_points = sp_cell{type};
 
@@ -259,10 +287,19 @@ for i=1:size(AC_logbin,1)
     % user info (independent variables)
     user_info = single(x);
 
+    % weights
+    %weights = data;%1./abs(sqrt(data));
+    %weights = data./data;
+    weights = data;
+    weights(data < 0) = 0;
+    % Run Gpufit
+    [parameters, states, chi_squares, n_iterations, gputime] = gpufit(data, weights, ...
+        model_id, initial_parameters, tolerance, max_n_iterations, [], estimator_id, user_info);
+    %{
     % run Gpufit
     [parameters, states, chi_squares, n_iterations, gputime] = gpufit(data, [], ...
      model_id, initial_parameters, tolerance, max_n_iterations, [], estimator_id, user_info);
-
+    %}
     % converged parameters
     converged = states == 0; 
     converged_parameters = parameters(:, converged);
@@ -275,7 +312,8 @@ for i=1:size(AC_logbin,1)
     end
 
     % construct fit result curve
-    n_struct = struct('brownian',3,'brownian2comp',[4; 5],'anomalous',3,'brownian_norm',1);
+    n_struct = struct('brownian',3,'brownian2comp',[4; 5],'anomalous',3,'brownian_norm',1,...
+                        'brownian_taua',2, 'anomalous_2param_taua',2);
     n_cell = struct2cell(n_struct);
     n = n_cell{type};
     len_x = numel(x);
@@ -287,6 +325,12 @@ for i=1:size(AC_logbin,1)
         model_fit(1:len_x) = model_coefs(1).* (1./(1+(x(1:len_x)./model_coefs(3)).^model_coefs(4))) + model_coefs(2); 
     elseif type == 4
         model_fit(1:len_x) = 1./(1+(x(1:len_x)./model_coefs(1)));
+    elseif type == 5
+        model_fit(1:len_x) = model_coefs(1).* (1./(1+(x(1:len_x)./model_coefs(2)))); 
+    elseif type == 6
+        %disp(model_coefs(1))
+        model_fit(1:len_x) = (1./(1+(x(1:len_x)./model_coefs(1)).^model_coefs(2)));
+        %model_fit(1:len_x) = (1./(1+(dT.*x(1:len_x)./((pixelsize^2)/(D_stp*4))).^model_coefs(2)));
     end
 
     % R-square
@@ -295,15 +339,20 @@ for i=1:size(AC_logbin,1)
     a(isinf(a)) = 0;
     rsquare = 1-sum(residuals.^2)/sum(y.^2);
 
+    
     % fit result structure
     fitresult(1,i)=struct('rawdata',[x',y'],'rsquare',rsquare,'model_fit',model_fit);
 
     % characteristic time
-    tauD(i)=model_coefs(n(1))*dT; % in in seconds
-
+    %tauD(i)=model_coefs(n(1)); % in in seconds THIS NEEDS TO BE CHANGED
+    %SHAWN check integer or decimal value WRONG
+    tauD(i)=model_coefs(1)*dT;
+    %disp(tauD(i))
+    %tauD(i) = ((pixelsize^2)/(D_stp*4));
+    
     % diffusion coefficient
     D(i)=(pixelsize.^2)/(4*tauD(i)); %in nm^2/s
-
+    %disp(D(i))
     % second diffusion coefficient if using 2-component model
     if type == 2
         tauD2(i)=model_coefs(n(2))*dT; % in in seconds
@@ -313,6 +362,11 @@ for i=1:size(AC_logbin,1)
     % alpha map if using anomalous model
     if type == 3
         alpha(i)= model_coefs(4);
+    end
+    
+    % alpha map if using anomalous model with 2 parameters
+    if type == 6
+        alpha(i)= model_coefs(2);
     end
 
     % compute total Gpufit time
@@ -333,7 +387,7 @@ tauDmap=reshape(tauD,rowdim,coldim);
 % remove poor fits
 D_corrected = zeros(1,numel(D));
 for i=1:numel(D)
-    if fitresult(1,i).rsquare<0.5
+    if fitresult(1,i).rsquare<0.
         D_corrected(i)=0;
     else
         D_corrected(i)=abs(D(i));
@@ -347,7 +401,7 @@ if type == 2
     tauD2map=reshape(tauD2,rowdim,coldim);
     D2_corrected = zeros(1,numel(D2));
     for i=1:numel(D2)
-        if fitresult(1,i).rsquare<0.5
+        if fitresult(1,i).rsquare<0.
             D2_corrected(i)=0;
         else
             D2_corrected(i)=abs(D2(i));
@@ -357,11 +411,11 @@ D2map_corrected=reshape(D2_corrected,rowdim,coldim);
 end
 
 % alpha map (anomalous diffusion)
-if type == 3    
+if type == 3   ||  type == 6
     alpha_corrected = zeros(1,numel(alpha));
     % remove bad alphas
     for i=1:numel(alpha)
-        if fitresult(1,i).rsquare<0.5
+        if fitresult(1,i).rsquare<0.
             alpha_corrected(i)=0;
         elseif alpha(i) < 0
             alpha_corrected(i)=0;
@@ -374,6 +428,7 @@ if type == 3
         end
     end
     alphamap=reshape([alpha_corrected],rowdim,coldim);
+    %alphamap(alphamap > alpha_max) = alpha_max;
 end
 
 % make map of R^2 values
@@ -383,7 +438,8 @@ for i=1:numel(fitresult)
 end
 R2map=reshape(R2,rowdim,coldim);
 
-name = ["Brownian","2-Component Brownian","Anomalous"];name = name(type);
+name = ["Brownian","2-Component Brownian","Anomalous","Brownian 1 Component Normalized",...
+            "Brownian 1 Component with Amplitude", "Anomalous 2 Parameters Tau and Alpha"];name = name(type);
 
 % display execution time of fcs step
 Bin_after = clock;
@@ -436,8 +492,8 @@ end
 %% Create scaling/stretching/shifting factor to create colormap
 %changing shift, scale will change the colormap colors, range
 maxvalue=cmax/normcoef; %this is the max value on the colormap
-shift=0.0;%shift left right
-scale=0.7;%factor to multiply everything by 
+shift=0.;%shift left right
+scale=0.6;%factor to multiply everything by 
 
 for i=1:size(normDmap2log,1)
     for j=1:size(normDmap2log,2)
@@ -476,6 +532,7 @@ end
 %% make super resolution only map
 % set caxis limits for SR map
 cscaleACim=filtim;
+%{
 for i=1:size(cscaleACim,1) %filter out values above/below, change to limits
     for j=1:size(cscaleACim,2)
         if cscaleACim(i,j)<cminAC
@@ -485,7 +542,10 @@ for i=1:size(cscaleACim,1) %filter out values above/below, change to limits
         end
     end
 end
+%}
 norm_ca_AC=cscaleACim./(max(max(cscaleACim))); %normalize
+
+
 
 % HSV values
 srmap_hsv(1:szmap1,1:szmap2,1)=ones(szmap1,szmap2); %set hue = color
@@ -496,11 +556,30 @@ srmap_hsv(1:szmap1,1:szmap2,3)=ones(szmap1,szmap2); %set brightness
 srmap_hsv=1-hsv2rgb(srmap_hsv); %convert to rgb
 srmap_hsv=rgb2gray(srmap_hsv);% convert to gray scale
 
+%% set the limits of the SOFI image
+%Shawn special start
+
+for i=1:size(srmap_hsv,1)
+    for j=1:size(srmap_hsv,2)
+        if srmap_hsv(i,j)<satmin
+            srmap_hsv(i,j)=satmin;
+        end
+        if srmap_hsv(i,j)>satmax
+            srmap_hsv(i,j)=satmax;
+        end
+    end
+end
+srmap_hsv=srmap_hsv./max(max(srmap_hsv)); %renormalize so on scale 0-1
+
+%Shawn special end
+
+
 %% combine D and Super res. for HSV
 hsvmap(1:szmap1,1:szmap2,1)=normDmap2log; %set hue = color
-hsvmap(1:szmap1,1:szmap2,2)=norm_ca_AC;
+hsvmap(1:szmap1,1:szmap2,2)=srmap_hsv;%norm_ca_AC;% Shawn change
 hsvmap(1:szmap1,1:szmap2,3)=ones(szmap1,szmap2); %set brightness
 hsv2rgbmap=1-hsv2rgb(real(hsvmap)); %convert to rgb
+
 
 % display execution time of fcsSOFI combination
 Combine_after = clock;
@@ -587,7 +666,12 @@ if plotfigures == 1
     end
     
     % alpha map if using anomalous model
-    if type == 3
+    if type == 3 || type == 6
+        
+        sofiBinarized = imbinarize(srmap_hsv, 0.05);
+        %sofiBinarized = imbinarize(srmap_hsv, 'adaptive');
+        alphamap(sofiBinarized == 0) = 0;
+        
         figure
         imagesc(alphamap);
         caxis([0 max(max((alphamap)))])
@@ -654,27 +738,56 @@ if plotfigures == 1
 end
 
 %% Single Pixel Results
-    name = ["Brownian","2-Component Brownian","Anomalous"];name = name(type);
+    name = ["Brownian","2-Component Brownian","Anomalous","Brownian Norm",...
+        "Brownian 1-Component Normalized", "Brownian 1-Component with Amplitude",...
+        "Anomalous 2 Parameters Tau and Alpha"];name = name(type);
 
     % optional single pixel curve fit result figure
     if examplecf == 1
         i=row_index; %row index
         j=column_index; %column index
         figure;
-        x2=fitresult2(i,j).rawdata(:,1);
+        x2=fitresult2(i,j).rawdata(:,1); 
         y2=fitresult2(i,j).rawdata(:,2);
-        N = max(y2);
-        plot(x2,1/N.*y2,'or','LineWidth',2)
+        plot(x2,y2,'or','LineWidth',2)
         hold on
-        plot(x2',1/N.*fitresult2(i,j).model_fit,'--k','LineWidth',2)
+        plot(x2,fitresult2(i,j).model_fit,'--k','LineWidth',2)
+        hold on
+        %plot(x2,1./(1+(x2./model_coefs(1))),'--b','LineWidth',2)
+        %plot(x2,1./(1+(x2./converged_parameters(1))),'--b','LineWidth',2)
+        %hold on
+        %plot(x2,1./(1+(dT.*x2./((47.6^2)/(4*10^6))^.7787)),'--b','LineWidth',2)
+        %hold on
+        %plot(x2,1./(1+(x2./td2_stp)),'--r','LineWidth',2)
         set(gca,'xscale','log')
         xlabel('\tau')
         ylabel('G(\tau)')
         legend('Raw Data','Fit Result');
         title(strcat(name,' Diffusion Curve Fit with Gpufit')); 
+        
+        %______________________________________
         %{
+        i=row_index2; %row index
+        j=column_index2; %column index
+        figure;
+        x2=fitresult2(i,j).rawdata(:,1);
+        y2=fitresult2(i,j).rawdata(:,2);
+        plot(x2,y2,'or','LineWidth',2)
+        hold on
+        plot(x2,fitresult2(i,j).model_fit,'--k','LineWidth',2)
+        hold on
+        %plot(x2,1./(1+(x2./td_stp_test).^alpha_stp_test),'--b','LineWidth',2)
+        
+        set(gca,'xscale','log')
+        xlabel('\tau')
+        ylabel('G(\tau)')
+        legend('Raw Data','Fit Result');
+        title(strcat(name,' Diffusion Curve Fit with Gpufit')); 
+        %}
+        %______________________________________
+        
         % error bars
-        number_parameters = [3; 5; 4];
+        number_parameters = [3; 5; 4; 1; 2; 2];
         [rsq,chisq,J,MSE,ci] = gofStats(type,...%type
             converged_parameters(1:number_parameters(type)),... %parameter values
             fitresult2(row_index,column_index).model_fit,...    %fit curve
@@ -688,7 +801,10 @@ end
         
         modeleqn = ["G(tau) = a * 1/(1 + tau/tauD) + b",...
             "G(tau) = a1 * 1/(1 + tau/tauD1) + a2 * 1/(1 + tau/tauD2) + b",...
-            "G(tau) = a * 1/(1 + (tau/tauD)^alpha) + b"]; modeleqn = modeleqn(type);
+            "G(tau) = a * 1/(1 + (tau/tauD)^alpha) + b", ...
+            "G(tau) = 1/(1 + tau/tauD)", ...
+            "G(tau) = a * 1/(1 + tau/tauD)",...
+            "G(tau) = 1/(1 + (tau/tauD)^alpha)"]; modeleqn = modeleqn(type);
 
         clc; fprintf(fname);fprintf('\nPixel (%i,%i)\n',row_index,column_index );
         fprintf(strcat(name,' Fit Model:\n',modeleqn,'\n\n'));
@@ -696,20 +812,20 @@ end
         
         % print error bars
         if type == 1
-          fprintf('a =    %6.2e ± %6.2e\n',converged_parameters(1),ebars(1));
-          fprintf('b =    %6.2e ± %6.2e\n',converged_parameters(2),ebars(2));
-          fprintf('tauD =     %6.2e ± %6.2e\n',converged_parameters(3),ebars(3));
+          fprintf('a =    %6.2e Â± %6.2e\n',converged_parameters(1),ebars(1));
+          fprintf('b =    %6.2e Â± %6.2e\n',converged_parameters(2),ebars(2));
+          fprintf('tauD =     %6.2e Â± %6.2e\n',converged_parameters(3),ebars(3));
           fprintf('\n')
           fprintf('D =         %6.3e\n',Dmap_corrected(row_index,column_index ))
           fprintf('log10(D):  %6.3f\n\n',Dmap2log(row_index,column_index ))
           fprintf('R-square:  %6.4f\n',R2map(row_index,column_index ));
         
         elseif type == 2
-          fprintf('a1 =    %6.2e ± %6.2e\n',converged_parameters(1),ebars(1));
-          fprintf('a2 =    %6.2e ± %6.2e\n',converged_parameters(2),ebars(2));
-          fprintf('b =     %6.2e ± %6.2e\n',converged_parameters(3),ebars(3));
-          fprintf('tauD1 = %6.4f ± %6.4e\n',converged_parameters(4),ebars(4));
-          fprintf('tauD2 = %6.4f ± %6.4e\n',converged_parameters(5),ebars(5));  
+          fprintf('a1 =    %6.2e Â± %6.2e\n',converged_parameters(1),ebars(1));
+          fprintf('a2 =    %6.2e Â± %6.2e\n',converged_parameters(2),ebars(2));
+          fprintf('b =     %6.2e Â± %6.2e\n',converged_parameters(3),ebars(3));
+          fprintf('tauD1 = %6.4f Â± %6.4e\n',converged_parameters(4),ebars(4));
+          fprintf('tauD2 = %6.4f Â± %6.4e\n',converged_parameters(5),ebars(5));  
           fprintf('\n')
           fprintf('D1:         %6.3e\n',Dmap_corrected(row_index,column_index ))
           fprintf('D2:         %6.3e\n',D2map_corrected(row_index,column_index ))
@@ -718,18 +834,41 @@ end
           fprintf('R-square:  %6.4f\n',R2map(row_index,column_index ));   
 
         elseif type == 3
-          fprintf('a =    %6.2e ± %6.2e\n',converged_parameters(1),ebars(1));
-          fprintf('b =    %6.2e ± %6.2e\n',converged_parameters(2),ebars(2));
-          fprintf('tauD =     %6.2e ± %6.2e\n',converged_parameters(3),ebars(3));
-          fprintf('alpha = %6.4f ± %6.4f\n',converged_parameters(4),ebars(4));
+          fprintf('a =    %6.2e Â± %6.2e\n',converged_parameters(1),ebars(1));
+          fprintf('b =    %6.2e Â± %6.2e\n',converged_parameters(2),ebars(2));
+          fprintf('tauD =     %6.2e Â± %6.2e\n',converged_parameters(3),ebars(3));
+          fprintf('alpha = %6.4f Â± %6.4f\n',converged_parameters(4),ebars(4));
           fprintf('\n')
           fprintf('D =         %6.3e\n',Dmap_corrected(row_index,column_index ))
           fprintf('log10(D):  %6.3f\n\n',Dmap2log(row_index,column_index ))
           fprintf('alpha:     %6.4f\n\n',alphamap(row_index,column_index ))
           fprintf('R-square:  %6.4f\n',R2map(row_index,column_index ));
           
+        elseif type == 4
+          fprintf('tauD =     %6.2e Â± %6.2e\n',converged_parameters(1),ebars(1));
+          fprintf('\n')
+          fprintf('D =         %6.3e\n',Dmap_corrected(row_index,column_index ))
+          fprintf('log10(D):  %6.3f\n\n',Dmap2log(row_index,column_index ))
+          fprintf('R-square:  %6.4f\n',R2map(row_index,column_index ));    
+        
+        elseif type == 5
+          fprintf('a =    %6.2e Â± %6.2e\n',converged_parameters(1),ebars(1));
+          fprintf('tauD =     %6.2e Â± %6.2e\n',converged_parameters(3),ebars(3));
+          fprintf('\n')
+          fprintf('D =         %6.3e\n',Dmap_corrected(row_index,column_index ))
+          fprintf('log10(D):  %6.3f\n\n',Dmap2log(row_index,column_index ))
+          fprintf('R-square:  %6.4f\n',R2map(row_index,column_index ));
+          
+       elseif type == 6
+          fprintf('tauD =     %6.2e Â± %6.2e\n',converged_parameters(1),ebars(1));
+          fprintf('alpha = %6.4f Â± %6.4f\n',converged_parameters(2),ebars(2));
+          fprintf('\n')
+          fprintf('D =         %6.3e\n',Dmap_corrected(row_index,column_index ))
+          fprintf('log10(D):  %6.3f\n\n',Dmap2log(row_index,column_index ))
+          fprintf('alpha:     %6.4f\n\n',alphamap(row_index,column_index ))
+          fprintf('R-square:  %6.4f\n',R2map(row_index,column_index ));
         end
-        %}
+        
     end
 
 %% save data
@@ -756,6 +895,15 @@ if savethedata == 1
         alpha_map = alphamap;
         save(strcat(fname,'_analyzed_anomalous_',date),'fit_curves','fit_parameters','SOFI','D_map','D_map_corrected','alpha_map','Rsquare_map','fcsSOFI','fcsSOFI_cmap',...
             'normDmap2log','normcoef','filtim','type','szmap1','szmap2');
+    elseif type == 4
+         save(strcat(fname,'_analyzed_brownian_norm_',date),'fit_curves','fit_parameters','SOFI','D_map','D_map_corrected','Rsquare_map','fcsSOFI','fcsSOFI_cmap',...
+             'normDmap2log','normcoef','filtim','type','szmap1','szmap2');
+    elseif type == 5
+         save(strcat(fname,'_analyzed_brownian_2_parameters_',date),'fit_curves','fit_parameters','SOFI','D_map','D_map_corrected','Rsquare_map','fcsSOFI','fcsSOFI_cmap',...
+             'normDmap2log','normcoef','filtim','type','szmap1','szmap2'); 
+    elseif type == 6
+         save(strcat(fname,'_analyzed_anomalous_2_parameters_',date),'fit_curves','fit_parameters','SOFI','D_map','D_map_corrected','Rsquare_map','fcsSOFI','fcsSOFI_cmap',...
+             'normDmap2log','normcoef','filtim','type','szmap1','szmap2');
     end
 
 end   
