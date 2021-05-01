@@ -288,8 +288,8 @@ for i=1:size(AC_logbin,1)
 
     % weights
     %weights = data;%1./abs(sqrt(data));
-    %weights = data./data;
-    weights = data;
+    weights = data./data;
+    %weights = data;
     weights(data < 0) = 0;
     % Run Gpufit
     [parameters, states, chi_squares, n_iterations, gputime] = gpufit(data, weights, ...
