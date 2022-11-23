@@ -265,7 +265,7 @@ for i = 1:size(AC_logbin, 1)
 
     % display progress at 25%, 50%, and 75% complete
     if i == ceil(size(AC_logbin, 1) / 4)
-        fprintf('\nCurve-fitting 25%% complete');
+        fprintf('Curve-fitting 25%% complete \n');
     end
     if i == ceil(size(AC_logbin, 1) / 2)
         fprintf('Curve-fitting 50%% complete \n');
