@@ -637,7 +637,7 @@ if plotfigures == 1
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
     DFigure = imagesc(trimDmap2log); axis image; title('FCS: log(D)')
     DFigure.AlphaData = Dmap2logAlpha; colormap(customColorMap);
-    c = colorbar; c.Label.String = 'log(D) (nm^2/s)';
+    c = colorbar; c.Label.String = 'log(D/(nm^2s^{-1}))';
     patch([0 xmax-xmin+1 xmax-xmin+1 0], [0 0 ymax-ymin+1 ymax-ymin+1], 'k'); % Patches a black background in front
     set(gca, 'children', flipud(get(gca, 'children'))); % Moves Black Background to back
     set(gca, 'FontSize', 14); set(gca, 'xtick', [], 'ytick', []) % Removes axis tick marks
@@ -653,7 +653,7 @@ if plotfigures == 1
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
     fcsSofiPlot = imagesc(trimDmap2log); axis image; title('Combined fcsSOFI image')
     fcsSofiPlot.AlphaData = sofiMap .* Dmap2logAlpha; % Uses the SOFI data as a transparency map
-    colormap(customColorMap); c = colorbar; c.Label.String = 'log(D) (nm^2/s)';
+    colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(nm^2s^{-1}))';
     patch([0 xmax-xmin+1 xmax-xmin+1 0], [0 0 ymax-ymin+1 ymax-ymin+1], 'k'); % Patches a black background in front
     set(gca, 'children', flipud(get(gca, 'children'))); % Moves Black Background to back
     set(gca, 'FontSize', 14); set(gca,'xtick',[],'ytick',[])
