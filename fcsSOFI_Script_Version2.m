@@ -1,6 +1,6 @@
 clear; close all hidden; clc;
 %% User Input
-startloc = 'Z:\BenjaminWellnitz\MATLAB Practice\20220915';
+startloc = 'Your Start Location';
 
 % Diffusion coefficient parameters
 pixelsize = 109; % In nm (IX83); needed to accurately calculate D
@@ -16,11 +16,11 @@ framesLength = 10000;
 
 % Region of interest in pixels (of all files added together)
 ymin = 1; 
-ymax = 100;
+ymax = 30;
 xmin = 1;
-xmax = 100;
+xmax = 30;
 tmin = 1; % Start frame
-tmax = 10000; % End frame
+tmax = 5000; % End frame
 
 % Choose type of diffusion (1 = Brownian, 2 = 2-Comp Brownian, 3 = Anomalous, ...
         ... 4 = Brownian 1 Comp with tau, 5 = 1-comp Brownian with tau and A, ...
@@ -65,14 +65,14 @@ doDecon = 1;
 satmin = 0;
 satmax = 1;
 
-% Whether you are using a tiff or mat file (1 = yes, 0 = no)
-doFileConversionAndBackSubtraction = 1;
+% Whether you are using a .tiff file (other option is a .mat file) (1 = yes, 0 = no)
+useTiffFile = 0;
 
 % Top and bottom colors for the color bar / color scale
 red = [1 0 0]; green = [0 0.5 0]; blue = [0 0 1]; lime = [0 1 0]; cyan = [0 1 1]; yellow = [1 1 0];
 magenta = [1 0 1]; maroon = [0.5 0 0]; olive = [0.5 0.5 0]; purple = [0.5 0 0.5]; teal = [0 0.5 0.5]; navy = [0 0 0.5];
-topC = blue;
-botC = red;
+topC = red;
+botC = blue;
 
 % Use defualt color scheme (1 = yes)
 defualtColors = 1;
@@ -80,9 +80,13 @@ defualtColors = 1;
 % END USER INPUT
 fprintf('Running...\n');
 
+%% Paths
+addpath(strcat(pwd, '\gpufit\Debug\matlab'))
+addpath(strcat(pwd, '\fcsSOFI_external_functions'))
+
 %% Convert Tif to Mat
 % Alows for ultiple files to be added together
-if doFileConversionAndBackSubtraction
+if useTiffFile
     
     fileNames = cell(1, numberFiles); paths = cell(1, numberFiles);
     % Select all the files
@@ -90,6 +94,7 @@ if doFileConversionAndBackSubtraction
         [fileName, path] = uigetfile(startloc, '*.tiff');
         fileNames(1, i) = {fileName};
         paths(1, i) = {path};
+        addpath(path);
     end
     % Read all the files
     Data = TiffReadRM(fileNames{1, 1}, paths{1, 1}, 1, framesLength);
@@ -100,30 +105,27 @@ if doFileConversionAndBackSubtraction
     end
     
     filenm = extractBefore(fileNames{1, 1}, ".tif");
-
-    %% Background Subtraction
-    thrData = Data; %will be the background subtracted dataset
-    for i = 1:size(Data, 3) %i is the frame number
-        Bkg = LRG_SuperRes_LocalThrMap(Data(:, :, i), true);%local background calcualted with LRG code
-        thrData(:, :, i) = double(Data(:, :, i)) - double(Bkg); %background subtraction step
-    end
-
-    %Background corrected file name
-    fname = strcat(filenm, '_Combined_BC.mat');
-    save(fname, 'thrData', '-v7.3')
-    DataCombined = thrData;
+    
+    % Save to mat converted file
+    fname = strcat(filenm, '_Combined.mat');
+    save(fname, 'Data', '-v7.3')
 
 else % If data was already converted
     [fileName, path] = uigetfile(startloc, '*');
     fname = fileName;
     addpath(path);
     load(fileName);
-    DataCombined = thrData;
 end
 
-%% Paths
-addpath(strcat(pwd, '\gpufit\Debug\matlab'))
-addpath(strcat(pwd, '\fcsSOFI_external_functions'))
+
+%% Background Subtraction
+thrData = Data; %will be the background subtracted dataset
+for i = 1:size(Data, 3) %i is the frame number
+    Bkg = LRG_SuperRes_LocalThrMap(Data(:, :, i), true);%local background calcualted with LRG code
+    thrData(:, :, i) = double(Data(:, :, i)) - double(Bkg); %background subtraction step
+end
+
+DataCombined = thrData;
 
 %% %%%%%%%%%%%%%%%%%%%% STEP 1: blink_AConly (SOFI) %%%%%%%%%%%%%%%%%%%%%%%%%
 % start global timer
@@ -630,7 +632,8 @@ if plotfigures == 1
 
     % R-square Map
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-    imagesc(R2map); axis image; title('R^2 map'); colorbar
+    imagesc(R2map); axis image; title('R^2 map'); 
+    colorbar; caxis([0 1]);
     
 
     % fcs figure creation
@@ -795,6 +798,7 @@ if savethedata == 1
     % Creates file names
     figureFileName = strcat(folderName, '.fig');
     dataFileName = strcat(folderName, '.mat');
+    backFileName = strcat(folderName, '_BC.mat');
     mkdir(folderName);
     
     % Saves the figures and files
@@ -802,19 +806,12 @@ if savethedata == 1
     save(dataFileName, 'fit_curves', 'fit_parameters', 'sofiMapMatrix', ...
         'DmapMatrix', 'Dmap_correctedMatrix', 'RsquareMapMatrix', 'trimDmap2logMatrix', ...
         'D2_mapMatrix', 'D2_mapCorrectedMatrix', 'alphaMapMatrix', '-v7.3');
+    save(backFileName, 'thrData', '-v7.3');
     
     % Moves the files into the folder created
     movefile(figureFileName, folderName);
     movefile(dataFileName, folderName);
-    
-    % If using background subtraction, then tiff-to-mat converted file and
-    %   background subtraction file saved aswell
-    if doFileConversionAndBackSubtraction
-        noBackFileName = strcat(filenm, '_converted.mat');
-        save(noBackFileName, 'Data', '-v7.3')
-        movefile(noBackFileName, folderName);
-        movefile(fname, folderName);
-    end
+    movefile(backFileName, folderName);
     
 end   
 
