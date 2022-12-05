@@ -2,7 +2,7 @@ This README gives a brief over view of how to use the fcsSOFI script.
 
 Data Prepreation:
 
-Your data must come in the form of tiff files. 
+Your data must come in the form of tiff files or mat files. (If using tiff, must assign useTiffFile = 1)
 You can use multiple files imaging the same point, the code will string them together.
 If you have ran your data before and have the background corrected (BC) .mat files, this can also be used.
 	If you with to run data with different setting, this will save a lot of time
@@ -62,9 +62,8 @@ plotFigures: Plots variouse figures
 	Figure 9: The single pixle diffusion fit for the selected pixle
 
 store_execution_times:
-savethedata: Saves the folling files in a new folder:
-	The combined tiff files in .mat form
-	The BC .mat file
+savethedata: Saves the folling files in a new folder: (the .mat convered file is always saved if using tiff file)
+	The background corrected .mat file
 	All the figures plotted in a .fig file
 	A selection of variables in .mat form
 		fit curves, fit parameters, sofi map, diffusion maps, r squared map, alpha map
