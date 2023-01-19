@@ -7,9 +7,6 @@
 function [ACXC_all] = CalcCorrCut(innerpts, DataVector)
 
     % i range accomodates time offset
-    %structure = struct('Order2', 1);
-    %ACXC_all = repmat(structure, 1, length(innerpts) - 2);
-    
     for i = 1:length(innerpts) - 2      
         %taking only indices we care about
         index = innerpts(i);
