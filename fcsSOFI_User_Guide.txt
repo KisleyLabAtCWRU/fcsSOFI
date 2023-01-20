@@ -4,8 +4,9 @@ Data Prepreation:
 
 Your data must come in the form of tiff files or mat files. (If using tiff, must assign useTiffFile = 1)
 You can use multiple files imaging the same point, the code will string them together.
-If you have ran your data before and have the background corrected (BC) .mat files, this can also be used.
-	If you with to run data with different setting, this will save a lot of time
+If you have ran your data before and have the combined .mat files, this can also be used.
+	If you with to run data with different setting, this will save a lot of time.
+	This is because converting .tiff files to .mat files takes a lot of time.
 
 
 User Input Section:
@@ -25,8 +26,8 @@ Region of Interest Settings: The data will be truncated to only look at this por
 
 Type: The type of diffusion to fit too
 	1 = Brownian, 2 = 2-Comp Brownian, 3 = Anomalous, ...
-      4 = Brownian 1 Comp with tau, 5 = 1-comp Brownian with tau and A, ...
-      6 = Anomalous with Tau and alpha)
+	4 = Brownian 1 Comp with tau, 5 = 1-comp Brownian with tau and A, ...
+	6 = Anomalous with Tau and alpha)
 
 A_stp: Starting fit value for amplitude
 alpha_stp: Starting fit value for alpha
@@ -62,17 +63,17 @@ plotFigures: Plots variouse figures
 	Figure 9: The single pixle diffusion fit for the selected pixle
 
 store_execution_times:
-savethedata: Saves the folling files in a new folder: (the .mat convered file is always saved if using tiff file)
+savethedata: Saves the following files into a new folder: (the .mat convered file is always saved if using tiff file)
 	The background corrected .mat file
-	All the figures plotted in a .fig file
-	A selection of variables in .mat form
+	All the figures plotted in one .fig file
+	A selection of variables in one .mat file
 		fit curves, fit parameters, sofi map, diffusion maps, r squared map, alpha map
 
 examplecf: Plots a curve fit for a single chossen pixle. Also prints the values found for this pixle
 doDecon: deconvelution on the sofi image can be skiped if it is found to remove too much infromation
-satmin/max: Caps the min and max of the sofi image, then renormalized it...
+satmin/max: Caps the min and max of values of the sofi image, then renormalized it...
 	Focuses in on different sections if they are not bright enough or too bright
-doFileConversionAndBackSubtraction: If useing the BC .mat file from a previouse run, change to 0
+useTiffFile: If useing the .mat file from a previouse run, change to 0
 	This speeds the code up signifigantly.
 Color selctions:
 	This picks the color scale used for all the diffusion images.

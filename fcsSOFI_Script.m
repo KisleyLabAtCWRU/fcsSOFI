@@ -121,7 +121,7 @@ end
 %% Background Subtraction
 thrData = Data; %will be the background subtracted dataset
 for i = 1:size(Data, 3) %i is the frame number
-    Bkg = LRG_SuperRes_LocalThrMap(Data(:, :, i), true);%local background calcualted with LRG code
+    Bkg = LRG_SuperRes_LocalThrMap(Data(:, :, i), true); %local background calcualted with LRG code
     thrData(:, :, i) = double(Data(:, :, i)) - double(Bkg); %background subtraction step
 end
 
@@ -157,7 +157,7 @@ end
 [innerpts] = getUpperLeft(ymax - ymin + 1, xmax - xmin + 1, 1);
 
 %% Calculate the correlation (2-4th orders, AC and XC)
-[ACXC_all] = CalcCorrCut(innerpts, DataVector); %calculate 
+[ACXC_all] = CalcCorr(innerpts, DataVector); %calculate 
 
 %% Calculate intensity for images by different methods     
 AC_G2 = zeros(1, numel(ACXC_all));
