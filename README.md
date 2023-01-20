@@ -10,10 +10,8 @@ Kisley, L.; Higgins, D.; Weiss, S.; Landes, C.F.; et al. Characterization of Por
 **Files and folders maintained on this repository:**
 * README: Description of the fcsSOFI repository (README.md - the file you are reading now!)
 * fcsSOFI User Guide - a detailed guide for the fcsSOFI GUI (fcsSOFI_user_guide.pdf)
-* GPU-accelerated fcsSOFI GUI (fcsSOFI_GUI.mlapp) 
 * GPU-accelerated fcsSOFI script (fcsSOFI_script.m)
 * Test data set: simulation of two pores with emitters undergoing Brownian diffusion (dataset77.mat)
-* Colorscale script: Change fcsSOFI colorscale external to GUI (SOFI_ColorScale.m)
 * Folder containing external functions called in script (fcsSOFI_External_Functions)
 * Customized Gpufit library (Gpufit_build-64-YYYYMMDD)
 
