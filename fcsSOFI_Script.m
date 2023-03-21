@@ -47,9 +47,6 @@ number_fits = 1000;
 % Plot figures? (1 = yes)
 plotfigures = 1;
 
-% Store execution times in external text file? (1 = yes);
-store_execution_times = 0;
-
 % Save data files? (1 = yes)
 savethedata = 1; 
 
@@ -68,14 +65,14 @@ satmax = 1;
 % Whether you are using a .tiff file (other option is a .mat file) (1 = yes, 0 = no)
 useTiffFile = 0;
 
-% Top and bottom colors for the color bar / color scale
+% Use defualt color scheme (1 = yes)
+defualtColors = 1;
+
+% If not using defualt colors. Top and bottom colors for the color bar / color scale
 red = [1 0 0]; green = [0 0.5 0]; blue = [0 0 1]; lime = [0 1 0]; cyan = [0 1 1]; yellow = [1 1 0];
 magenta = [1 0 1]; maroon = [0.5 0 0]; olive = [0.5 0.5 0]; purple = [0.5 0 0.5]; teal = [0 0.5 0.5]; navy = [0 0 0.5];
 topC = red;
 botC = blue;
-
-% Use defualt color scheme (1 = yes)
-defualtColors = 1;
 
 % END USER INPUT
 fprintf('Running...\n');
@@ -96,6 +93,10 @@ if useTiffFile
         paths(1, i) = {path};
         addpath(path);
     end
+
+    % Start global timer after user selects files
+    timeStart = tic;
+
     % Read all the files
     Data = TiffReadRM(fileNames{1, 1}, paths{1, 1}, 1, framesLength);
     fprintf('Tiff file 1 loaded \n');
@@ -112,13 +113,27 @@ if useTiffFile
 
 else % If data was already converted
     [fileName, path] = uigetfile(startloc, '*');
+
+    % Start global timer after user selects files
+    timeStart = tic;
+
     fname = fileName;
     addpath(path);
     load(fileName);
 end
 
+fprintf(strcat(fname, ' loaded\n'));
+
+% Display time for file load
+time = toc(timeStart);
+timeOut = ['Loading File Complete, Execution Time: ', num2str(floor(time / 60)), ' Minutes, ', num2str(mod(time, 60)), ' Seconds'];
+disp(timeOut);
 
 %% Background Subtraction
+
+% Start background subtration timer
+timeBack = tic;
+
 thrData = Data; %will be the background subtracted dataset
 for i = 1:size(Data, 3) %i is the frame number
     Bkg = LRG_SuperRes_LocalThrMap(Data(:, :, i), true); %local background calcualted with LRG code
@@ -127,17 +142,17 @@ end
 
 DataCombined = thrData;
 
+% Display time for background subtration
+time = toc(timeBack);
+timeOut = ['Background Subtration Complete, Execution Time: ', num2str(floor(time / 60)), ' Minutes, ', num2str(mod(time, 60)), ' Seconds'];
+disp(timeOut);
+
 %% %%%%%%%%%%%%%%%%%%%% STEP 1: blink_AConly (SOFI) %%%%%%%%%%%%%%%%%%%%%%%%%
-% start global timer
-before = clock;
 
-% start timer for SOFI step
-blink_before = clock;
+% Start timer before SOFI step
+timeSofi = tic;
 
-%% start code/load and setup data 
-
-% Load data
-fprintf(strcat(fname, ' loaded\n'));
+%% start code and setup data 
 
 % Set ROI
 DataCombined = DataCombined(ymin:ymax, xmin:xmax, tmin:tmax);
@@ -191,13 +206,14 @@ else
 end
 
 % display execution time of SOFI step
-blink_after = clock;
-fprintf('SOFI complete, execution time: %6.2f seconds\n', etime(blink_after, blink_before));
+time = toc(timeSofi);
+timeOut = ['Sofi Complete, Execution Time: ', num2str(floor(time / 60)), ' Minutes, ', num2str(mod(time, 60)), ' Seconds'];
+disp(timeOut);
 
 %% %%%%%%%%%%%%%%%%%%%% STEP 2: BinFitData (fcs) %%%%%%%%%%%%%%%%%%%%%%%%%
 
 % start timer for fcs step
-Bin_before = clock;
+timeFcs = tic;
 
 % ROI pixels of image to analyze
 xmn = 1; xmx = xmax - xmin;
@@ -452,13 +468,14 @@ end
 R2map = reshape(R2, rowdim, coldim);
 
 % display execution time of fcs step
-Bin_after = clock;
-fprintf('FCS complete, execution time: %6.2f seconds\n', etime(Bin_after, Bin_before));
+time = toc(timeFcs);
+timeOut = ['FCS Complete, Execution Time: ', num2str(floor(time / 60)), ' Minutes, ', num2str(mod(time, 60)), ' Seconds'];
+disp(timeOut)
 
 %% %%%%%%%%%%%%%%%%%%%% STEP 3: CombineTempSpat (fcsSOFI) %%%%%%%%%%%%%%%%%%%%%%%%%
 
 % start timer for fcsSOFI combination
-Combine_before = clock;
+timeCombine = tic;
     
 %% Diffusion map
 
@@ -541,8 +558,9 @@ im = im ./ (max(max(im)));
 %% Finish the timer for image combination
 
 % display execution time of fcsSOFI combination
-Combine_after = clock;
-fprintf('Image fusion complete, execution time: %6.2f seconds\n', etime(Combine_after, Combine_before));
+time = toc(timeCombine);
+timeOut = ['Image Fusion Complete, Execution Time: ', num2str(floor(time / 60)), ' Minutes, ', num2str(mod(time, 60)), ' Seconds'];
+disp(timeOut);
 
 %% Figures
 
@@ -816,17 +834,9 @@ if savethedata == 1
 end   
 
 %% total computation time
-totaltime = etime(clock,before);
-fprintf(['\nTotal fcsSOFI execution time:' ' ' num2str(totaltime/60) ' ' 'minutes (' num2str(totaltime) ' ' 'seconds)\n\n']);
+time = toc(timeStart);
+timeOut = ['Total Execution Time: ', num2str(floor(time / 60)), ' Minutes, ', num2str(mod(time, 60)), ' Seconds'];
+disp(timeOut);
 
-% write computation time to text file for remote access
-if store_execution_times == 1
-    DateString = datestr(datetime);
-    xdim = num2str((xmax-xmin+1)); ydim = num2str((ymax-ymin+1));
-    fid = fopen('fcsSOFI_execution_times.txt','at');
-    fprintf(fid, [DateString '\n']);
-    fprintf(fid, ['Data File:' ' ' fname '.m' ' (' xdim 'x' ydim ' ' 'image)\n']); 
-    fprintf(fid, ['Total execution time:' ' ' num2str(totaltime/60) ' ' 'minutes (' num2str(totaltime) ' ' 'seconds)\n']);
-    fprintf(fid, ['Total GPU Only time:' ' ' num2str(fit_time) ' ' 'seconds\n\n']);
-    fclose(fid);
-end
+fit_timeOut = ['Total GPU Only Time: ', num2str(floor(fit_time / 60)), ' Minutes, ', num2str(mod(fit_time, 60)), ' Seconds'];
+disp(fit_timeOut);
