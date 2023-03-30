@@ -1,10 +1,10 @@
 clear; close all hidden; clc;
 %% User Input
-startloc = 'Your Start Path';
+startloc = '\\129.22.135.181\Test\Surajit\fcsSOFI-Surajit\fcsSOFI-master\0302323_analysis results 01272023\2000kdadestran_agarose_486fps_a1_m3_MMStack_Pos0.ome_Combined_BC_analyzed_01-29-2023_17-41';
 
 % Diffusion coefficient parameters
-pixelsize = 109; % In nm (IX83); needed to accurately calculate D
-PSFsample = 5; % In pixel; based off of PSF from moving samples
+pixelsize = 0.109; % In nm (IX83); needed to accurately calculate D
+PSFsample = 3.5; % In pixel; based off of PSF from moving samples
 vPSFsample = PSFsample*2-1;
 dT = 0.002; % In s; needed to accurately calculate D
 
@@ -50,7 +50,7 @@ number_fits = 1000;
 plotfigures = 1;
 
 % Save data files? (1 = yes)
-savethedata = 0; 
+savethedata = 1; 
 
 % Optional example single pixel curve fit plot (1 = yes)
 examplecf = 1;
@@ -61,11 +61,15 @@ row_index = 10; % Y coordinate
 doDecon = 1;
 
 % SOFI scaling
-satmin = 0;
-satmax = 1;
+satMin = 0;
+satMax = 0.1;
+crossSatMax = satMax + 0.2;
 
 % Whether you are using a .tiff file (other option is a .mat file) (1 = yes, 0 = no)
 useTiffFile = 0;
+
+% Use already background subtracted data. Must be using a mat file if yes (1 = yes)
+useBCData = 1;
 
 % Use defualt color scheme (1 = yes)
 defualtColors = 1;
@@ -122,7 +126,12 @@ else % If data was already converted
     fname = fileName;
     addpath(path);
     load(fileName);
-    Data = Data(ymin:ymax, xmin:xmax, tmin:tmax);
+    
+    if useBCData
+        Data = thrData(ymin:ymax, xmin:xmax, tmin:tmax);
+    else
+        Data = Data(ymin:ymax, xmin:xmax, tmin:tmax);
+    end
 end
 
 fprintf(strcat(fname, ' loaded\n'));
@@ -138,12 +147,12 @@ disp(timeOut);
 timeBack = tic;
 
 thrData = Data; %will be the background subtracted dataset
-
-for i = 1:size(Data, 3) %i is the frame number
-    Bkg = LRG_SuperRes_LocalThrMap(Data(:, :, i), true); %local background calcualted with LRG code
-    thrData(:, :, i) = double(Data(:, :, i)) - double(Bkg); %background subtraction step
+if ~useBCData
+    for i = 1:size(Data, 3) %i is the frame number
+        Bkg = LRG_SuperRes_LocalThrMap(Data(:, :, i), true); %local background calcualted with LRG code
+        thrData(:, :, i) = double(Data(:, :, i)) - double(Bkg); %background subtraction step
+    end
 end
-
 DataCombined = thrData;
 
 % Display time for background subtration
@@ -177,7 +186,7 @@ end
 
 %% Calculate the correlation (2-4th orders, AC and XC)
 [ACXC_all] = CalcCorr(innerpts, DataVector); %calculate
-[crossSofiVirt, crossSofi] = crossSofi(thrData, 0, satmax + 0.25);
+[crossSofiMap] = crossSofi(thrData, 0);
 
 %% Calculate intensity for images by different methods     
 AC_G2 = zeros(1, numel(ACXC_all));
@@ -198,7 +207,7 @@ AC_G2_im = M;
 
 %% Deconvolution
 avgim = avgimage;
-im = AC_G2_im;
+sofiMap = AC_G2_im;
 
 % Define the PSF 
 gauss1 = customgauss([100 100], sigma, sigma, 0, 0, 1, [5 5]); % Create a 2D PSF
@@ -207,10 +216,11 @@ PSF = gauss1(45:65, 45:65); % Only use the center where the PSF is located at
 vPSF = vGauss1(45:65, 45:65);
 
 if doDecon
-    filtim = deconvlucy(im, PSF); % Based on Geissbuehler bSOFI paper
-    crossSofiVirtDecon = deconvlucy(crossSofiVirt, vPSF);
+    sofiMapDecon = deconvlucy(sofiMap, PSF); % Based on Geissbuehler bSOFI paper
+    crossSofiMapDecon = deconvlucy(crossSofiMap, vPSF);
 else
-    filtim = im;
+    sofiMapDecon = sofiMap;
+    crossSofiMapDecon = crossSofiMap;
 end
 
 % display execution time of SOFI step
@@ -490,85 +500,66 @@ timeCombine = tic;
 % Create log base Dmap
 Dmap2log = log10(Dmap_corrected); 
 
-for i = 1:size(Dmap2log, 1)
-    for j = 1:size(Dmap2log, 2)
-        if Dmap2log(i, j) == -Inf
-            Dmap2log(i,j ) = 0;
-        end
-    end
-end
+
+Dmap2log(Dmap2log == -Inf) = 0;
 
 % Filter out poor fits if you want to here with an R2cutoff
 R2cutoff = 0.5; %set R^2 cutoff (0-1); == 0, no filtering
-Dmap2logAlpha = ones(size(Dmap2log, 1), size(Dmap2log, 2));
-for i = 1:size(Dmap2log, 1)
-    for j = 1:size(Dmap2log, 2)
-        if R2map(i, j) < R2cutoff
-            Dmap2log(i, j) = NaN;
-            Dmap2logAlpha(i, j) = 0;
-        end
-    end
-end
+Dmap2logAlpha = ones(size(Dmap2log, 1), size(Dmap2log, 2)); % Used For Plotting
+
+Dmap2log(R2map < R2cutoff) = NaN;
+Dmap2logAlpha(R2map < R2cutoff) = 0;
 
 %R2 cutoff from D histogram; beads=0.95, 76kDa=0.8, 2000kDa=0.9, BSA=0.88
 R2cutoff = 0.95;
-DhighSOFIvaluesR2 = [];
-for i = 1:size(Dmap2log, 1)
-    for j = 1:size(Dmap2log, 2)
-        if R2map(i, j) > R2cutoff
-            DhighSOFIvaluesR2 = [DhighSOFIvaluesR2, Dmap_corrected(i, j)];
-        end
-    end
-end
+DhighSOFIvaluesR2 = Dmap_corrected;
+DhighSOFIvaluesR2 = DhighSOFIvaluesR2(R2map < R2cutoff);
 
 % Used to keep track of figures to save
 figureNumber = 1; figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-hist(DhighSOFIvaluesR2)
+histogram(reshape(DhighSOFIvaluesR2, 1, []))
 
 % Trims the RGB Diffusion map data to realistic values
 trimDmap2log = Dmap2log;
-
-for i = 1:size(Dmap2log, 1)
-    for j = 1:size(Dmap2log, 2)
-        if Dmap2log(i,j ) < diffusionMin
-            trimDmap2log(i, j) = diffusionMin;
-        elseif Dmap2log(i, j) > diffusionMax
-            trimDmap2log(i, j) = diffusionMax;
-        end
-    end
-end
+trimDmap2log(Dmap2log < diffusionMin) = diffusionMin;
+trimDmap2log(Dmap2log > diffusionMax) = diffusionMax;
 
 
 %% Set the limits of the SOFI image
 
-sofiMap = filtim;
-sofiMap = sofiMap ./ (max(max(sofiMap))); %normalize
-im = im ./ (max(max(im)));
-for i = 1:size(sofiMap, 1)
-    for j = 1:size(sofiMap, 2)
-        % Deconvolved sofi
-        if sofiMap(i, j) < satmin
-            sofiMap(i, j) = satmin;
-        elseif sofiMap(i, j) > satmax
-            sofiMap(i, j) = satmax;
-        end
-        % Non-Deconvolved sofi
-        if im(i, j) < satmin
-            im(i, j) = satmin;
-        elseif im(i, j) > satmax
-            im(i, j) = satmax;
-        end 
-    end
-end
-sofiMap = sofiMap ./ (max(max(sofiMap))); %normalize again
-im = im ./ (max(max(im)));
+% Normalize
+sofiMap = sofiMap ./ (max(max(sofiMap))); % sofi no decon
+sofiMapDecon = sofiMapDecon ./ (max(max(sofiMapDecon))); % sofi decon
+crossSofiMap = crossSofiMap ./ (max(max(crossSofiMap))); % Cross sofi no decon
+crossSofiMapDecon = crossSofiMapDecon ./ (max(max(crossSofiMapDecon))); % Cross sofi decon
 
+sofiMapSat = sofiMap;
+sofiMapDeconSat = sofiMapDecon;
+crossSofiMapSat = crossSofiMap;
+crossSofiMapDeconSat = crossSofiMapDecon;
+
+
+% Adjust with sat max/min
+sofiMapSat(sofiMap < satMin) = satMin;
+sofiMapDeconSat(sofiMapDecon < satMin) = satMin;
+crossSofiMapSat(crossSofiMap < satMin) = satMin;
+crossSofiMapDeconSat(crossSofiMapDecon < satMin) = satMin;
+
+sofiMapSat(sofiMap > satMax) = satMax;
+sofiMapDeconSat(sofiMapDecon > satMax) = satMax;
+crossSofiMapSat(crossSofiMap > crossSatMax) = crossSatMax;
+crossSofiMapDeconSat(crossSofiMapDecon > crossSatMax) = crossSatMax;
+
+% Re Normalize
+sofiMapSat = sofiMapSat ./ (max(max(sofiMapSat))); % sofi no decon
+sofiMapDeconSat = sofiMapDeconSat ./ (max(max(sofiMapDeconSat))); % sofi decon
+crossSofiMapSat = crossSofiMapSat ./ (max(max(crossSofiMapSat))); % Cross sofi no decon
+crossSofiMapDeconSat = crossSofiMapDeconSat ./ (max(max(crossSofiMapDeconSat))); % Cross sofi decon
 
 %% Creating Larger Images
 
-largTrimDmap2log = imresize(trimDmap2log(2: size(trimDmap2log, 1), 2:size(trimDmap2log, 2)), size(crossSofiVirt), 'nearest');
-largDmap2logAlpha = imresize(Dmap2logAlpha(2: size(Dmap2logAlpha, 1), 2:size(Dmap2logAlpha, 2)), size(crossSofiVirt), 'nearest');
-crossSofiVirtDecon = crossSofiVirtDecon ./ max(max(crossSofiVirtDecon));
+largTrimDmap2log = imresize(trimDmap2log(2: size(trimDmap2log, 1), 2:size(trimDmap2log, 2)), size(crossSofiMap), 'nearest');
+largDmap2logAlpha = imresize(Dmap2logAlpha(2: size(Dmap2logAlpha, 1), 2:size(Dmap2logAlpha, 2)), size(crossSofiMap), 'nearest');
 
 %% Finish the timer for image combination
 
@@ -596,19 +587,19 @@ if plotfigures == 1
     title('Average image'); set(gca, 'xtick', [], 'ytick', [])
 
     % Autocorrelation
-    subplot(2, 2, 2); imagesc(im); axis image
+    subplot(2, 2, 2); imagesc(sofiMapSat); axis image
     title('AC G^2(0+\tau)'); set(gca, 'xtick', [], 'ytick', [])
 
     % Deconvolved Image
-    subplot(2, 2, 3); imagesc(sofiMap); axis image; 
+    subplot(2, 2, 3); imagesc(sofiMapDeconSat); axis image; 
     title('Deconvolved');set(gca, 'xtick', [], 'ytick', [])
 
     % Line Sections of row 25
     subplot(2, 2, 4); hold on
     plot(avgim(25, :) ./ max(avgim(25, :)), '-b')
-    plot(im(25, :) ./ max(im(25, :)), '-r')
-    plot(sofiMap(25, :) ./ max(sofiMap(25, :)), '-k')
-    axis square; title('Line sections'); ylim([0 1]); xlim([0 size(im(25, :), 2)])
+    plot(sofiMapSat(25, :) ./ max(sofiMapSat(25, :)), '-r')
+    plot(sofiMapDeconSat(25, :) ./ max(sofiMapDeconSat(25, :)), '-k')
+    axis square; title('Line sections'); ylim([0 1]); xlim([0 size(sofiMapSat(25, :), 2)])
 
 
     % BinFitData subplots (fcs) 
@@ -653,7 +644,7 @@ if plotfigures == 1
 
     % Alpha Map if using anomalous model
     if type == 3 || type == 6
-        sofiBinarized = imbinarize(sofiMap, 0.05);
+        sofiBinarized = imbinarize(sofiMapDeconSat, 0.05);
         alphamap(sofiBinarized == 0) = 0;
        
         figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
@@ -679,7 +670,7 @@ if plotfigures == 1
     
     % Large fcs figure creation
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-    DFigure = imagesc(largTrimDmap2log); axis image; title('larger FCS: log(D)')
+    DFigure = imagesc(largTrimDmap2log); axis image; title('Cross FCS: log(D)')
     DFigure.AlphaData = largDmap2logAlpha; colormap(customColorMap);
     c = colorbar; c.Label.String = 'log(D/(nm^2s^{-1}))';
     patch([1 (xmax-xmin)*2 (xmax-xmin)*2 1], [1 1 (ymax-ymin)*2 (ymax-ymin)*2], 'k'); % Patches a black background in front
@@ -688,23 +679,23 @@ if plotfigures == 1
     
     % SOFI super resolution image
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-    imagesc(sofiMap); axis image; title('SOFI super-resolution')
+    imagesc(sofiMapDeconSat); axis image; title('SOFI super-resolution')
     set(gca, 'xtick', [], 'ytick', []); colormap(gray)
     
     % Large SOFI super resolution image
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-    imagesc(crossSofiVirt); axis image; title('cross SOFI super-resolution')
+    imagesc(crossSofiMapSat); axis image; title('Cross SOFI super-resolution')
     set(gca, 'xtick', [], 'ytick', []); colormap(gray)
     
     % Large Decon SOFI super resolution image 
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-    imagesc(crossSofiVirtDecon); axis image; title('SOFI decon super-resolution')
+    imagesc(crossSofiMapDeconSat); axis image; title('Cross SOFI super-resolutionwith Decon')
     set(gca, 'xtick', [], 'ytick', []); colormap(gray)
     
     % fcsSOFI figure creation 
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
     fcsSofiPlot = imagesc(trimDmap2log); axis image; title('Combined fcsSOFI image')
-    fcsSofiPlot.AlphaData = sofiMap .* Dmap2logAlpha; % Uses the SOFI data as a transparency map
+    fcsSofiPlot.AlphaData = sofiMapDeconSat .* Dmap2logAlpha; % Uses the SOFI data as a transparency map
     colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(nm^2s^{-1}))';
     patch([1 xmax-xmin xmax-xmin 1], [1 1 ymax-ymin ymax-ymin], 'k'); % Patches a black background in front
     set(gca, 'children', flipud(get(gca, 'children'))); % Moves Black Background to back
@@ -712,8 +703,8 @@ if plotfigures == 1
     
     % Large fcsSOFI figure creation 
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-    fcsSofiPlot = imagesc(largTrimDmap2log); axis image; title('Combined cross fcsSOFI image')
-    fcsSofiPlot.AlphaData = crossSofiVirt .* largDmap2logAlpha; % Uses the SOFI data as a transparency map
+    fcsSofiPlot = imagesc(largTrimDmap2log); axis image; title('Combined Cross fcsSOFI image')
+    fcsSofiPlot.AlphaData = crossSofiMapSat .* largDmap2logAlpha; % Uses the SOFI data as a transparency map
     colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(nm^2s^{-1}))';
     patch([1 (xmax-xmin)*2 (xmax-xmin)*2 1], [1 1 (ymax-ymin)*2 (ymax-ymin)*2], 'k'); % Patches a black background in front
     set(gca, 'children', flipud(get(gca, 'children'))); % Moves Black Background to back
@@ -721,8 +712,8 @@ if plotfigures == 1
     
     % Large Decon fcsSOFI figure creation 
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-    fcsSofiPlot = imagesc(largTrimDmap2log); axis image; title('Combined cross decon fcsSOFI image')
-    fcsSofiPlot.AlphaData = crossSofiVirtDecon .* largDmap2logAlpha; % Uses the SOFI data as a transparency map
+    fcsSofiPlot = imagesc(largTrimDmap2log); axis image; title('Combined Cross fcsSOFI image with Decon')
+    fcsSofiPlot.AlphaData = crossSofiMapDeconSat .* largDmap2logAlpha; % Uses the SOFI data as a transparency map
     colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(nm^2s^{-1}))';
     patch([1 (xmax-xmin)*2 (xmax-xmin)*2 1], [1 1 (ymax-ymin)*2 (ymax-ymin)*2], 'k'); % Patches a black background in front
     set(gca, 'children', flipud(get(gca, 'children'))); % Moves Black Background to back
@@ -840,16 +831,8 @@ if savethedata == 1
     
     % The Variables to save
     date = datestr(now,'mm-dd-yyyy_HH-MM');
-    fit_curves = fitresult2;
-    fit_parameters = double(converged_parameters);
-    sofiMapMatrix = sofiMap;
-    DmapMatrix = Dmap;
-    Dmap_correctedMatrix = Dmap_corrected;
-    RsquareMapMatrix = R2map;
-    trimDmap2logMatrix = trimDmap2log;
-    D2_mapMatrix = NaN;
-    D2_mapCorrectedMatrix = NaN;
-    alphaMapMatrix = NaN;
+
+    converged_parameters = double(converged_parameters);
     
     folderNameStart = erase(fname, '.mat');
     folderName = strcat(folderNameStart, '_analyzed_', date);
@@ -861,25 +844,41 @@ if savethedata == 1
         case 3
             alphaMapMatrix = alphamap;
     end
+
+    if type ~= 2
+        D2map = NaN;
+        D2map_corrected = NaN;
+    end
+    
+    if type ~= 3
+        alphamap = NaN;
+    end
     
     % Creates file names
     figureFileName = strcat(folderName, '.fig');
     dataFileName = strcat(folderName, '.mat');
-    backFileName = strcat(folderName, '_BC.mat');
     mkdir(folderName);
     
     % Saves the figures and files
     savefig(figureArray, figureFileName);
-    save(dataFileName, 'fit_curves', 'fit_parameters', 'sofiMapMatrix', ...
-        'DmapMatrix', 'Dmap_correctedMatrix', 'RsquareMapMatrix', 'trimDmap2logMatrix', ...
-        'D2_mapMatrix', 'D2_mapCorrectedMatrix', 'alphaMapMatrix', '-v7.3');
-    save(backFileName, 'thrData', '-v7.3');
-    
+    save(dataFileName, 'fitresult2', 'converged_parameters', ...
+        'sofiMap', 'sofiMapDecon', 'crossSofiMap', 'crossSofiMapDecon', ...
+        'sofiMapSat', 'sofiMapDeconSat', 'crossSofiMapSat', 'crossSofiMapDeconSat',...
+        'Dmap', 'Dmap_corrected', 'R2map', 'trimDmap2log', ...
+        'Dmap2logAlpha', 'largTrimDmap2log', 'largDmap2logAlpha', ...
+        'satMax', 'crossSatMax', 'satMin', 'PSFsample', 'dT', 'customColorMap', ...
+        'D2map', 'D2map_corrected', 'alphamap', '-v7.3');
+
     % Moves the files into the folder created
     movefile(figureFileName, folderName);
     movefile(dataFileName, folderName);
-    movefile(backFileName, folderName);
-    
+
+    if ~useBCData
+        backFileName = strcat(folderName, '_BC.mat');
+        save(backFileName, 'thrData', '-v7.3');
+        movefile(backFileName, folderName);
+    end
+
 end   
 
 %% total computation time
