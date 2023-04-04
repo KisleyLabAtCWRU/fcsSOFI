@@ -1,3 +1,14 @@
+%% Info %%
+%{
+This is used to take already analyzed data from the fcsSOFI script
+and create new images based on the given sat values.
+Is much faster than re running the data all the way through.
+Must take the data file saved from the fcsSOFI script.
+
+THE FCSSOFI SCRIPT MUST NEEDS TO BE FROM 4/4/2023 OR LATER.
+If you ran your data on an older version of fcsSOFI it will not have to 
+varibalessaved need for this script.
+
 %% User Input %%
 
 % Load Saved Data
@@ -30,10 +41,10 @@ crossSofiMapSat(crossSofiMap > crossSatMax) = crossSatMax;
 crossSofiMapDeconSat(crossSofiMapDecon > crossSatMax) = crossSatMax;
 
 % Re Normalize
-sofiMapSat = sofiMapSat ./ (max(max(sofiMapSat))); % sofi no decon
-sofiMapDeconSat = sofiMapDeconSat ./ (max(max(sofiMapDeconSat))); % sofi decon
-crossSofiMapSat = crossSofiMapSat ./ (max(max(crossSofiMapSat))); % Cross sofi no decon
-crossSofiMapDeconSat = crossSofiMapDeconSat ./ (max(max(crossSofiMapDeconSat))); % Cross sofi decon
+sofiMapSat = rescale(sofiMapSat); % sofi no decon
+sofiMapDeconSat = rescale(sofiMapDeconSat); % sofi decon
+crossSofiMapSat = rescale(crossSofiMapSat); % Cross sofi no decon
+crossSofiMapDeconSat = rescale(crossSofiMapDeconSat); % Cross sofi decon
 
 
 %% Re Plot %%
