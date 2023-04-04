@@ -8,6 +8,7 @@ Must take the data file saved from the fcsSOFI script.
 THE FCSSOFI SCRIPT MUST NEEDS TO BE FROM 4/4/2023 OR LATER.
 If you ran your data on an older version of fcsSOFI it will not have to 
 varibalessaved need for this script.
+%}
 
 %% User Input %%
 
