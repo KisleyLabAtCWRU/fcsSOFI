@@ -1,12 +1,12 @@
 clear; close all hidden; clc;
 %% User Input
-startloc = '\\129.22.135.181\Test\Surajit\fcsSOFI-Surajit\fcsSOFI-master\0302323_analysis results 01272023\2000kdadestran_agarose_486fps_a1_m3_MMStack_Pos0.ome_Combined_BC_analyzed_01-29-2023_17-41';
+startloc = 'Your Start Location';
 
 % Diffusion coefficient parameters
 pixelsize = 0.109; % In nm (IX83); needed to accurately calculate D
 PSFsample = 3.5; % In pixel; based off of PSF from moving samples
 vPSFsample = PSFsample*2-1;
-dT = 0.002; % In s; needed to accurately calculate D
+dT = 0.002; % Time between frames in s; needed to accurately calculate D
 
 % Set PSF for deconvolution of sofi image
 sigma = (PSFsample / 2.355) / (2 ^ 0.5); % Standart deviation of PSF in pixels
@@ -62,14 +62,14 @@ doDecon = 1;
 
 % SOFI scaling
 satMin = 0;
-satMax = 0.1;
-crossSatMax = satMax + 0.2;
+satMax = 1;
+crossSatMax = satMax + 0;
 
 % Whether you are using a .tiff file (other option is a .mat file) (1 = yes, 0 = no)
-useTiffFile = 0;
+useTiffFile = 1;
 
 % Use already background subtracted data. Must be using a mat file if yes (1 = yes)
-useBCData = 1;
+useBCData = 0;
 
 % Use defualt color scheme (1 = yes)
 defualtColors = 1;
@@ -87,7 +87,7 @@ fprintf('Running...\n');
 addpath(strcat(pwd, '\gpufit\Debug\matlab'))
 addpath(strcat(pwd, '\fcsSOFI_external_functions'))
 
-%% Convert Tif to Mat
+%% Convert Tif to Mat / Load Data
 % Alows for ultiple files to be added together
 if useTiffFile
     
@@ -527,11 +527,11 @@ trimDmap2log(Dmap2log > diffusionMax) = diffusionMax;
 
 %% Set the limits of the SOFI image
 
-% Normalize
-sofiMap = sofiMap ./ (max(max(sofiMap))); % sofi no decon
-sofiMapDecon = sofiMapDecon ./ (max(max(sofiMapDecon))); % sofi decon
-crossSofiMap = crossSofiMap ./ (max(max(crossSofiMap))); % Cross sofi no decon
-crossSofiMapDecon = crossSofiMapDecon ./ (max(max(crossSofiMapDecon))); % Cross sofi decon
+% Normalize between [0 1]
+sofiMap = rescale(sofiMap); % sofi no decon
+sofiMapDecon = rescale(sofiMapDecon); % sofi decon
+crossSofiMap = rescale(crossSofiMap); % Cross sofi no decon
+crossSofiMapDecon = rescale(crossSofiMapDecon); % Cross sofi decon
 
 sofiMapSat = sofiMap;
 sofiMapDeconSat = sofiMapDecon;
@@ -550,11 +550,11 @@ sofiMapDeconSat(sofiMapDecon > satMax) = satMax;
 crossSofiMapSat(crossSofiMap > crossSatMax) = crossSatMax;
 crossSofiMapDeconSat(crossSofiMapDecon > crossSatMax) = crossSatMax;
 
-% Re Normalize
-sofiMapSat = sofiMapSat ./ (max(max(sofiMapSat))); % sofi no decon
-sofiMapDeconSat = sofiMapDeconSat ./ (max(max(sofiMapDeconSat))); % sofi decon
-crossSofiMapSat = crossSofiMapSat ./ (max(max(crossSofiMapSat))); % Cross sofi no decon
-crossSofiMapDeconSat = crossSofiMapDeconSat ./ (max(max(crossSofiMapDeconSat))); % Cross sofi decon
+% Re Normalize between [0 1]
+sofiMapSat = rescale(sofiMapSat); % sofi no decon
+sofiMapDeconSat = rescale(sofiMapDeconSat); % sofi decon
+crossSofiMapSat = rescale(crossSofiMapSat); % Cross sofi no decon
+crossSofiMapDeconSat = rescale(crossSofiMapDeconSat); % Cross sofi decon
 
 %% Creating Larger Images
 
