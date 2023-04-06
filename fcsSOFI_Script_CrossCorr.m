@@ -513,7 +513,7 @@ Dmap2logAlpha(R2map < R2cutoff) = 0;
 %R2 cutoff from D histogram; beads=0.95, 76kDa=0.8, 2000kDa=0.9, BSA=0.88
 R2cutoff = 0.95;
 DhighSOFIvaluesR2 = Dmap_corrected;
-DhighSOFIvaluesR2 = DhighSOFIvaluesR2(R2map < R2cutoff);
+DhighSOFIvaluesR2 = DhighSOFIvaluesR2(R2map > R2cutoff);
 
 % Used to keep track of figures to save
 figureNumber = 1; figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
