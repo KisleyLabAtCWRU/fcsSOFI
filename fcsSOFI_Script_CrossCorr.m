@@ -1,6 +1,6 @@
 clear; close all hidden; clc;
 %% User Input
-startloc = 'Your Start Location';
+startloc = '\\kisleylab1\test\BenjaminWellnitz\fcsSOFI Master';
 
 % Diffusion coefficient parameters
 pixelsize = 0.109; % In micro meters (IX83); needed to accurately calculate D
@@ -44,7 +44,7 @@ number_fits = 1000;
 plotfigures = 1;
 
 % Save data files? (1 = yes)
-savethedata = 1; 
+savethedata = 0; 
 
 % Optional example single pixel curve fit plot (1 = yes)
 examplecf = 1;
@@ -63,7 +63,7 @@ crossSatMax = satMax + 0;
 useTiffFile = 0;
 
 % Use already background subtracted data. Must be using a mat file if yes (1 = yes)
-useBCData = 1;
+useBCData = 0;
 
 % Use defualt color scheme (1 = yes)
 defualtColors = 1;
@@ -140,17 +140,20 @@ disp(timeOut);
 
 %% Background Subtraction
 
+thrData = Data; %will be the background subtracted dataset
+
+% Done inside the Localization Code. The threshold is computed while
+%   identifying particles in LRG_SuperRes_Particle_Identify_org
+%{
 % Start background subtration timer
 timeBack = tic;
-
-thrData = Data; %will be the background subtracted dataset
 
 % Background Subtraction
 if ~useBCData
     for i = 1:size(Data, 3) %i is the frame number
         Bkg = LRG_SuperRes_LocalThrMap(Data(:, :, i), true); %local background calcualted with LRG code
         thrData(:, :, i) = double(Data(:, :, i)) - double(Bkg); %background subtraction step
-        switch iframe
+        switch i
             case round(size(Data, 3) / 4)
                 disp('Background Subtraction 25% Complete')
             case round(2 * size(Data, 3) / 4)
@@ -166,6 +169,7 @@ end
 time = toc(timeBack);
 timeOut = ['Background Subtration Finished, Execution Time: ', num2str(floor(time / 60)), ' Minutes, ', num2str(mod(time, 60)), ' Seconds'];
 disp(timeOut);
+%}
 
 %% Localization (PFS Estimate)
 
@@ -173,14 +177,15 @@ disp(timeOut);
 timePSF = tic;
 
 % Localization for PFS estimate
-[thrData, locatStore] = RM_Main_LRGSuperRes_Function(thrData);
+[thrData, locatStore, Bkg] = RM_Main_LRGSuperRes_Function(thrData);
+thrData = double(thrData) - double(Bkg);
 sigma = AveragePSFperFrame(locatStore); % Standard Deviation of Guasian PSF in pixels
 vSigma = sigma * 2 - 1; % Standard Deviation of Guasian PSF after increased pixel count
 PSFsample = sigma * 2 * sqrt(2*log(2)); % FWHM of Guassian PSF
 
 % Display time for PFS Estimate
 time = toc(timePSF);
-timeOut = ['PSF Estimate Finished, Execution Time: ', num2str(floor(time / 60)), ' Minutes, ', num2str(mod(time, 60)), ' Seconds'];
+timeOut = ['PSF Estimate and Backgournd Subraction Finished, Execution Time: ', num2str(floor(time / 60)), ' Minutes, ', num2str(mod(time, 60)), ' Seconds'];
 disp(timeOut);
 
 %% %%%%%%%%%%%%%%%%%%%% STEP 1: blink_AConly (SOFI) %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -517,13 +522,47 @@ disp(timeOut);
 
 % start timer for fcsSOFI combination
 timeCombine = tic;
-    
-%% Diffusion map
+   
+
+%% Diffusion CDF Creation
+
+% R2 cutoff for D CDF and histogram; beads=0.95, 76kDa=0.8, 2000kDa=0.9, BSA=0.88
+R2cutoff = 0.95;
+DhighSOFIvaluesR2 = Dmap_corrected(R2 > R2cutoff);
+
+% Reshape Dmap data into a vector
+DhighSOFIvaluesR2 = unique(reshape(DhighSOFIvaluesR2, 1, []));
+TimeArray = unique(DhighSOFIvaluesR2); % All posible values of diffusion data
+
+% Produce Cumulative Distribution
+[DWellFinal, IndexFinal] = cumuldist(DhighSOFIvaluesR2, TimeArray);
+
+% Used to keep track of figures to save
+figureNumber = 1;
+%{
+% Plot Diffusion Data
+figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
+plot(1:numel(DhighSOFIvaluesR2), DhighSOFIvaluesR2);
+title('Diffusion Vector') 
+
+% Plot Probability Distribution
+figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
+histogram(DhighSOFIvaluesR2);
+title('Probability distribution')
+%}
+
+% Plot Cumulative Distribution
+figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
+plot(flipud(DWellFinal), IndexFinal, 'k.');
+title('Cumulative distribution')
+xlabel('Diffusion Coefficient (\mum^2s^{-1})')
+ylabel('Probability')
+
+
+%% Creatation of log(D) scale for plotting
 
 % Create log base Dmap
 Dmap2log = log10(Dmap_corrected); 
-
-
 Dmap2log(Dmap2log == -Inf) = 0;
 
 % Filter out poor fits if you want to here with an R2cutoff
@@ -532,15 +571,6 @@ Dmap2logAlpha = ones(size(Dmap2log, 1), size(Dmap2log, 2)); % Used For Plotting
 
 Dmap2log(R2map < R2cutoff) = NaN;
 Dmap2logAlpha(R2map < R2cutoff) = 0;
-
-%R2 cutoff from D histogram; beads=0.95, 76kDa=0.8, 2000kDa=0.9, BSA=0.88
-R2cutoff = 0.95;
-DhighSOFIvaluesR2 = Dmap_corrected;
-DhighSOFIvaluesR2 = DhighSOFIvaluesR2(R2map > R2cutoff);
-
-% Used to keep track of figures to save
-figureNumber = 1; figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-histogram(reshape(DhighSOFIvaluesR2, 1, []))
 
 % Trims the RGB Diffusion map data to realistic values
 trimDmap2log = Dmap2log;
@@ -579,10 +609,10 @@ sofiMapDeconSat = rescale(sofiMapDeconSat); % sofi decon
 crossSofiMapSat = rescale(crossSofiMapSat); % Cross sofi no decon
 crossSofiMapDeconSat = rescale(crossSofiMapDeconSat); % Cross sofi decon
 
-%% Creating Larger Images
+%% Creating Larger DMap Images
 
-largTrimDmap2log = imresize(trimDmap2log(2: size(trimDmap2log, 1), 2:size(trimDmap2log, 2)), size(crossSofiMap), 'nearest');
-largDmap2logAlpha = imresize(Dmap2logAlpha(2: size(Dmap2logAlpha, 1), 2:size(Dmap2logAlpha, 2)), size(crossSofiMap), 'nearest');
+largTrimDmap2log = imresize(trimDmap2log(2:size(trimDmap2log, 1), 2:size(trimDmap2log, 2)), size(crossSofiMap), 'nearest');
+largDmap2logAlpha = imresize(Dmap2logAlpha(2:size(Dmap2logAlpha, 1), 2:size(Dmap2logAlpha, 2)), size(crossSofiMap), 'nearest');
 
 %% Finish the timer for image combination
 
@@ -903,6 +933,7 @@ if savethedata == 1
         'sofiMapSat', 'sofiMapDeconSat', 'crossSofiMapSat', 'crossSofiMapDeconSat',...
         'Dmap', 'Dmap_corrected', 'R2map', 'trimDmap2log', ...
         'Dmap2logAlpha', 'largTrimDmap2log', 'largDmap2logAlpha', ...
+        'DhighSOFIvaluesR2', 'TimeArray', ...
         'satMax', 'crossSatMax', 'satMin', 'PSFsample', 'dT', 'customColorMap', ...
         'D2map', 'D2map_corrected', 'alphamap', '-v7.3');
 

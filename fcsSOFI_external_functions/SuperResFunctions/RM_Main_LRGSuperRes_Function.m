@@ -1,7 +1,7 @@
 %% RM - LRG Super Res Main Run
 %Use LRG_SuperRes to identify particles over many
 %frames (bining)
-function [thrData, locatStore] = RM_Main_LRGSuperRes_Function(thrData)
+function [thrData, locatStore, Bkg] = RM_Main_LRGSuperRes_Function(thrData)
 
 % Not needed for function version
 %{ 
@@ -48,7 +48,7 @@ disp('All Files Selected')
 
 %% User Defined Parameters - Run section for 2D and 3D
 % General Parameters
-e.codedir='C:\Users\Kisleylab\Desktop\UsersTemp\RicardoMN\2022_06_02\'; 
+e.codedir='Your Path'; % Not needed for function version
 e.runsuperres='true'; % (true or false) false = find kinetics using diffraction limited data. true = find kinetics using superlocalized data
 e.startframe=1; % The first frame to analyze 
 e.stopframe=size(thrData, 3);% The last frame to analyze
@@ -100,8 +100,6 @@ e.CPstate=0; % program ID change point states (0) or # for user defined states (
 
 %% Run LRG_SuperRes 
 
-addpath(strcat(pwd,'\LRG_SuperRes_Kinetics_Final\RMN Codes'));
-
-[thrData, locatStore] = RM_LRG_SuperRes_Run(e, thrData);  
+[thrData, locatStore, Bkg] = RM_LRG_SuperRes_Run(e, thrData);  
 
 return
