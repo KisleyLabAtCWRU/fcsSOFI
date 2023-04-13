@@ -1,6 +1,6 @@
 clear; close all hidden; clc;
 %% User Input
-startloc = 'Your Start Location';
+startloc = '\\kisleylab1\test\BenjaminWellnitz\fcsSOFI Master';
 
 % Diffusion coefficient parameters
 pixelsize = 0.109; % In micro meters (IX83); needed to accurately calculate D
@@ -509,22 +509,22 @@ TimeArray = unique(DhighSOFIvaluesR2); % All posible values of diffusion data
 [DWellFinal, IndexFinal] = cumuldist(DhighSOFIvaluesR2, TimeArray);
 
 % Used to keep track of figures to save
-figureNumber = 1; figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
+figureNumber = 1;
 %{
 % Plot Diffusion Data
-subplot(1,3,1)
+figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
 plot(1:numel(DhighSOFIvaluesR2), DhighSOFIvaluesR2);
 title('Diffusion Vector') 
 
 % Plot Probability Distribution
-subplot(1, 3, 2)
+figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
 histogram(DhighSOFIvaluesR2);
 title('Probability distribution')
 %}
 
 % Plot Cumulative Distribution
-subplot(1, 3, 3)
-plot(flipud(DFinal), IndexFinal, 'k.');
+figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
+plot(flipud(DWellFinal), IndexFinal, 'k.');
 title('Cumulative distribution')
 xlabel('Diffusion Coefficient (\mum^2s^{-1})')
 ylabel('Probability')
@@ -905,6 +905,7 @@ if savethedata == 1
         'sofiMapSat', 'sofiMapDeconSat', 'crossSofiMapSat', 'crossSofiMapDeconSat',...
         'Dmap', 'Dmap_corrected', 'R2map', 'trimDmap2log', ...
         'Dmap2logAlpha', 'largTrimDmap2log', 'largDmap2logAlpha', ...
+        'DhighSOFIvaluesR2', 'TimeArray', ...
         'satMax', 'crossSatMax', 'satMin', 'PSFsample', 'dT', 'customColorMap', ...
         'D2map', 'D2map_corrected', 'alphamap', '-v7.3');
 
