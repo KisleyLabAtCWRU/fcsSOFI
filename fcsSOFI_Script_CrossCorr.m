@@ -1,6 +1,6 @@
 clear; close all hidden; clc;
 %% User Input
-startloc = 'Your Start Location';
+startloc = '\\kisleylab1\test\BenjaminWellnitz\fcsSOFI Master';
 
 % Diffusion coefficient parameters
 pixelsize = 0.109; % In micro meters (IX83); needed to accurately calculate D
@@ -18,11 +18,11 @@ framesLength = 40000;
 
 % Region of interest in pixels (of all files added together)
 ymin = 1;
-ymax = 100;
+ymax = 30;
 xmin = 1;
-xmax = 100;
+xmax = 30;
 tmin = 1; % Start frame
-tmax = 10000; % End frame
+tmax = 5000; % End frame
 
 % Choose type of diffusion (1 = Brownian, 2 = 2-Comp Brownian, 3 = Anomalous, ...
         ... 4 = Brownian 1 Comp with tau, 5 = 1-comp Brownian with tau and A, ...
@@ -50,7 +50,7 @@ number_fits = 1000;
 plotfigures = 1;
 
 % Save data files? (1 = yes)
-savethedata = 1; 
+savethedata = 0; 
 
 % Optional example single pixel curve fit plot (1 = yes)
 examplecf = 1;
@@ -69,7 +69,7 @@ crossSatMax = satMax + 0;
 useTiffFile = 0;
 
 % Use already background subtracted data. Must be using a mat file if yes (1 = yes)
-useBCData = 1;
+useBCData = 0;
 
 % Use defualt color scheme (1 = yes)
 defualtColors = 1;
@@ -495,12 +495,45 @@ disp(timeOut);
 % start timer for fcsSOFI combination
 timeCombine = tic;
     
-%% Diffusion map
+%% Diffusion CDF Creation
+
+% R2 cutoff for D CDF and histogram; beads=0.95, 76kDa=0.8, 2000kDa=0.9, BSA=0.88
+R2cutoff = 0.95;
+DhighSOFIvaluesR2 = Dmap_corrected(R2 > R2cutoff);
+
+% Reshape Dmap data into a vector
+DhighSOFIvaluesR2 = unique(reshape(DhighSOFIvaluesR2, 1, []));
+TimeArray = unique(DhighSOFIvaluesR2); % All posible values of diffusion data
+
+% Produce Cumulative Distribution
+[DWellFinal, IndexFinal] = cumuldist(DhighSOFIvaluesR2, TimeArray);
+
+% Used to keep track of figures to save
+figureNumber = 1;
+%{
+% Plot Diffusion Data
+figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
+plot(1:numel(DhighSOFIvaluesR2), DhighSOFIvaluesR2);
+title('Diffusion Vector') 
+
+% Plot Probability Distribution
+figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
+histogram(DhighSOFIvaluesR2);
+title('Probability distribution')
+%}
+
+% Plot Cumulative Distribution
+figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
+plot(flipud(DWellFinal), IndexFinal, 'k.');
+title('Cumulative distribution')
+xlabel('Diffusion Coefficient (\mum^2s^{-1})')
+ylabel('Probability')
+
+
+%% Creatation of log(D) scale for plotting
 
 % Create log base Dmap
 Dmap2log = log10(Dmap_corrected); 
-
-
 Dmap2log(Dmap2log == -Inf) = 0;
 
 % Filter out poor fits if you want to here with an R2cutoff
@@ -509,15 +542,6 @@ Dmap2logAlpha = ones(size(Dmap2log, 1), size(Dmap2log, 2)); % Used For Plotting
 
 Dmap2log(R2map < R2cutoff) = NaN;
 Dmap2logAlpha(R2map < R2cutoff) = 0;
-
-%R2 cutoff from D histogram; beads=0.95, 76kDa=0.8, 2000kDa=0.9, BSA=0.88
-R2cutoff = 0.95;
-DhighSOFIvaluesR2 = Dmap_corrected;
-DhighSOFIvaluesR2 = DhighSOFIvaluesR2(R2map > R2cutoff);
-
-% Used to keep track of figures to save
-figureNumber = 1; figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-histogram(reshape(DhighSOFIvaluesR2, 1, []))
 
 % Trims the RGB Diffusion map data to realistic values
 trimDmap2log = Dmap2log;
@@ -556,10 +580,11 @@ sofiMapDeconSat = rescale(sofiMapDeconSat); % sofi decon
 crossSofiMapSat = rescale(crossSofiMapSat); % Cross sofi no decon
 crossSofiMapDeconSat = rescale(crossSofiMapDeconSat); % Cross sofi decon
 
-%% Creating Larger Images
+%% Creating Larger Dmap Images
 
-largTrimDmap2log = imresize(trimDmap2log(2: size(trimDmap2log, 1), 2:size(trimDmap2log, 2)), size(crossSofiMap), 'nearest');
-largDmap2logAlpha = imresize(Dmap2logAlpha(2: size(Dmap2logAlpha, 1), 2:size(Dmap2logAlpha, 2)), size(crossSofiMap), 'nearest');
+% Need to fit D data ontop of SOFI data with extra pixels
+largTrimDmap2log = imresize(trimDmap2log(2:size(trimDmap2log, 1), 2:size(trimDmap2log, 2)), size(crossSofiMap), 'nearest');
+largDmap2logAlpha = imresize(Dmap2logAlpha(2:size(Dmap2logAlpha, 1), 2:size(Dmap2logAlpha, 2)), size(crossSofiMap), 'nearest');
 
 %% Finish the timer for image combination
 
@@ -880,6 +905,7 @@ if savethedata == 1
         'sofiMapSat', 'sofiMapDeconSat', 'crossSofiMapSat', 'crossSofiMapDeconSat',...
         'Dmap', 'Dmap_corrected', 'R2map', 'trimDmap2log', ...
         'Dmap2logAlpha', 'largTrimDmap2log', 'largDmap2logAlpha', ...
+        'DhighSOFIvaluesR2', 'TimeArray', ...
         'satMax', 'crossSatMax', 'satMin', 'PSFsample', 'dT', 'customColorMap', ...
         'D2map', 'D2map_corrected', 'alphamap', '-v7.3');
 
