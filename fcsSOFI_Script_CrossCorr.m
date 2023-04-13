@@ -3,10 +3,10 @@ clear; close all hidden; clc;
 startloc = 'Your Start Location';
 
 % Diffusion coefficient parameters
-pixelsize = 0.109; % In nm (IX83); needed to accurately calculate D
-PSFsample = 3.5; % In pixel; based off of PSF from moving samples
+pixelsize = 0.109; % In micro meters (IX83); needed to accurately calculate D
+PSFsample = 5; % In pixel; based off of PSF from moving samples
 vPSFsample = PSFsample*2-1;
-dT = 0.002; % Time between frames in s; needed to accurately calculate D
+dT = 0.005; % Time between frames in s; needed to accurately calculate D
 
 % Set PSF for deconvolution of sofi image
 sigma = (PSFsample / 2.355) / (2 ^ 0.5); % Standart deviation of PSF in pixels
@@ -17,12 +17,12 @@ numberFiles = 1;
 framesLength = 40000;
 
 % Region of interest in pixels (of all files added together)
-ymin = 1; 
+ymin = 1;
 ymax = 100;
 xmin = 1;
 xmax = 100;
 tmin = 1; % Start frame
-tmax = 40000; % End frame
+tmax = 10000; % End frame
 
 % Choose type of diffusion (1 = Brownian, 2 = 2-Comp Brownian, 3 = Anomalous, ...
         ... 4 = Brownian 1 Comp with tau, 5 = 1-comp Brownian with tau and A, ...
@@ -40,7 +40,7 @@ alpha_max = 1.2; % Maximum value of alpha allowed to appear on alpha map
 alpha_min = 0;
 
 % Set the limits which the diffsion data will be trimmed to
-diffusionMin = 0; 
+diffusionMin = -Inf; 
 diffusionMax = Inf;
 
 % Number of fit iterations per pixel
@@ -66,10 +66,10 @@ satMax = 1;
 crossSatMax = satMax + 0;
 
 % Whether you are using a .tiff file (other option is a .mat file) (1 = yes, 0 = no)
-useTiffFile = 1;
+useTiffFile = 0;
 
 % Use already background subtracted data. Must be using a mat file if yes (1 = yes)
-useBCData = 0;
+useBCData = 1;
 
 % Use defualt color scheme (1 = yes)
 defualtColors = 1;
@@ -663,7 +663,7 @@ if plotfigures == 1
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
     DFigure = imagesc(trimDmap2log); axis image; title('FCS: log(D)')
     DFigure.AlphaData = Dmap2logAlpha; colormap(customColorMap);
-    c = colorbar; c.Label.String = 'log(D/(nm^2s^{-1}))';
+    c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
     patch([0 xmax-xmin+1 xmax-xmin+1 0], [0 0 ymax-ymin+1 ymax-ymin+1], 'k'); % Patches a black background in front
     set(gca, 'children', flipud(get(gca, 'children'))); % Moves Black Background to back
     set(gca, 'FontSize', 14); set(gca, 'xtick', [], 'ytick', []) % Removes axis tick marks
@@ -672,14 +672,19 @@ if plotfigures == 1
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
     DFigure = imagesc(largTrimDmap2log); axis image; title('Cross FCS: log(D)')
     DFigure.AlphaData = largDmap2logAlpha; colormap(customColorMap);
-    c = colorbar; c.Label.String = 'log(D/(nm^2s^{-1}))';
+    c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
     patch([1 (xmax-xmin)*2 (xmax-xmin)*2 1], [1 1 (ymax-ymin)*2 (ymax-ymin)*2], 'k'); % Patches a black background in front
     set(gca, 'children', flipud(get(gca, 'children'))); % Moves Black Background to back
     set(gca, 'FontSize', 14); set(gca, 'xtick', [], 'ytick', []) % Removes axis tick marks
     
     % SOFI super resolution image
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-    imagesc(sofiMapDeconSat); axis image; title('SOFI super-resolution')
+    imagesc(sofiMapSat); axis image; title('SOFI super-resolution')
+    set(gca, 'xtick', [], 'ytick', []); colormap(gray)
+
+    % Decon SOFI super resolution image
+    figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
+    imagesc(sofiMapDeconSat); axis image; title('SOFI super-resolution with Decon')
     set(gca, 'xtick', [], 'ytick', []); colormap(gray)
     
     % Large SOFI super resolution image
@@ -689,14 +694,23 @@ if plotfigures == 1
     
     % Large Decon SOFI super resolution image 
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-    imagesc(crossSofiMapDeconSat); axis image; title('Cross SOFI super-resolutionwith Decon')
+    imagesc(crossSofiMapDeconSat); axis image; title('Cross SOFI super-resolution with Decon')
     set(gca, 'xtick', [], 'ytick', []); colormap(gray)
     
     % fcsSOFI figure creation 
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
     fcsSofiPlot = imagesc(trimDmap2log); axis image; title('Combined fcsSOFI image')
     fcsSofiPlot.AlphaData = sofiMapDeconSat .* Dmap2logAlpha; % Uses the SOFI data as a transparency map
-    colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(nm^2s^{-1}))';
+    colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
+    patch([1 xmax-xmin xmax-xmin 1], [1 1 ymax-ymin ymax-ymin], 'k'); % Patches a black background in front
+    set(gca, 'children', flipud(get(gca, 'children'))); % Moves Black Background to back
+    set(gca, 'FontSize', 14); set(gca,'xtick',[],'ytick',[])
+
+    % Decon fcsSOFI figure creation
+    figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
+    fcsSofiPlot = imagesc(trimDmap2log); axis image; title('Combined fcsSOFI image with Decon')
+    fcsSofiPlot.AlphaData = sofiMapSat .* Dmap2logAlpha; % Uses the SOFI data as a transparency map
+    colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
     patch([1 xmax-xmin xmax-xmin 1], [1 1 ymax-ymin ymax-ymin], 'k'); % Patches a black background in front
     set(gca, 'children', flipud(get(gca, 'children'))); % Moves Black Background to back
     set(gca, 'FontSize', 14); set(gca,'xtick',[],'ytick',[])
@@ -705,7 +719,7 @@ if plotfigures == 1
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
     fcsSofiPlot = imagesc(largTrimDmap2log); axis image; title('Combined Cross fcsSOFI image')
     fcsSofiPlot.AlphaData = crossSofiMapSat .* largDmap2logAlpha; % Uses the SOFI data as a transparency map
-    colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(nm^2s^{-1}))';
+    colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
     patch([1 (xmax-xmin)*2 (xmax-xmin)*2 1], [1 1 (ymax-ymin)*2 (ymax-ymin)*2], 'k'); % Patches a black background in front
     set(gca, 'children', flipud(get(gca, 'children'))); % Moves Black Background to back
     set(gca, 'FontSize', 14); set(gca,'xtick',[],'ytick',[])
@@ -714,7 +728,7 @@ if plotfigures == 1
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
     fcsSofiPlot = imagesc(largTrimDmap2log); axis image; title('Combined Cross fcsSOFI image with Decon')
     fcsSofiPlot.AlphaData = crossSofiMapDeconSat .* largDmap2logAlpha; % Uses the SOFI data as a transparency map
-    colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(nm^2s^{-1}))';
+    colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
     patch([1 (xmax-xmin)*2 (xmax-xmin)*2 1], [1 1 (ymax-ymin)*2 (ymax-ymin)*2], 'k'); % Patches a black background in front
     set(gca, 'children', flipud(get(gca, 'children'))); % Moves Black Background to back
     set(gca, 'FontSize', 14); set(gca,'xtick',[],'ytick',[])

@@ -3,7 +3,7 @@ clear; close all hidden; clc;
 startloc = 'Your Start Location';
 
 % Diffusion coefficient parameters
-pixelsize = 109; % In nm (IX83); needed to accurately calculate D
+pixelsize = 0.109; % In micro meters (IX83); needed to accurately calculate D
 PSFsample = 5; % In pixel; based off of PSF from moving samples
 dT = 0.005; % In s; needed to accurately calculate D
 
@@ -38,7 +38,7 @@ alpha_max = 1.2; % Maximum value of alpha allowed to appear on alpha map
 alpha_min = 0;
 
 % Set the limits which the diffsion data will be trimmed to
-diffusionMin = 0; 
+diffusionMin = -Inf; 
 diffusionMax = Inf;
 
 % Number of fit iterations per pixel
@@ -658,7 +658,7 @@ if plotfigures == 1
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
     DFigure = imagesc(trimDmap2log); axis image; title('FCS: log(D)')
     DFigure.AlphaData = Dmap2logAlpha; colormap(customColorMap);
-    c = colorbar; c.Label.String = 'log(D/(nm^2s^{-1}))';
+    c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
     patch([0 xmax-xmin+1 xmax-xmin+1 0], [0 0 ymax-ymin+1 ymax-ymin+1], 'k'); % Patches a black background in front
     set(gca, 'children', flipud(get(gca, 'children'))); % Moves Black Background to back
     set(gca, 'FontSize', 14); set(gca, 'xtick', [], 'ytick', []) % Removes axis tick marks
@@ -674,7 +674,7 @@ if plotfigures == 1
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
     fcsSofiPlot = imagesc(trimDmap2log); axis image; title('Combined fcsSOFI image')
     fcsSofiPlot.AlphaData = sofiMap .* Dmap2logAlpha; % Uses the SOFI data as a transparency map
-    colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(nm^2s^{-1}))';
+    colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
     patch([0 xmax-xmin+1 xmax-xmin+1 0], [0 0 ymax-ymin+1 ymax-ymin+1], 'k'); % Patches a black background in front
     set(gca, 'children', flipud(get(gca, 'children'))); % Moves Black Background to back
     set(gca, 'FontSize', 14); set(gca,'xtick',[],'ytick',[])
