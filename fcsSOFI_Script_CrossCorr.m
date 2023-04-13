@@ -4,17 +4,11 @@ startloc = 'Your Start Location';
 
 % Diffusion coefficient parameters
 pixelsize = 0.109; % In micro meters (IX83); needed to accurately calculate D
-PSFsample = 5; % In pixel; based off of PSF from moving samples
-vPSFsample = PSFsample*2-1;
 dT = 0.005; % Time between frames in s; needed to accurately calculate D
-
-% Set PSF for deconvolution of sofi image
-sigma = (PSFsample / 2.355) / (2 ^ 0.5); % Standart deviation of PSF in pixels
-vSigma = (vPSFsample / 2.355) / (2 ^ 0.5);
 
 % Number of files used together and length of each file
 numberFiles = 1;
-framesLength = 40000;
+framesLength = 40000; % Of each individual file
 
 % Region of interest in pixels (of all files added together)
 ymin = 1;
@@ -86,6 +80,7 @@ fprintf('Running...\n');
 %% Paths
 addpath(strcat(pwd, '\gpufit\Debug\matlab'))
 addpath(strcat(pwd, '\fcsSOFI_external_functions'))
+addpath(strcat(pwd, '\fcsSOFI_external_functions\SuperResFunctions'))
 
 %% Convert Tif to Mat / Load Data
 % Alows for ultiple files to be added together
@@ -117,6 +112,8 @@ if useTiffFile
     fname = strcat(filenm, '_Combined.mat');
     save(fname, 'Data', '-v7.3')
 
+    Data = Data(ymin:ymax, xmin:xmax, tmin:tmax);
+
 else % If data was already converted
     [fileName, path] = uigetfile(startloc, '*');
 
@@ -147,17 +144,43 @@ disp(timeOut);
 timeBack = tic;
 
 thrData = Data; %will be the background subtracted dataset
+
+% Background Subtraction
 if ~useBCData
     for i = 1:size(Data, 3) %i is the frame number
         Bkg = LRG_SuperRes_LocalThrMap(Data(:, :, i), true); %local background calcualted with LRG code
         thrData(:, :, i) = double(Data(:, :, i)) - double(Bkg); %background subtraction step
+        switch iframe
+            case round(size(Data, 3) / 4)
+                disp('Background Subtraction 25% Complete')
+            case round(2 * size(Data, 3) / 4)
+                disp('Background Subtraction 50% Complete')
+            case round(3 * size(Data, 3) / 4)
+                disp('Background Subtraction 75% Complete')
+        end
     end
+    disp('Background Subtraction 100% Complete')
 end
-DataCombined = thrData;
 
 % Display time for background subtration
 time = toc(timeBack);
 timeOut = ['Background Subtration Finished, Execution Time: ', num2str(floor(time / 60)), ' Minutes, ', num2str(mod(time, 60)), ' Seconds'];
+disp(timeOut);
+
+%% Localization (PFS Estimate)
+
+% Start PFS Estimate Timer
+timePSF = tic;
+
+% Localization for PFS estimate
+[thrData, locatStore] = RM_Main_LRGSuperRes_Function(thrData);
+sigma = AveragePSFperFrame(locatStore); % Standard Deviation of Guasian PSF in pixels
+vSigma = sigma * 2 - 1; % Standard Deviation of Guasian PSF after increased pixel count
+PSFsample = sigma * 2 * sqrt(2*log(2)); % FWHM of Guassian PSF
+
+% Display time for PFS Estimate
+time = toc(timePSF);
+timeOut = ['PSF Estimate Finished, Execution Time: ', num2str(floor(time / 60)), ' Minutes, ', num2str(mod(time, 60)), ' Seconds'];
 disp(timeOut);
 
 %% %%%%%%%%%%%%%%%%%%%% STEP 1: blink_AConly (SOFI) %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -167,8 +190,8 @@ timeSofi = tic;
 
 %% start code and setup data 
 
-% Set ROI
-DataCombined = DataCombined(ymin:ymax, xmin:xmax, tmin:tmax);
+% Copy Data Set
+DataCombined = thrData;
 
 % Produce average image
 avgimage = sum(DataCombined(:, :, :), 3) ./ size(DataCombined, 3);
@@ -249,7 +272,7 @@ AC_all(1, 1).curves = AC_XC_all_save;
 for i = 1:numel(AC_all(1, 1).curves)
         % add raw AC curves
     ACadd(1, :) = AC_all(1, 1).curves(1, i).Order2;
-    AC_avg(1, i).curves = mean(ACadd, 1);   
+    AC_avg(1, i).curves = mean(ACadd, 1);
 end
 
 %% log bin the averaged data
