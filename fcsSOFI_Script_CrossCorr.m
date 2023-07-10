@@ -6,7 +6,7 @@ startloc = '\\kisleylab1\test\BenjaminWellnitz\fcsSOFI Master';
 pixelsize = 0.109; % In micro meters (IX83); needed to accurately calculate D
 PSFsample = 5; % In pixel; based off of PSF from moving samples
 vPSFsample = PSFsample*2-1;
-dT = 0.005; % Time between frames in s; needed to accurately calculate D
+dT = 0.002; % Time between frames in s; needed to accurately calculate D
 
 % Set PSF for deconvolution of sofi image
 sigma = (PSFsample / 2.355) / (2 ^ 0.5); % Standart deviation of PSF in pixels
@@ -18,11 +18,11 @@ framesLength = 40000;
 
 % Region of interest in pixels (of all files added together)
 ymin = 1;
-ymax = 30;
+ymax = 100;
 xmin = 1;
-xmax = 30;
+xmax = 100;
 tmin = 1; % Start frame
-tmax = 5000; % End frame
+tmax = 40000; % End frame
 
 % Choose type of diffusion (1 = Brownian, 2 = 2-Comp Brownian, 3 = Anomalous, ...
         ... 4 = Brownian 1 Comp with tau, 5 = 1-comp Brownian with tau and A, ...
@@ -69,7 +69,7 @@ crossSatMax = satMax + 0;
 useTiffFile = 0;
 
 % Use already background subtracted data. Must be using a mat file if yes (1 = yes)
-useBCData = 0;
+useBCData = 1;
 
 % Use defualt color scheme (1 = yes)
 defualtColors = 1;
@@ -186,7 +186,7 @@ end
 
 %% Calculate the correlation (2-4th orders, AC and XC)
 [ACXC_all] = CalcCorr(innerpts, DataVector); %calculate
-[crossSofiMap] = crossSofi(thrData, 0);
+[crossSofiMap, XC3, XC2Corrected, sigma] = crossSofi(thrData);
 
 %% Calculate intensity for images by different methods     
 AC_G2 = zeros(1, numel(ACXC_all));
