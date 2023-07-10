@@ -85,7 +85,7 @@ fprintf('Running...\n');
 
 %% Paths
 addpath(strcat(pwd, '\gpufit\Debug\matlab'))
-addpath(strcat(pwd, '\fcsSOFI_external_functions'))
+addpath(genpath(strcat(pwd, '\fcsSOFI_external_functions')))
 
 %% Convert Tif to Mat / Load Data
 % Alows for ultiple files to be added together
