@@ -40,10 +40,11 @@ np = 375;    % Number of Particles
 detectRange = round([-200, 0] ./ pixelSize); % Detection range in nm of microscope [low, high]
 
 % PSF information
-stdGauss = 2.5; %sigma of simulated Gaussian PSF in pixels
-int_part = 150/50*3; %intensity of the PSF; taken from shot noise, Poisson rand
+stdGauss = 2.5; % sigma of simulated Gaussian PSF in pixels
+int_part = 150/50*3; % intensity of the PSF; taken from shot noise, Poisson rand
 bg = 140/50*3*1.25; % max bg of image; bg/2 is average value (read noise)
 sbr=int_part/(bg/2);
+SNR = int_part / sqrt((int_part + ((2*bg)^2)/12)); % Signal to Noise (mean / std)
 
 % %%% Diffusion parameters %%% %
 % Brownian parameters
@@ -118,14 +119,14 @@ for particle = 1:np
                 
         % Levy flight
         elseif type == 1
-            stepSize = abs(sqrt(2*D*dT)*((1/randn(1, 3)).^(-1/alpha)))./pixelSize;
+            stepSize = abs(sqrt(2*D*dT)*((1/randn(extraSteps, 3)).^(-1/alpha)))./pixelSize;
 
         % Two-component brownian
         elseif type == 2
             if particle <= P1*np
-                stepSize = abs(sqrt(2*D1*dT)*randn(1, 3))./pixelSize;
+                stepSize = abs(sqrt(2*D1*dT)*randn(extraSteps, 3))./pixelSize;
             else
-                stepSize = abs(sqrt(2*D2*dT)*randn(1, 3))./pixelSize;
+                stepSize = abs(sqrt(2*D2*dT)*randn(extraSteps, 3))./pixelSize;
             end
         end
         
@@ -252,22 +253,22 @@ for frame = 1:nFrames
         xUpLim = xloc + gaussR;
 
         % Check if particle is near edge and adjust gaussian to stay in bounds
-        if (yloc < minCords(1) + gaussR) % Close to top
+        if (yloc < minCords(1) + gaussR) % To Close to top
             gauss{particle}(1:gaussR-yloc+1, :) = [];
             yLowLim = minCords(1);
         end
 
-        if (yloc > maxCords(1) - gaussR) % Close to bottom
+        if (yloc > maxCords(1) - gaussR) % To Close to bottom
             gauss{particle}(2+gaussR+maxCords(1)-yloc:2*gaussR+1, :) = [];
             yUpLim = maxCords(1);
         end
 
-        if (xloc < minCords(2) + gaussR) % Close to left
+        if (xloc < minCords(2) + gaussR) % To Close to left
             gauss{particle}(:, 1:gaussR-xloc+1) = [];
             xLowLim = minCords(2);
         end
 
-        if (xloc > maxCords(2) - gaussR) % Close to right
+        if (xloc > maxCords(2) - gaussR) % To Close to right
             gauss{particle}(:, 2+gaussR+maxCords(2)-xloc:2*gaussR+1) = [];
             xUpLim = maxCords(2);
         end
