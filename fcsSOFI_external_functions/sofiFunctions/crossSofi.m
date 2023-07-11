@@ -21,6 +21,7 @@ tau = [1, 4, 6]; % Chosen Time Shifts
 data = double(data);
 average = mean(data,3);
 delta = data - average;
+
 i = 2:height-1;
 j = 2:width-1;
 t = 1:(nframes-max(tau));
@@ -28,11 +29,11 @@ clear data
 
 %% Cross Correlation Calculations
 % Second Order
-AC2 = abs(mean(delta(i,j,t) .* delta(i,j,t+tau(1)), 3));
-XC2Vertical = abs(mean(delta(i,j,t) .* delta(i+1,j,t+tau(1)), 3));
-XC2Horizontal = abs(mean(delta(i,j,t) .* delta(i,j+1,t+tau(1)), 3));
-XC2Diagonal1 = abs(mean(delta(i,j,t) .* delta(i+1,j+1,t+tau(1)), 3));
-XC2Diagonal2 = abs(mean(delta(i+1,j,t) .* delta(i,j+1,t+tau(1)), 3));
+AC2 = abs(mean(delta(i,j,t) .* delta(i,j,t), 3));
+XC2Vertical = abs(mean(delta(i,j,t) .* delta(i+1,j,t), 3));
+XC2Horizontal = abs(mean(delta(i,j,t) .* delta(i,j+1,t), 3));
+XC2Diagonal1 = abs(mean(delta(i,j,t) .* delta(i+1,j+1,t), 3));
+XC2Diagonal2 = abs(mean(delta(i+1,j,t) .* delta(i,j+1,t), 3));
 XC2Diagonal = (XC2Diagonal1 + XC2Diagonal2) / 2;
 
 % Create XC2 matrix from XC2 claculations
@@ -42,14 +43,20 @@ XC2(2:2:end, 1:2:end) = XC2Vertical(1:end-1, :);
 XC2(1:2:end, 2:2:end) = XC2Horizontal(:, 1:end-1);  
 XC2(2:2:end, 2:2:end) = XC2Diagonal(1:end-1, 1:end-1);
 
-XC2Corrected = XC2;
-XC2Corrected(1:2:end, 1:2:end) = XC2(1:2:end, 1:2:end) + average(i, j).^2;
-XC2Corrected(2:2:end, 1:2:end) = XC2(2:2:end, 1:2:end) + average(2:end-1, 2:end-1) .* average(3:end-2, 2:end-2);
-XC2Corrected(1:2:end, 2:2:end) = XC2(1:2:end, 2:2:end) + average(2:end-1, 2:end-1) .* average(2:end-2, 3:end-2);
-diagCorrection = (average(1:end-1, 1:end-1) .* average(2:end, 2:end) + average(2:end, 1:end-1) .* average(1:end-1, 2:end)) ./2;
-XC2Corrected(2:2:end, 2:2:end) = XC2(2:2:end, 2:2:end) + diagCorrection;
+% Diffusion Corrections
+origCorrection = average(i, j).^2; 
+vertCorrection = average(i, j) .* average(i+1, j);
+horiCorrection = average(i, j) .* average(i, j+1); 
+diagCorrection = (average(i,j) .* average(i+1,j+1) + average(i+1, j) .* average(i, j+1)) ./ 2;
 
-clear XC2Vertical XC2Horizontal XC2Diagonal1 XC2Diagonal2 XC2Diagonal diagCorrection
+XC2Corrected = zeros(2*(height-2)-1, 2*(width-2)-1);
+XC2Corrected(1:2:end, 1:2:end) = AC2 + origCorrection;
+XC2Corrected(2:2:end, 1:2:end) = XC2Vertical(1:end-1, :) + vertCorrection(1:end-1, :);
+XC2Corrected(1:2:end, 2:2:end) = XC2Horizontal(:, 1:end-1) + horiCorrection(:, 1:end-1);
+XC2Corrected(2:2:end, 2:2:end) = XC2Diagonal(1:end-1, 1:end-1) + diagCorrection(1:end-1, 1:end-1);
+
+clear XC2Vertical XC2Horizontal XC2Diagonal1 XC2Diagonal2 XC2Diagonal
+clear origCorrection vertCorrection horiCorrection diagCorrection
 
 % Third Order
 for k = 1:size(tau,1)
@@ -88,7 +95,7 @@ averageBlur = mat2gray(averageBlur);
 filterGradient = bwconvhull(abs(gradient(averageBlur)) > 0.01, 'objects');
 filterIntensity = (averageBlur > 0.25 & averageBlur < 0.9);
 filter = logical(filterGradient .* filterIntensity);
-filter = filter(2:height-1, 2:width-1);
+filter = filter(i, j);
 
 % Extra Cross Corrilations
 XC2Vert = abs(mean(delta(i-1,j,t) .* delta(i+1,j,t+tau(1)), 3));
