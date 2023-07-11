@@ -24,7 +24,7 @@ data = double(data);
 %% SOFI Calculations
 average = mean(data, 3);
 [AC2, AC3, AC4, AG4, AC2Corrected, AC3Corrected, AC4Corrected] = autoSofi(data);
-[XC2, XC3, sigma] = crossSofi(data);
+[XC2, XC3, XC2Corrected, sigma] = crossSofi(data);
 [deconAC, deconXC, deconAvg] = decon(average, {AC2, AC3, AC4}, {XC2, XC3}, sigma);
 
 truthSat = satAdj(truth, 0, 0.05);
@@ -323,7 +323,7 @@ if oneRun
     axis image
 
     subplot(2, 1, 2)
-    imagesc(AX2Corrected)
+    imagesc(XC2Corrected)
     colormap(gray)
     title("AX2 Corrected")
     axis image
