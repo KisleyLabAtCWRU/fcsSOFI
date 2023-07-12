@@ -81,7 +81,6 @@ XC3(3:3:end,3:3:end) = XC3Diagonal2(1:end-1,1:end-1);
 XC3(2:3:end,3:3:end) = XC3Diagonal3(1:end-1,1:end-1);
 XC3(3:3:end,2:3:end) = XC3Diagonal4(1:end-1,1:end-1);
 
-fprintf('Finished.\n');
 clear AC3 XC3Horizontal1 XC3Horizontal2...
     XC3Vertical1 XC3Vertical2 XC3Diagonal1...
     XC3Diagonal2 XC3Diagonal3 XC3Diagonal4;
