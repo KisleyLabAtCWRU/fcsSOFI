@@ -92,28 +92,28 @@ The CXX compiler identification is MSVC, found in "F:/Homework/Physics/KisleyLab
 Detecting C compiler ABI info compiled with the following output:
 Change Dir: F:/Homework/Physics/KisleyLab/BUILD/gpufit/CMakeFiles/CMakeTmp
 
-Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/MSBuild/Current/Bin/MSBuild.exe cmTC_cbbee.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=16.0 /v:m && Microsoft (R) Build Engine version 16.7.0+b89cb5fde for .NET Framework
-Copyright (C) Microsoft Corporation. All rights reserved.
-
-  Microsoft (R) C/C++ Optimizing Compiler Version 19.27.29110 for x64
-  CMakeCCompilerABI.c
-  Copyright (C) Microsoft Corporation.  All rights reserved.
-  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_cbbee.dir\Debug\\" /Fd"cmTC_cbbee.dir\Debug\vc142.pdb" /Gd /TC /errorReport:queue "F:\Homework\Physics\KisleyLab\cmake-3.18.1-win64-x64\share\cmake-3.18\Modules\CMakeCCompilerABI.c"
-  cmTC_cbbee.vcxproj -> F:\Homework\Physics\KisleyLab\BUILD\gpufit\CMakeFiles\CMakeTmp\Debug\cmTC_cbbee.exe
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/MSBuild/Current/Bin/MSBuild.exe cmTC_cbbee.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=16.0 /v:m && Microsoft (R) Build Engine version 16.7.0+b89cb5fde for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.27.29110 for x64
+  CMakeCCompilerABI.c
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_cbbee.dir\Debug\\" /Fd"cmTC_cbbee.dir\Debug\vc142.pdb" /Gd /TC /errorReport:queue "F:\Homework\Physics\KisleyLab\cmake-3.18.1-win64-x64\share\cmake-3.18\Modules\CMakeCCompilerABI.c"
+  cmTC_cbbee.vcxproj -> F:\Homework\Physics\KisleyLab\BUILD\gpufit\CMakeFiles\CMakeTmp\Debug\cmTC_cbbee.exe
 
 
 
 Detecting CXX compiler ABI info compiled with the following output:
 Change Dir: F:/Homework/Physics/KisleyLab/BUILD/gpufit/CMakeFiles/CMakeTmp
 
-Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/MSBuild/Current/Bin/MSBuild.exe cmTC_588a2.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=16.0 /v:m && Microsoft (R) Build Engine version 16.7.0+b89cb5fde for .NET Framework
-Copyright (C) Microsoft Corporation. All rights reserved.
-
-  Microsoft (R) C/C++ Optimizing Compiler Version 19.27.29110 for x64
-  CMakeCXXCompilerABI.cpp
-  Copyright (C) Microsoft Corporation.  All rights reserved.
-  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_588a2.dir\Debug\\" /Fd"cmTC_588a2.dir\Debug\vc142.pdb" /Gd /TP /errorReport:queue "F:\Homework\Physics\KisleyLab\cmake-3.18.1-win64-x64\share\cmake-3.18\Modules\CMakeCXXCompilerABI.cpp"
-  cmTC_588a2.vcxproj -> F:\Homework\Physics\KisleyLab\BUILD\gpufit\CMakeFiles\CMakeTmp\Debug\cmTC_588a2.exe
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/MSBuild/Current/Bin/MSBuild.exe cmTC_588a2.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=16.0 /v:m && Microsoft (R) Build Engine version 16.7.0+b89cb5fde for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.27.29110 for x64
+  CMakeCXXCompilerABI.cpp
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_588a2.dir\Debug\\" /Fd"cmTC_588a2.dir\Debug\vc142.pdb" /Gd /TP /errorReport:queue "F:\Homework\Physics\KisleyLab\cmake-3.18.1-win64-x64\share\cmake-3.18\Modules\CMakeCXXCompilerABI.cpp"
+  cmTC_588a2.vcxproj -> F:\Homework\Physics\KisleyLab\BUILD\gpufit\CMakeFiles\CMakeTmp\Debug\cmTC_588a2.exe
 
 
 

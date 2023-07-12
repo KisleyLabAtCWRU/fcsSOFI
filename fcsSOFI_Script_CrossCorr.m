@@ -14,7 +14,7 @@ vSigma = (vPSFsample / 2.355) / (2 ^ 0.5);
 
 % Number of files used together and length of each file
 numberFiles = 1;
-framesLength = 40000;
+framesLength = 10000;
 
 % Region of interest in pixels (of all files added together)
 ymin = 1;
@@ -22,7 +22,7 @@ ymax = 100;
 xmin = 1;
 xmax = 100;
 tmin = 1; % Start frame
-tmax = 40000; % End frame
+tmax = 10000; % End frame
 
 % Choose type of diffusion (1 = Brownian, 2 = 2-Comp Brownian, 3 = Anomalous, ...
         ... 4 = Brownian 1 Comp with tau, 5 = 1-comp Brownian with tau and A, ...
@@ -50,7 +50,7 @@ number_fits = 1000;
 plotfigures = 1;
 
 % Save data files? (1 = yes)
-savethedata = 0; 
+savethedata = 1; 
 
 % Optional example single pixel curve fit plot (1 = yes)
 examplecf = 1;
@@ -66,10 +66,10 @@ satMax = 1;
 crossSatMax = satMax + 0;
 
 % Whether you are using a .tiff file (other option is a .mat file) (1 = yes, 0 = no)
-useTiffFile = 0;
+useTiffFile = 1;
 
 % Use already background subtracted data. Must be using a mat file if yes (1 = yes)
-useBCData = 1;
+useBCData = 0;
 
 % Use defualt color scheme (1 = yes)
 defualtColors = 1;
@@ -216,8 +216,14 @@ PSF = gauss1(45:65, 45:65); % Only use the center where the PSF is located at
 vPSF = vGauss1(45:65, 45:65);
 
 if doDecon
+    [deconAC, deconXC, deconAvg] = decon(avgim, {sofiMap}, {crossSofiMap}, sigma);
+    sofiMapDecon = deconAC{1};
+    crossSofiMapDecon = deconXC{1};
+    % Old Implimentation
+    %{
     sofiMapDecon = deconvlucy(sofiMap, PSF); % Based on Geissbuehler bSOFI paper
     crossSofiMapDecon = deconvlucy(crossSofiMap, vPSF);
+    %}
 else
     sofiMapDecon = sofiMap;
     crossSofiMapDecon = crossSofiMap;
@@ -399,7 +405,7 @@ for i = 1:size(AC_logbin, 1)
     tauD(i) = model_coefs(n(1)); % in in seconds
     
     % diffusion coefficient
-    w = pixelsize * PSFsample;
+    w = pixelsize * sigma * 2.355; % Use PSFsample instead if you know the full width half mast;
     D(i) = (w .^ 2) / (4 * tauD(i)); %in nm^2/s
     
     % second diffusion coefficient if using 2-component model
@@ -490,6 +496,7 @@ time = toc(timeFcs);
 timeOut = ['FCS Complete, Execution Time: ', num2str(floor(time / 60)), ' Minutes, ', num2str(mod(time, 60)), ' Seconds'];
 disp(timeOut);
 
+
 %% %%%%%%%%%%%%%%%%%%%% STEP 3: CombineTempSpat (fcsSOFI) %%%%%%%%%%%%%%%%%%%%%%%%%
 
 % start timer for fcsSOFI combination
@@ -562,7 +569,6 @@ sofiMapDeconSat = sofiMapDecon;
 crossSofiMapSat = crossSofiMap;
 crossSofiMapDeconSat = crossSofiMapDecon;
 
-
 % Adjust with sat max/min
 sofiMapSat(sofiMap < satMin) = satMin;
 sofiMapDeconSat(sofiMapDecon < satMin) = satMin;
@@ -579,6 +585,7 @@ sofiMapSat = rescale(sofiMapSat); % sofi no decon
 sofiMapDeconSat = rescale(sofiMapDeconSat); % sofi decon
 crossSofiMapSat = rescale(crossSofiMapSat); % Cross sofi no decon
 crossSofiMapDeconSat = rescale(crossSofiMapDeconSat); % Cross sofi decon
+
 
 %% Creating Larger Dmap Images
 
@@ -875,14 +882,6 @@ if savethedata == 1
     
     folderNameStart = erase(fname, '.mat');
     folderName = strcat(folderNameStart, '_analyzed_', date);
-    
-    switch type
-        case 2
-            D2_mapMatrix = D2map;
-            D2_map_correctedMatrix = D2map_corrected;
-        case 3
-            alphaMapMatrix = alphamap;
-    end
 
     if type ~= 2
         D2map = NaN;
