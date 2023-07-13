@@ -23,7 +23,7 @@ data = double(data);
 
 %% SOFI Calculations
 average = mean(data, 3);
-[AC2, AC3, AC4, AG4, AC2Corrected, AC3Corrected, AC4Corrected] = autoSofi(data);
+[AC2, AC3, AC4, AG4, AC2Corrected, AC3Corrected, AG4Corrected] = autoSofi(data);
 [XC2, XC3, XC2Corrected, sigma] = crossSofi(data);
 [deconAC, deconXC, deconAvg] = decon(average, {AC2, AC3, AC4}, {XC2, XC3}, sigma);
 
@@ -195,7 +195,7 @@ if oneRun
     AC4Line = mean(AC4, 1);
     AC2CorrectLine = mean(AC2Corrected, 1);
     AC3CorrectLine = mean(AC3Corrected, 1);
-    AC4CorrectLine = mean(AC4Corrected, 1);
+    AG4CorrectLine = mean(AG4Corrected, 1);
     avgLine = mean(average, 1);
 
     deconXC2Line = mean(deconXC{1}, 1);
@@ -240,7 +240,7 @@ if oneRun
     plot(posArrayAC, AC4Line ./ max(AC4Line), '-b.', 'DisplayName', 'AC4')
     plot(posArrayAC, AC2CorrectLine ./ max(AC2CorrectLine), '--g.', 'DisplayName', 'AC2 Corrected')
     plot(posArrayAC, AC3CorrectLine ./ max(AC3CorrectLine), '--r.', 'DisplayName', 'AC3 Corrected')
-    plot(posArrayAC, AC4CorrectLine ./ max(AC4CorrectLine), '--b.', 'DisplayName', 'AC4 Corrected')
+    plot(posArrayAC, AG4CorrectLine ./ max(AG4CorrectLine), '--b.', 'DisplayName', 'AC4 Corrected')
     legend
     title('Corrected AC SOFI Line Sections')
     hold off
@@ -308,7 +308,7 @@ if oneRun
     axis image
 
     subplot(2, 4, 7)
-    imagesc(AC4Corrected)
+    imagesc(AG4Corrected)
     colormap(gray)
     title("AG4 Corrected")
     axis image
