@@ -14,7 +14,7 @@ vSigma = (vPSFsample / 2.355) / (2 ^ 0.5);
 
 % Number of files used together and length of each file
 numberFiles = 1;
-framesLength = 10000;
+framesLength = 60000;
 
 % Region of interest in pixels (of all files added together)
 ymin = 1;
@@ -22,7 +22,7 @@ ymax = 100;
 xmin = 1;
 xmax = 100;
 tmin = 1; % Start frame
-tmax = 10000; % End frame
+tmax = 60000; % End frame
 
 % Choose type of diffusion (1 = Brownian, 2 = 2-Comp Brownian, 3 = Anomalous, ...
         ... 4 = Brownian 1 Comp with tau, 5 = 1-comp Brownian with tau and A, ...
@@ -68,6 +68,9 @@ crossSatMax = satMax + 0;
 % Whether you are using a .tiff file (other option is a .mat file) (1 = yes, 0 = no)
 useTiffFile = 1;
 
+% If using tiff file and using matlab 2021b or newer, tiffReadVolume is faster (1 = yes)
+tiffReadVol = 1;
+
 % Use already background subtracted data. Must be using a mat file if yes (1 = yes)
 useBCData = 0;
 
@@ -104,10 +107,10 @@ if useTiffFile
     timeStart = tic;
 
     % Read all the files
-    Data = TiffReadRM(fileNames{1, 1}, paths{1, 1}, 1, framesLength);
+    Data = tifRdFunc(fileNames{1, 1}, paths{1, 1}, framesLength, tiffReadVol);
     fprintf('Tiff file 1 loaded \n');
     for i = 2:numberFiles
-        Data = cat(3, Data, TiffReadRM(fileNames{1, i}, paths{1, i}, 1, framesLength));
+        Data = cat(3, Data, tifRdFunc(fileNames{1, 1}, paths{1, 1}, framesLength, tiffReadVol));
         fprintf('Tiff file %g loaded \n', i);
     end
     
