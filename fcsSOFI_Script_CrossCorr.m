@@ -69,7 +69,7 @@ crossSatMax = satMax + 0;
 useTiffFile = 1;
 
 % If using tiff file and using matlab 2021b or newer, tiffReadVolume is faster (1 = yes)
-tiffReadVol = 1;
+tiffReadVol = 0;
 
 % Use already background subtracted data. Must be using a mat file if yes (1 = yes)
 useBCData = 0;
