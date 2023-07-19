@@ -17,7 +17,7 @@ sz = size(data);
 height = sz(1);
 width = sz(2);
 nframes = sz(3);
-tau = [1, 4, 6]; % Chosen Time Shifts
+tau = [1, 2, 3]; % Chosen Time Shifts
 data = double(data);
 average = mean(data,3);
 delta = data - average;
@@ -29,11 +29,11 @@ clear data
 
 %% Cross Correlation Calculations
 % Second Order
-AC2 = abs(mean(delta(i,j,t) .* delta(i,j,t), 3));
-XC2Vertical = abs(mean(delta(i,j,t) .* delta(i+1,j,t), 3));
-XC2Horizontal = abs(mean(delta(i,j,t) .* delta(i,j+1,t), 3));
-XC2Diagonal1 = abs(mean(delta(i,j,t) .* delta(i+1,j+1,t), 3));
-XC2Diagonal2 = abs(mean(delta(i+1,j,t) .* delta(i,j+1,t), 3));
+AC2 = abs(mean(delta(i,j,t) .* delta(i,j,t+tau(1)), 3));
+XC2Vertical = abs(mean(delta(i,j,t) .* delta(i+1,j,t+tau(1)), 3));
+XC2Horizontal = abs(mean(delta(i,j,t) .* delta(i,j+1,t+tau(1)), 3));
+XC2Diagonal1 = abs(mean(delta(i,j,t) .* delta(i+1,j+1,t+tau(1)), 3));
+XC2Diagonal2 = abs(mean(delta(i+1,j,t) .* delta(i,j+1,t+tau(1)), 3));
 XC2Diagonal = (XC2Diagonal1 + XC2Diagonal2) / 2;
 
 % Create XC2 matrix from XC2 claculations
