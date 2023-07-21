@@ -183,10 +183,10 @@ if oneRun
     XC3 = padarray(XC3, [3, 3]);
     deconXC{1} = padarray(deconXC{1}, [2, 2]);
     deconXC{2} = padarray(deconXC{2}, [3, 3]);
-    posArrayXC2 = scaler+1:scaler/2:length(poreMap)+scaler/2;
-    posArrayXC3 = scaler+1:scaler/3:length(poreMap)+scaler/3;
-    posArrayAC = scaler+1:scaler:length(poreMap)+scaler;
-    posArrayPore = 1:1:length(poreMap);
+    posArrayXC2 = scaler+1:scaler/2:size(poreMap, 2)+scaler/2;
+    posArrayXC3 = scaler+1:scaler/3:size(poreMap, 2)+scaler/3;
+    posArrayAC = scaler+1:scaler:size(poreMap, 2)+scaler;
+    posArrayPore = 1:1:size(poreMap, 2);
 
     XC2Line = mean(XC2, 1);
     XC3Line = mean(XC3, 1);
