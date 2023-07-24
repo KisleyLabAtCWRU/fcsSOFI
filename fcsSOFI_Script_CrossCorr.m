@@ -409,7 +409,7 @@ for i = 1:size(AC_logbin, 1)
     
     % diffusion coefficient
     w = pixelsize * sigma * 2.355; % Use PSFsample instead if you know the full width half mast;
-    D(i) = (w .^ 2) / (4 * tauD(i)); %in nm^2/s
+    D(i) = (w .^ 2) / (4 * tauD(i)); %in micro meters^2/s
     
     % second diffusion coefficient if using 2-component model
     if type == 2
@@ -735,7 +735,7 @@ if plotfigures == 1
     % fcsSOFI figure creation 
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
     fcsSofiPlot = imagesc(trimDmap2log); axis image; title('Combined fcsSOFI image')
-    fcsSofiPlot.AlphaData = sofiMapDeconSat .* Dmap2logAlpha; % Uses the SOFI data as a transparency map
+    fcsSofiPlot.AlphaData = sofiMapSat .* Dmap2logAlpha; % Uses the SOFI data as a transparency map
     colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
     patch([1 xmax-xmin xmax-xmin 1], [1 1 ymax-ymin ymax-ymin], 'k'); % Patches a black background in front
     set(gca, 'children', flipud(get(gca, 'children'))); % Moves Black Background to back
@@ -744,7 +744,7 @@ if plotfigures == 1
     % Decon fcsSOFI figure creation
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
     fcsSofiPlot = imagesc(trimDmap2log); axis image; title('Combined fcsSOFI image with Decon')
-    fcsSofiPlot.AlphaData = sofiMapSat .* Dmap2logAlpha; % Uses the SOFI data as a transparency map
+    fcsSofiPlot.AlphaData = sofiMapDeconSat .* Dmap2logAlpha; % Uses the SOFI data as a transparency map
     colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
     patch([1 xmax-xmin xmax-xmin 1], [1 1 ymax-ymin ymax-ymin], 'k'); % Patches a black background in front
     set(gca, 'children', flipud(get(gca, 'children'))); % Moves Black Background to back
