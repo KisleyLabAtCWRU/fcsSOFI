@@ -4,7 +4,7 @@
 %   - innerpts -
 %   - DataVector - 1D vector of the image to be analyzed
 
-function [ACXC_all] = CalcCorrCut(innerpts, DataVector)
+function [ACXC_all] = CalcCorr(innerpts, DataVector)
 
     % i range accomodates time offset
     for i = 1:length(innerpts) - 2      
