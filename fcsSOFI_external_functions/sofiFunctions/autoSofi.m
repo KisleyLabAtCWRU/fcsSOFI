@@ -1,5 +1,20 @@
+%{
+Computes the sofi auto correlation maps of a given matrix representing
+the video data.
 
+Inputes:
+data - the matrix of data to compute SOFI on
 
+Outputs:
+AC2, AC3, AC4 - 2nd, 3rd, and 4th order auto cumulents
+AG4 - 4th order auto correlation
+AC2Corrected, AC3Corrected, AG4Corrected - The diffusion corrected version
+    of the autocorrelation values. Still under development
+
+data must be in the format height by width by frames.
+Ex: In a 5x10x30 each frame is 5 pixels tall and 10 pixels wide and there
+are 30 frames.
+%}
 function [AC2, AC3, AC4, AG4, AC2Corrected, AC3Corrected, AG4Corrected] = autoSofi(data)
     
 
@@ -51,14 +66,7 @@ function [AC2, AC3, AC4, AG4, AC2Corrected, AC3Corrected, AG4Corrected] = autoSo
     AC4 = abs(AG4-AG4_01.*AG4_23-AG4_02.*AG4_13-AG4_03.*AG4_12);
 
     AG4Corrected = AG4 + (sum(AC3CorrectedAll, 3).*average) - (sum(AC2CorrectedAll, 3).*average.^2) + (3*average.^4);
-    
 
-    %{
-    %% Normalize
-    AC2 = rescale(AC2);
-    AC3 = rescale(AC3);
-    AC4 = rescale(AC4);
-    %}
     % Old Sofi Implimentation
     %{
 

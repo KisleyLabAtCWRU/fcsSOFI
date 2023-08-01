@@ -1,7 +1,97 @@
 clear; close all hidden; clc;
 %% User Input
+% Start Location of file prompter
 startloc = '\\kisleylab1\test\BenjaminWellnitz\fcsSOFI Master';
 
+
+% %% Input Data Settings %% %
+
+% Microscope Set Up
+pixelsize = 0.109; % In micro meters (IX83); needed to accurately calculate D
+dT = 0.002; % Time between frames in s; needed to accurately calculate D
+
+% Whether you are using a .tiff file (other option is a .mat file) (1 = yes, 0 = no)
+useTiffFile = 0;
+
+% If using tiff file and using matlab 2021b or newer, tiffReadVolume is faster (1 = yes)
+tiffReadVol = 0;
+
+% Use already background subtracted data. Must be using a mat file if yes (1 = yes)
+useBCData = 0;
+
+% Number of files used together and length of each file if using multiple files
+numberFiles = 1;
+framesLength = 60000;
+
+% Region of interest in pixels (of all files added together)
+ymin = 1;
+ymax = 25;
+xmin = 1;
+xmax = 25;
+tmin = 1; % Start frame
+tmax = 1000; % End frame
+
+
+% %% Sample and Anylisis Settings %% %
+
+% Choose type of diffusion (1 = Brownian, 2 = 2-Comp Brownian, 3 = Anomalous, ...
+        ... 4 = Brownian 1 Comp with tau, 5 = 1-comp Brownian with tau and A, ...
+        ... 6 = Anomalous with Tau and alpha)
+type = 4;
+
+% Initial Condition For Fitting
+D_stp = 1e5;    % Diffusion Coeficient
+D2_stp = 1e6;   % 2d Diffusion Coeficient (For two compnent)
+A_stp = 1;      % A Value (for type 1 and 4)
+alpha_stp = .9; % Alpha Value (for type 3 and 6)
+
+% Alpha Limits (Values cut off at these points)
+alpha_max = 1.2; % Maximum value of alpha allowed to appear on alpha map
+alpha_min = 0;
+
+% Diffusion Limits (Both D1 and D2 values cut off at these points)
+diffusionMin = 0; % micro m^2 / s
+diffusionMax = Inf;
+
+% R Squared Cut off for cumulative distribution of D, beads=0.95, 76kDa=0.8, 2000kDa=0.9, BSA=0.88
+R2cutoff = 0.90;
+
+% Deconvolution on SOFI Image (1 = yes, 0 = no)
+doDecon = 1;
+
+% SOFI scaling, Normalized (0-1) data will be cut ff and re-nomarlized at these values
+satMin = 0;
+satMax = 1;
+crossSatMax = satMax + 0;
+
+% Bin Size for fcs Binning. Allow for faster D detection
+binSize = 1;
+
+
+% %% Result Settings %% %
+
+% Plot figures? (1 = yes)
+plotfigures = 1;
+
+% Save data files? (1 = yes)
+savethedata = 1; 
+
+% Optional example single pixel curve fit plot (1 = yes)
+examplecf = 1;
+column_index = 10; % X coordinate
+row_index = 10; % Y coordinate (also used for sofi cross sections)
+
+% Use defualt color scheme (1 = yes)
+defualtColors = 1;
+
+% If not using defualt colors. Top and bottom colors for the color bar / color scale
+red = [1 0 0]; green = [0 0.5 0]; blue = [0 0 1]; lime = [0 1 0]; cyan = [0 1 1]; yellow = [1 1 0];
+magenta = [1 0 1]; maroon = [0.5 0 0]; olive = [0.5 0.5 0]; purple = [0.5 0 0.5]; teal = [0 0.5 0.5]; navy = [0 0 0.5];
+topC = red;
+botC = blue;
+
+% Old User Input layout
+%{
 % Diffusion coefficient parameters
 pixelsize = 0.109; % In micro meters (IX83); needed to accurately calculate D
 PSFsample = 5; % In pixel; based off of PSF from moving samples
@@ -18,22 +108,28 @@ framesLength = 60000;
 
 % Region of interest in pixels (of all files added together)
 ymin = 1;
-ymax = 100;
+ymax = 25;
 xmin = 1;
-xmax = 100;
+xmax = 25;
 tmin = 1; % Start frame
-tmax = 60000; % End frame
+tmax = 1000; % End frame
 
 % Choose type of diffusion (1 = Brownian, 2 = 2-Comp Brownian, 3 = Anomalous, ...
         ... 4 = Brownian 1 Comp with tau, 5 = 1-comp Brownian with tau and A, ...
         ... 6 = Anomalous with Tau and alpha)
 type = 4;
 
-% Choose alpha start point (Anomalous diffusion model only)
-A_stp = 1;
-alpha_stp = .9;
+% Bin Size
+binSize = 1;
+
+% R Squared Cut off for cumulative distribution of D, beads=0.95, 76kDa=0.8, 2000kDa=0.9, BSA=0.88
+R2cutoff = 0.95;
+
+% Initial Condition For Fitting
 D_stp = 1e5;
 D2_stp = 1e6;
+A_stp = 1;
+alpha_stp = .9;
 
 % Alpha threshold
 alpha_max = 1.2; % Maximum value of alpha allowed to appear on alpha map
@@ -66,7 +162,7 @@ satMax = 1;
 crossSatMax = satMax + 0;
 
 % Whether you are using a .tiff file (other option is a .mat file) (1 = yes, 0 = no)
-useTiffFile = 1;
+useTiffFile = 0;
 
 % If using tiff file and using matlab 2021b or newer, tiffReadVolume is faster (1 = yes)
 tiffReadVol = 0;
@@ -82,6 +178,7 @@ red = [1 0 0]; green = [0 0.5 0]; blue = [0 0 1]; lime = [0 1 0]; cyan = [0 1 1]
 magenta = [1 0 1]; maroon = [0.5 0 0]; olive = [0.5 0.5 0]; purple = [0.5 0 0.5]; teal = [0 0.5 0.5]; navy = [0 0 0.5];
 topC = red;
 botC = blue;
+%}
 
 % END USER INPUT
 fprintf('Running...\n');
@@ -131,9 +228,7 @@ else % If data was already converted
     load(fileName);
     
     if useBCData
-        Data = thrData(ymin:ymax, xmin:xmax, tmin:tmax);
-    else
-        Data = Data(ymin:ymax, xmin:xmax, tmin:tmax);
+        Data = thrData;
     end
 end
 
@@ -173,9 +268,15 @@ timeSofi = tic;
 % Set ROI
 DataCombined = DataCombined(ymin:ymax, xmin:xmax, tmin:tmax);
 
-% Produce average image
-avgimage = sum(DataCombined(:, :, :), 3) ./ size(DataCombined, 3);
+% Make sure bin size fits
+remain = mod(size(DataCombined), binSize);
+DataCombined = DataCombined(1:end-remain(1), 1:end-remain(2), :);
 
+% Produce average image
+avgim = mean(DataCombined, 3);
+
+% Old fcs implimentation
+%{
 % Reshape 2D image to 1D for analysis
 % shapes columnwise into a 1x(ymax-ymin+1)(xmax-xmin+1)
 DataVector = zeros(tmax,(xmax-xmin+1)*(ymax-ymin+1));
@@ -188,9 +289,15 @@ end
 [innerpts] = getUpperLeft(ymax - ymin + 1, xmax - xmin + 1, 1);
 
 %% Calculate the correlation (2-4th orders, AC and XC)
-[ACXC_all] = CalcCorr(innerpts, DataVector); %calculate
-[crossSofiMap, XC3, XC2Corrected, sigma] = crossSofi(thrData);
+[ACXC_all] = CalcCorr(innerpts, DataVector); % Calculate
+%}
 
+%% Calculate the correlation (2-3th orders, AC and XC)
+[crossSofiMap, ~, ~, sigma] = crossSofi(DataCombined);
+[sofiMap, ~, ~, ~, ~, ~, ~] = autoSofi(DataCombined);
+
+% Old fcs implimentation
+%{
 %% Calculate intensity for images by different methods     
 AC_G2 = zeros(1, numel(ACXC_all));
 for i = 1:numel(ACXC_all)
@@ -207,26 +314,15 @@ M = zeros(size(AC_G2_im));
 M(1:end - 1, :) = AC_G2_im(2:end, :);
 M(end, :) = circshift(AC_G2_im(1, :), numel(AC_G2_im(1, :)) - 1);
 AC_G2_im = M;
+sofiMap = AC_G2_im;
+%}
 
 %% Deconvolution
-avgim = avgimage;
-sofiMap = AC_G2_im;
-
-% Define the PSF 
-gauss1 = customgauss([100 100], sigma, sigma, 0, 0, 1, [5 5]); % Create a 2D PSF
-vGauss1 = customgauss([100 100], vSigma, vSigma, 0, 0, 1, [5 5]); % Create a 2D PSF
-PSF = gauss1(45:65, 45:65); % Only use the center where the PSF is located at
-vPSF = vGauss1(45:65, 45:65);
 
 if doDecon
     [deconAC, deconXC, deconAvg] = decon(avgim, {sofiMap}, {crossSofiMap}, sigma);
     sofiMapDecon = deconAC{1};
     crossSofiMapDecon = deconXC{1};
-    % Old Implimentation
-    %{
-    sofiMapDecon = deconvlucy(sofiMap, PSF); % Based on Geissbuehler bSOFI paper
-    crossSofiMapDecon = deconvlucy(crossSofiMap, vPSF);
-    %}
 else
     sofiMapDecon = sofiMap;
     crossSofiMapDecon = crossSofiMap;
@@ -242,6 +338,167 @@ disp(timeOut);
 % start timer for fcs step
 timeFcs = tic;
 
+% Bin The Data into bin sizes to allow for faster D detection
+% A little confusing to follow, but sums values in each bin
+fcsData = reshape(DataCombined, binSize, [], size(DataCombined, 3));
+fcsData = sum(fcsData, 1);
+fcsData = reshape(fcsData, size(DataCombined,1) / binSize, [], size(DataCombined, 3));
+fcsData = pagetranspose(fcsData);
+fcsData = reshape(fcsData, binSize, [], size(DataCombined, 3));
+fcsData = sum(fcsData, 1);
+fcsData = reshape(fcsData, size(DataCombined, 2) / binSize, [], size(DataCombined, 3));
+fcsData = pagetranspose(fcsData);
+
+% Calculate Auto Correlation Curves
+[autoCorrelations] = fcsCorrelate(fcsData);
+
+% Bin Correlation Curves 
+maxLag = size(autoCorrelations, 1);
+lags = 1:maxLag;
+ddwell = 1;
+[logBinLags, logBinAC] = logbindata(lags, autoCorrelations, ddwell, maxLag);
+
+
+% %% Set Up Curve Fit %% %
+% Data To Fit
+fitData = single(logBinAC(2:end, :) ./ max(logBinAC(2:end, :), [], 1));
+
+% Weights on Data Points
+weights = ones(size(fitData));
+weights(fitData < 0) = 0;
+weights = single(weights);
+
+% Model to fit with
+model_id = [ModelID.BROWNIAN_1COMP; ModelID.BROWNIAN_2COMP; ModelID.ANOMALOUS;...
+    ModelID.BROWNIAN_1COMP_NORM; ModelID.BROWNIAN_1COMP_TAUA; ...
+    ModelID.ANOMALOUS_2PARAM_TAUA]; model_id = model_id(type);
+
+% Initial Perameters
+initialA = ones(1, size(fitData, 2)) * A_stp;
+initialBack = mean(fitData(round(3*end/4:end), :), 1);
+initialTd = ones(1, size(fitData, 2)) * ((pixelsize ^ 2) / (D_stp * 4));
+initialTd2 = ones(1, size(fitData, 2)) * ((pixelsize ^ 2) / (D2_stp * 4));
+initialMax = max(fitData, [], 1);
+initialAlpha = ones(1, size(fitData, 2)) * alpha_stp;
+switch type
+    case 1 % Brownian
+        initial_parameters = cat(1, initialA, initialBack, initialTd);
+        tuaDIndex = 3;
+    case 2 % Brownian 2 component
+        initial_parameters = cat(1, initialMax, initialMax, initialBack, initialTd, initialTd2);
+        tuaDIndex = 4;
+    case 3 % Anomalous
+        initial_parameters = cat(1, initialMax.*2, initialBack, initialTd, initialAlpha);
+        tuaDIndex = 3;
+        alphaIndex = 4;
+    case 4 % Brownian Norm
+        initial_parameters = initialTd;
+        tuaDIndex = 1;
+    case 5 % Bronian With Tua and A
+        initial_parameters = cat(1, initialA, initialTd);
+        tuaDIndex = 2;
+    case 6 % Anomalous Tua and A
+        initial_parameters = cat(1, initialTd, initialAlpha);
+        tuaDIndex = 1;
+        alphaIndex = 2;
+end
+initial_parameters = single(initial_parameters);
+
+% Tolerance
+tolerance = 1e-3;
+
+% Maximum number of iterations per pixel
+max_n_iterations = 100000;
+
+% Estimator id
+estimator_id = EstimatorID.LSE;
+
+% Lag Times (x)
+fitTimePoints = single(logBinLags(2:end) .* dT);
+
+
+% %% Fit Data %% %
+
+% Compute Fit
+[parameters, states, chi_squares, n_iterations, gputime] = gpufit(fitData, weights, ...
+    model_id, initial_parameters, tolerance, max_n_iterations, [], estimator_id, fitTimePoints);
+
+fit_time = gputime;
+
+
+% %% Extract Fit Info %% %
+
+% Find Converged Fits
+converged = states == 0; 
+
+% Calculate fit values at the data time points
+fitTimePoints = repmat(fitTimePoints, 1, size(fitData, 2));
+switch type
+    case 1 % Brownian
+        model_fit = parameters(1, :) .* (1./(1+(fitTimePoints./parameters(3, :)))) + parameters(2, :);
+    case 2 % Brownian 2 component
+        model_fit = parameters(1, :) .* (1./(1+(fitTimePoints./parameters(4, :)))) + parameters(2, :).*(1./(1+(fitTimePoints./parameters(5, :)))) + parameters(3, :);
+    case 3 % Anomalous
+        model_fit = parameters(1, :) .* (1./(1+(fitTimePoints./parameters(3, :)).^parameters(4, :))) + parameters(2, :); 
+    case 4 % Brownian Norm
+        model_fit = 1./(1+(fitTimePoints./parameters(1, :)));
+    case 5 % Bronian With Tua and A
+        model_fit = parameters(1, :).* (1./(1+(fitTimePoints./parameters(2, :)))); 
+    case 6 % Anomalous Tua and A
+        model_fit = (1./(1+(fitTimePoints./parameters(1, :)).^parameters(2, :)));
+end
+
+% Find pixel dimentions of fcs image
+fcsSz = size(fcsData);
+fcsSz = fcsSz(1:2);
+
+% R-square
+residuals = fitData - model_fit;
+a = (fitData - model_fit) .^ 2 ./ model_fit;
+a(isinf(a)) = 0;
+R2 = 1 - sum(residuals .^ 2, 1) ./ sum(fitData .^ 2, 1);
+R2map = reshape(R2, fcsSz);
+
+% Chi-Squared Map
+chiMap = reshape(chi_squares, fcsSz);
+
+% Characteristic time
+tauD = parameters(tuaDIndex, :); % in in seconds
+tauDmap = reshape(tauD, fcsSz);
+    
+% Diffusion Coefficient
+w = pixelsize * sigma * 2.355; % Use PSFsample instead if you know the full width half mast;
+D = (w .^ 2) ./ (4 * tauD); %in micro meters^2/s
+D_corrected = abs(D);
+D_corrected(D_corrected > diffusionMax) = diffusionMax;
+D_corrected(D_corrected < diffusionMin) = diffusionMin;
+D_corrected(~converged) = NaN;
+Dmap_corrected = reshape(D_corrected, fcsSz);
+
+% Second diffusion coefficient if using 2-component model
+if type == 2
+    tauD2 = parameters(5, :); % in in seconds
+    tauD2map = reshape(tauD2, fcsSz);
+    D2 = (w .^ 2) ./ (4 * tauD2);
+    D2_corrected = abs(D2);
+    D2_corrected(D2_corrected > diffusionMax) = diffusionMax;
+    D2_corrected(D2_corrected < diffusionMin) = diffusionMin;
+    D2_corrected(~converged) = NaN;
+    D2map_corrected = reshape(D2_corrected, fcsSz);
+end
+
+% Alpha map if using anomalous model
+if (type == 3) || (type == 6)
+    alpha = parameters(alphaIndex, :);
+    alpha_corrected = abs(alpha);
+    alpha_corrected(~converged) = NaN;
+    alpha_corrected(alpha_corrected < alpha_min ) = 0;
+    alpha_corrected(alpha_corrected > alpha_max ) = alpha_max;
+    alphaMap = reshape(alpha_corrected, fcsSz);
+end
+
+% Old fcs Implimentation (Slower and harder to read/modify)
+%{
 % ROI pixels of image to analyze
 xmn = 1; xmx = xmax - xmin;
 ymn = 1; ymx = ymax - ymin;
@@ -252,13 +509,13 @@ ymn = 1; ymx = ymax - ymin;
 ACXC_all2 = [ACXC_all, ACXC_all(1, 1), ACXC_all(1, 1)];
 ACXC_all_reshape = reshape(ACXC_all2, size(AC_G2_im));
 ACXC_all_ROI = ACXC_all_reshape(ymn:ymx, xmn:xmx);
-AC_XC_all_save = reshape(ACXC_all_ROI, 1, size(ACXC_all_ROI, 1) * size(ACXC_all_ROI, 2));
+AC_XC_all_save = reshape(ACXC_all_ROI, 1, size(ACXC_all_ROI, 1) * size(ACXC_all_ROI, 2)); % Same as ACXC_all2 since RIO already done
 AC_all(1, 1).curves = AC_XC_all_save;
 
 for i = 1:numel(AC_all(1, 1).curves)
         % add raw AC curves
-    ACadd(1, :) = AC_all(1, 1).curves(1, i).Order2;
-    AC_avg(1, i).curves = mean(ACadd, 1);   
+    ACadd(1, :) = AC_all(1, 1).curves(1, i).Order2; 
+    AC_avg(1, i).curves = mean(ACadd, 1); % Doesn't Average since ACdd in second dimension, AC_avg same as AC_all
 end
 
 %% log bin the averaged data
@@ -269,18 +526,19 @@ for i = 1:numel(AC_all(1, 1).curves)
     lags = 1:max_lag;
     ddwell = 1;
 
-    [new_lags, new_AC] = logbindata(lags, AC_aver, ddwell, max_lag);
+    [new_lags, new_AC] = logbindata(lags, AC_aver', ddwell, max_lag);
 
     AC_logbin(i, :) = new_AC;
     AC_loglag(i, :) = new_lags;
 
 end
 
+
 rowdim = size(ACXC_all_ROI, 1);
 coldim = size(ACXC_all_ROI, 2);
 
 
-%% Set up curve fitting
+%% Curve fitting
 
 % initialize variable to keep track of GPU computation time
 fit_time = 0;
@@ -303,7 +561,7 @@ tolerance = 1e-3;
 max_n_iterations = 10000;
 
 % preallocate variables 
-tauD = zeros(1, xmx * ymx); tauD2 = tauD; D = tauD; D2 = tauD; alpha = tauD;
+tauD = zeros(1, xmx * ymx); tauD2 = tauD; D = tauD; D2 = tauD; alpha = tauD; chi = tauD;
 
 %% Perform curve fitting
 for i = 1:size(AC_logbin, 1)
@@ -401,6 +659,9 @@ for i = 1:size(AC_logbin, 1)
     a(isinf(a)) = 0;
     rsquare = 1 - sum(residuals .^ 2) / sum(y .^ 2);
 
+    % Chi-Squared
+    chi(i) = chi_squares(1);
+
     % fit result structure
     fitresult(1, i) = struct('rawdata', [x', y'], 'rsquare', rsquare, 'model_fit', model_fit);
 
@@ -437,6 +698,7 @@ fitresult2 = reshape(fitresult, rowdim, coldim);
 
 %Diffusion coefficient map
 Dmap = reshape(D, rowdim, coldim);
+chiMap = reshape(chi, rowdim, coldim);
 
 % create tauD map
 tauDmap = reshape(tauD, rowdim, coldim);
@@ -493,8 +755,9 @@ for i = 1:numel(fitresult)
     R2(i) = fitresult(1, i).rsquare;
 end
 R2map = reshape(R2, rowdim, coldim);
+%}
 
-% display execution time of fcs step
+% Display execution time of fcs step
 time = toc(timeFcs);
 timeOut = ['FCS Complete, Execution Time: ', num2str(floor(time / 60)), ' Minutes, ', num2str(mod(time, 60)), ' Seconds'];
 disp(timeOut);
@@ -507,8 +770,7 @@ timeCombine = tic;
     
 %% Diffusion CDF Creation
 
-% R2 cutoff for D CDF and histogram; beads=0.95, 76kDa=0.8, 2000kDa=0.9, BSA=0.88
-R2cutoff = 0.95;
+% Only values with good R2 values used
 DhighSOFIvaluesR2 = Dmap_corrected(R2 > R2cutoff);
 
 % Reshape Dmap data into a vector
@@ -543,20 +805,15 @@ ylabel('Probability')
 %% Creatation of log(D) scale for plotting
 
 % Create log base Dmap
-Dmap2log = log10(Dmap_corrected); 
-Dmap2log(Dmap2log == -Inf) = 0;
+Dmap2log = log10(Dmap_corrected);
+Dmap2log(Dmap2log == -Inf) = NaN;
 
 % Filter out poor fits if you want to here with an R2cutoff
 R2cutoff = 0.5; %set R^2 cutoff (0-1); == 0, no filtering
-Dmap2logAlpha = ones(size(Dmap2log, 1), size(Dmap2log, 2)); % Used For Plotting
+Dmap2logAlpha = ones(size(Dmap2log)); % Used For Plotting
 
 Dmap2log(R2map < R2cutoff) = NaN;
-Dmap2logAlpha(R2map < R2cutoff) = 0;
-
-% Trims the RGB Diffusion map data to realistic values
-trimDmap2log = Dmap2log;
-trimDmap2log(Dmap2log < diffusionMin) = diffusionMin;
-trimDmap2log(Dmap2log > diffusionMax) = diffusionMax;
+Dmap2logAlpha(isnan(Dmap2log)) = 0;
 
 
 %% Set the limits of the SOFI image
@@ -593,8 +850,10 @@ crossSofiMapDeconSat = rescale(crossSofiMapDeconSat); % Cross sofi decon
 %% Creating Larger Dmap Images
 
 % Need to fit D data ontop of SOFI data with extra pixels
-largTrimDmap2log = imresize(trimDmap2log(2:size(trimDmap2log, 1), 2:size(trimDmap2log, 2)), size(crossSofiMap), 'nearest');
-largDmap2logAlpha = imresize(Dmap2logAlpha(2:size(Dmap2logAlpha, 1), 2:size(Dmap2logAlpha, 2)), size(crossSofiMap), 'nearest');
+largDmap2log = imresize(Dmap2log, size(Dmap2log).*2, 'nearest');
+largDmap2logAlpha = imresize(Dmap2logAlpha, size(Dmap2log).*2, 'nearest');
+largDmap2log = largDmap2log(3:end-3, 3:end-3);
+largDmap2logAlpha = largDmap2logAlpha(3:end-3, 3:end-3);
 
 %% Finish the timer for image combination
 
@@ -629,12 +888,12 @@ if plotfigures == 1
     subplot(2, 2, 3); imagesc(sofiMapDeconSat); axis image; 
     title('Deconvolved');set(gca, 'xtick', [], 'ytick', [])
 
-    % Line Sections of row 25
+    % Line Sections of single point row
     subplot(2, 2, 4); hold on
-    plot(avgim(25, :) ./ max(avgim(25, :)), '-b')
-    plot(sofiMapSat(25, :) ./ max(sofiMapSat(25, :)), '-r')
-    plot(sofiMapDeconSat(25, :) ./ max(sofiMapDeconSat(25, :)), '-k')
-    axis square; title('Line sections'); ylim([0 1]); xlim([0 size(sofiMapSat(25, :), 2)])
+    plot(avgim(row_index, :) ./ max(avgim(row_index, :)), '-b')
+    plot(sofiMapSat(row_index, :) ./ max(sofiMapSat(row_index, :)), '-r')
+    plot(sofiMapDeconSat(row_index, :) ./ max(sofiMapDeconSat(row_index, :)), '-k')
+    axis square; title('Line sections'); ylim([0 1]); xlim([0 size(sofiMapSat(row_index, :), 2)])
 
 
     % BinFitData subplots (fcs) 
@@ -644,7 +903,7 @@ if plotfigures == 1
     subplot(2, 2, 1); imagesc(tauDmap); colorbar; axis image; title('\tau_D map')
     
     % Diffusion Map with nothing removed
-    subplot(2, 2, 2); imagesc(Dmap); colormap(customColorMap); 
+    subplot(2, 2, 2); imagesc(Dmap_corrected); colormap(customColorMap); 
     colorbar; axis image; title('D map, nothing removed')
 
     % Diffusion Map with poor fits removed
@@ -663,7 +922,7 @@ if plotfigures == 1
         subplot(2, 2, 1); imagesc(tauD2map); axis image; title('D2: \tau_D map')
         
         % Diffusion Map 2 With Nothing Removed
-        subplot(2, 2, 2); imagesc(D2map); colormap(customColorMap);
+        subplot(2, 2, 2); imagesc(D2map_corrected); colormap(customColorMap);
         axis image; title('D2: D map, nothing removed')
         
         % Diffution Map 2 with poor fits removed
@@ -696,20 +955,18 @@ if plotfigures == 1
 
     % fcs figure creation
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-    DFigure = imagesc(trimDmap2log); axis image; title('FCS: log(D)')
+    DFigure = imagesc(Dmap2log); axis image; title('FCS: log(D)')
     DFigure.AlphaData = Dmap2logAlpha; colormap(customColorMap);
     c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
-    patch([0 xmax-xmin+1 xmax-xmin+1 0], [0 0 ymax-ymin+1 ymax-ymin+1], 'k'); % Patches a black background in front
-    set(gca, 'children', flipud(get(gca, 'children'))); % Moves Black Background to back
+    set(gca, 'Color', [0, 0, 0]) % Set background color to black
     set(gca, 'FontSize', 14); set(gca, 'xtick', [], 'ytick', []) % Removes axis tick marks
     
     % Large fcs figure creation
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-    DFigure = imagesc(largTrimDmap2log); axis image; title('Cross FCS: log(D)')
+    DFigure = imagesc(largDmap2log); axis image; title('Cross FCS: log(D)')
     DFigure.AlphaData = largDmap2logAlpha; colormap(customColorMap);
     c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
-    patch([1 (xmax-xmin)*2 (xmax-xmin)*2 1], [1 1 (ymax-ymin)*2 (ymax-ymin)*2], 'k'); % Patches a black background in front
-    set(gca, 'children', flipud(get(gca, 'children'))); % Moves Black Background to back
+    set(gca, 'Color', [0, 0, 0]) % Set background color to black
     set(gca, 'FontSize', 14); set(gca, 'xtick', [], 'ytick', []) % Removes axis tick marks
     
     % SOFI super resolution image
@@ -734,38 +991,34 @@ if plotfigures == 1
     
     % fcsSOFI figure creation 
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-    fcsSofiPlot = imagesc(trimDmap2log); axis image; title('Combined fcsSOFI image')
+    fcsSofiPlot = imagesc(Dmap2log); axis image; title('Combined fcsSOFI image')
     fcsSofiPlot.AlphaData = sofiMapSat .* Dmap2logAlpha; % Uses the SOFI data as a transparency map
     colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
-    patch([1 xmax-xmin xmax-xmin 1], [1 1 ymax-ymin ymax-ymin], 'k'); % Patches a black background in front
-    set(gca, 'children', flipud(get(gca, 'children'))); % Moves Black Background to back
+    set(gca, 'Color', [0, 0, 0]) % Set background color to black
     set(gca, 'FontSize', 14); set(gca,'xtick',[],'ytick',[])
 
     % Decon fcsSOFI figure creation
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-    fcsSofiPlot = imagesc(trimDmap2log); axis image; title('Combined fcsSOFI image with Decon')
+    fcsSofiPlot = imagesc(Dmap2log); axis image; title('Combined fcsSOFI image with Decon')
     fcsSofiPlot.AlphaData = sofiMapDeconSat .* Dmap2logAlpha; % Uses the SOFI data as a transparency map
     colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
-    patch([1 xmax-xmin xmax-xmin 1], [1 1 ymax-ymin ymax-ymin], 'k'); % Patches a black background in front
-    set(gca, 'children', flipud(get(gca, 'children'))); % Moves Black Background to back
+    set(gca, 'Color', [0, 0, 0]) % Set background color to black
     set(gca, 'FontSize', 14); set(gca,'xtick',[],'ytick',[])
     
     % Large fcsSOFI figure creation 
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-    fcsSofiPlot = imagesc(largTrimDmap2log); axis image; title('Combined Cross fcsSOFI image')
+    fcsSofiPlot = imagesc(largDmap2log); axis image; title('Combined Cross fcsSOFI image')
     fcsSofiPlot.AlphaData = crossSofiMapSat .* largDmap2logAlpha; % Uses the SOFI data as a transparency map
     colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
-    patch([1 (xmax-xmin)*2 (xmax-xmin)*2 1], [1 1 (ymax-ymin)*2 (ymax-ymin)*2], 'k'); % Patches a black background in front
-    set(gca, 'children', flipud(get(gca, 'children'))); % Moves Black Background to back
+    set(gca, 'Color', [0, 0, 0]) % Set background color to black
     set(gca, 'FontSize', 14); set(gca,'xtick',[],'ytick',[])
     
     % Large Decon fcsSOFI figure creation 
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-    fcsSofiPlot = imagesc(largTrimDmap2log); axis image; title('Combined Cross fcsSOFI image with Decon')
+    fcsSofiPlot = imagesc(largDmap2log); axis image; title('Combined Cross fcsSOFI image with Decon')
     fcsSofiPlot.AlphaData = crossSofiMapDeconSat .* largDmap2logAlpha; % Uses the SOFI data as a transparency map
     colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
-    patch([1 (xmax-xmin)*2 (xmax-xmin)*2 1], [1 1 (ymax-ymin)*2 (ymax-ymin)*2], 'k'); % Patches a black background in front
-    set(gca, 'children', flipud(get(gca, 'children'))); % Moves Black Background to back
+    set(gca, 'Color', [0, 0, 0]) % Set background color to black
     set(gca, 'FontSize', 14); set(gca,'xtick',[],'ytick',[])
 end
 
@@ -776,14 +1029,19 @@ end
 
     % optional single pixel curve fit result figure
     if examplecf == 1
-        i = row_index; %row index
-        j = column_index; %column index
+        printRow = row_index;
+        printCol = column_index;
+        row_index = ceil(row_index / binSize); %row index
+        column_index = ceil(column_index/ binSize); %column index
+        linear_index = sub2ind(fcsSz, row_index, column_index);
+        singleParams = parameters(:, linear_index);
+
         figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-        x2 = fitresult2(i, j).rawdata(:, 1); 
-        y2 = fitresult2(i, j).rawdata(:, 2);
+        x2 = fitTimePoints(:, linear_index); 
+        y2 = fitData(:, linear_index);
         plot(x2, y2, 'or', 'LineWidth', 2)
         hold on
-        plot(x2, fitresult2(i, j).model_fit, '--k', 'LineWidth', 2)
+        plot(x2, model_fit(:, linear_index), '--k', 'LineWidth', 2)
         hold on
         set(gca,'xscale','log')
         xlabel('\tau')
@@ -794,10 +1052,10 @@ end
         % error bars
         number_parameters = [3; 5; 4; 1; 2; 2];
         [rsq, chisq, J, MSE, ci] = gofStats(type,...%type
-            converged_parameters(1:number_parameters(type)),... %parameter values
-            fitresult2(row_index, column_index).model_fit,...    %fit curve
-            fitresult2(row_index, column_index).rawdata(:, 1)',... %x data
-            fitresult2(row_index, column_index).rawdata(:, 2)');   %y data
+            singleParams(1:number_parameters(type)),... %parameter values
+            model_fit(:, linear_index),...    %fit curve
+            x2,... %x data
+            y2);   %y data
         gof_gpu = [rsq chisq];
         ci = ci';
 
@@ -811,26 +1069,26 @@ end
             "G(tau) = a * 1/(1 + tau/tauD)",...
             "G(tau) = 1/(1 + (tau/tauD)^alpha)"]; modeleqn = modeleqn(type);
 
-        fprintf('\n'); fprintf(fname); fprintf('\nPixel (%i,%i)\n', row_index, column_index);
+        fprintf('\n'); fprintf(fname); fprintf('\nPixel (%i,%i)\n', printRow, printCol);
         fprintf(strcat(name, ' Fit Model:\n', modeleqn, '\n\n'));
         fprintf('Fit Result Parameters\n');
         
         % print error bars
         if type == 1
-          fprintf('a =    %6.2e ± %6.2e\n', converged_parameters(1), ebars(1));
-          fprintf('b =    %6.2e ± %6.2e\n', converged_parameters(2), ebars(2));
-          fprintf('tauD =     %6.2e ± %6.2e\n', converged_parameters(3), ebars(3));
+          fprintf('a =    %6.2e ± %6.2e\n', singleParams(1), ebars(1));
+          fprintf('b =    %6.2e ± %6.2e\n', singleParams(2), ebars(2));
+          fprintf('tauD =     %6.2e ± %6.2e\n', singleParams(3), ebars(3));
           fprintf('\n')
           fprintf('D =         %6.3e\n', Dmap_corrected(row_index, column_index))
           fprintf('log10(D):  %6.3f\n\n', Dmap2log(row_index, column_index))
           fprintf('R-square:  %6.4f\n', R2map(row_index, column_index));
         
         elseif type == 2
-          fprintf('a1 =    %6.2e ± %6.2e\n', converged_parameters(1), ebars(1));
-          fprintf('a2 =    %6.2e ± %6.2e\n', converged_parameters(2), ebars(2));
-          fprintf('b =     %6.2e ± %6.2e\n', converged_parameters(3), ebars(3));
-          fprintf('tauD1 = %6.4f ± %6.4e\n', converged_parameters(4), ebars(4));
-          fprintf('tauD2 = %6.4f ± %6.4e\n', converged_parameters(5), ebars(5));  
+          fprintf('a1 =    %6.2e ± %6.2e\n', singleParams(1), ebars(1));
+          fprintf('a2 =    %6.2e ± %6.2e\n', singleParams(2), ebars(2));
+          fprintf('b =     %6.2e ± %6.2e\n', singleParams(3), ebars(3));
+          fprintf('tauD1 = %6.4f ± %6.4e\n', singleParams(4), ebars(4));
+          fprintf('tauD2 = %6.4f ± %6.4e\n', singleParams(5), ebars(5));  
           fprintf('\n')
           fprintf('D1:         %6.3e\n', Dmap_corrected(row_index, column_index))
           fprintf('D2:         %6.3e\n', D2map_corrected(row_index, column_index))
@@ -839,10 +1097,10 @@ end
           fprintf('R-square:  %6.4f\n', R2map(row_index, column_index));   
 
         elseif type == 3
-          fprintf('a =    %6.2e ± %6.2e\n', converged_parameters(1), ebars(1));
-          fprintf('b =    %6.2e ± %6.2e\n', converged_parameters(2), ebars(2));
-          fprintf('tauD =     %6.2e ± %6.2e\n', converged_parameters(3), ebars(3));
-          fprintf('alpha = %6.4f ± %6.4f\n', converged_parameters(4), ebars(4));
+          fprintf('a =    %6.2e ± %6.2e\n', singleParams(1), ebars(1));
+          fprintf('b =    %6.2e ± %6.2e\n', singleParams(2), ebars(2));
+          fprintf('tauD =     %6.2e ± %6.2e\n', singleParams(3), ebars(3));
+          fprintf('alpha = %6.4f ± %6.4f\n', singleParams(4), ebars(4));
           fprintf('\n')
           fprintf('D =         %6.3e\n', Dmap_corrected(row_index, column_index))
           fprintf('log10(D):  %6.3f\n\n', Dmap2log(row_index, column_index))
@@ -857,16 +1115,16 @@ end
           fprintf('R-square:  %6.4f\n', R2map(row_index, column_index));    
         
         elseif type == 5
-          fprintf('a =    %6.2e ± %6.2e\n', converged_parameters(1), ebars(1));
-          fprintf('tauD =     %6.2e ± %6.2e\n', converged_parameters(3), ebars(3));
+          fprintf('a =    %6.2e ± %6.2e\n', singleParams(1), ebars(1));
+          fprintf('tauD =     %6.2e ± %6.2e\n', singleParams(3), ebars(3));
           fprintf('\n')
           fprintf('D =         %6.3e\n', Dmap_corrected(row_index, column_index))
           fprintf('log10(D):  %6.3f\n\n', Dmap2log(row_index, column_index))
           fprintf('R-square:  %6.4f\n', R2map(row_index, column_index));
           
        elseif type == 6
-          fprintf('tauD =     %6.2e ± %6.2e\n', converged_parameters(1), ebars(1));
-          fprintf('alpha = %6.4f ± %6.4f\n', converged_parameters(2), ebars(2));
+          fprintf('tauD =     %6.2e ± %6.2e\n', singleParams(1), ebars(1));
+          fprintf('alpha = %6.4f ± %6.4f\n', singleParams(2), ebars(2));
           fprintf('\n')
           fprintf('D =         %6.3e\n', Dmap_corrected(row_index, column_index))
           fprintf('log10(D):  %6.3f\n\n', Dmap2log(row_index, column_index))
@@ -881,13 +1139,10 @@ if savethedata == 1
     % The Variables to save
     date = datestr(now,'mm-dd-yyyy_HH-MM');
 
-    converged_parameters = double(converged_parameters);
-    
     folderNameStart = erase(fname, '.mat');
     folderName = strcat(folderNameStart, '_analyzed_', date);
 
     if type ~= 2
-        D2map = NaN;
         D2map_corrected = NaN;
     end
     
@@ -902,14 +1157,14 @@ if savethedata == 1
     
     % Saves the figures and files
     savefig(figureArray, figureFileName);
-    save(dataFileName, 'fitresult2', 'converged_parameters', ...
+    save(dataFileName, 'fitData', 'fitTimePoints', 'model_fit', 'parameters', ...
         'sofiMap', 'sofiMapDecon', 'crossSofiMap', 'crossSofiMapDecon', ...
         'sofiMapSat', 'sofiMapDeconSat', 'crossSofiMapSat', 'crossSofiMapDeconSat',...
-        'Dmap', 'Dmap_corrected', 'R2map', 'trimDmap2log', ...
-        'Dmap2logAlpha', 'largTrimDmap2log', 'largDmap2logAlpha', ...
+        'Dmap_corrected', 'R2map', 'chiMap', 'Dmap2log', ...
+        'Dmap2logAlpha', 'largDmap2log', 'largDmap2logAlpha', ...
         'DhighSOFIvaluesR2', 'TimeArray', ...
         'satMax', 'crossSatMax', 'satMin', 'PSFsample', 'dT', 'customColorMap', ...
-        'D2map', 'D2map_corrected', 'alphamap', '-v7.3');
+        'D2map_corrected', 'alphamap', '-v7.3');
 
     % Moves the files into the folder created
     movefile(figureFileName, folderName);

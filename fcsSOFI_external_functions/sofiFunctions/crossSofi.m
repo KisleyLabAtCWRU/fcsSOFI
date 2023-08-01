@@ -5,6 +5,13 @@ representing the video data.
 Inputes:
 data - the matrix of data to compute SOFI on
 
+Outputes:
+XC2, XC3 - 2nd and 3rd order cross cumulents
+XC2Corrected - The diffusion corrected version of the cross correlation 
+    values. Still under development.
+sigma - A estimation of the average PSF standard deviation calculated from
+    the distance factor correction values
+
 data must be in the format height by width by frames.
 Ex: In a 5x10x30 each frame is 5 pixels tall and 10 pixels wide and there
 are 30 frames.

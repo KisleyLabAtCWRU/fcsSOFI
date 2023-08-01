@@ -1,20 +1,31 @@
-% logbindata.m
+%{
+logbindata.m
 
-% bin the data logarithmically
+Function to bin data logarithmically
 
-% lags - old lags
-% new_lags - lags after binning
-% AC_aver - old AC values
-% new_AC - AC values after binning
+lags - old lags
+new_lags - lags after binning
+AC_aver - old AC values
+new_AC - AC values after binning
 
-% =========================================
-% Aug 2, 2007               Alexei Tcherniak
-% =========================================
-%% Modified to comply with NI Board
-% April 29, 2011            Sergio Dominguez
-% ==========================================
+Takes data over many time lags, and averages the data into bins for fewer
+points. The Bins range from the smallest to largest log10 values. There are
+10 bins per decade.
 
+AC_aver can be a 2D array which contains multiple data sets. Different data
+sets need to be in different columns. The binning will take place in the
+1st dimension. Aka, AC_aver needs to be (points x datasets)
 
+=========================================
+Aug 2, 2007               Alexei Tcherniak
+=========================================
+% Modified to comply with NI Board
+April 29, 2011            Sergio Dominguez
+==========================================
+% Modified to work in two dimensions
+July 31, 2023            Benjamin Wellnitz
+==========================================
+%}
 function [new_lags, new_AC] = logbindata(lags,AC_aver,ddwell,max_lag)
 
 % determine the lowest and higher order
@@ -58,13 +69,13 @@ nbins = n_first_bins + 9*(hi_order - (low_order + 1));
 % return
 
 new_lags = zeros(nbins,1);
-new_AC = zeros(nbins,1);
+new_AC = zeros(nbins, size(AC_aver, 2));
 npoints_per_bin = zeros(hi_order-(low_order+1),1);
 
 % fill the bins until the next order
 for ipoint=1:n_first_bins
     new_lags(ipoint) = lags(ipoint);
-    new_AC(ipoint) = AC_aver(ipoint);
+    new_AC(ipoint, :) = AC_aver(ipoint, :);
 end
 
 flag_stop = 0; % is used to stop filling the bins once the end of lags array is reached
@@ -110,8 +121,7 @@ for iorder = 1:(hi_order-(low_order+1))
 % 'point_indx, tmp_indx'
 % point_indx, tmp_indx
             new_lags(bin_indx) = new_lags(bin_indx) + lags(point_indx)/npoints_per_bin(iorder);
-            new_AC(bin_indx) = new_AC(bin_indx) + AC_aver(point_indx)/npoints_per_bin(iorder);
-            
+            new_AC(bin_indx, :) = new_AC(bin_indx, :) + AC_aver(point_indx, :)./npoints_per_bin(iorder);
         end %loop over points
         
         if (flag_stop == 1)
@@ -127,24 +137,24 @@ for iorder = 1:(hi_order-(low_order+1))
 end % loop over orders
 
 
-% rid new_lags of zero values
-ind = find(new_lags);
-tmp = new_lags(ind);
-new_lags = tmp;
+% % rid new_lags of zero values
+new_lags_rep = repmat(new_lags, 1, size(AC_aver, 2)); % Make copy to logical index AC
+new_AC = new_AC(new_lags_rep ~= 0); % Logical Inddex AC
+new_lags = new_lags(new_lags ~= 0); % Logical Index lags
+new_AC = reshape(new_AC, length(new_lags), size(AC_aver, 2)); %Logical Index leaves linear, must reshape
 
-tmp = new_AC(ind);
-new_AC = tmp;
 
 
 %  figure
 %  hold on
 %  %plot(new_lags*ddwell,new_AC,'o','MarkerSize',12) %%very important to multiply new_lags*ddwell !
-%  plot(new_lags,new_AC,'o','MarkerSize',12) %%very important to multiply new_lags*ddwell !
+%  %plot(new_lags,new_AC,'o','MarkerSize',12) %%very important to multiply new_lags*ddwell !
 %  set(gca,'XScale','log')
-%  
+% 
 %  %% if you want to compare to previous data
 % hold on
 % plot(lags,AC_aver,'o','MarkerSize',10,'Color','r')
+% plot(new_lags,new_AC,'o','MarkerSize',12, 'Color', 'b') %%very important to multiply new_lags*ddwell !
 % set(gca, 'FontSize', 20)
 % 
 %  legend('log bins','default bin')
