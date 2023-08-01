@@ -14,7 +14,7 @@ f(1:10) = parallel.FevalFuture;
 % Open tiff using tiffreadVolume (requires matlab 2021b)
 if (tiffReadVol)
     f(1) = parfeval(@tiffreadVolume, 1, fileName, 'PixelRegion', {[1, inf], [1, inf], [1, floor(frames/10)]});
-    f(2) = parfeval(@tiffreadVolume, 1, fileName, 'PixelRegion', {[1, inf], [1, inf], [floor(frames/10), floor(2*frames/10)]});
+    f(2) = parfeval(@tiffreadVolume, 1, fileName, 'PixelRegion', {[1, inf], [1, inf], [floor(frames/10)+1, floor(2*frames/10)]});
     f(3) = parfeval(@tiffreadVolume, 1, fileName, 'PixelRegion', {[1, inf], [1, inf], [floor(2*frames/10)+1, floor(3*frames/10)]});
     f(4) = parfeval(@tiffreadVolume, 1, fileName, 'PixelRegion', {[1, inf], [1, inf], [floor(3*frames/10)+1, floor(4*frames/10)]});
     f(5) = parfeval(@tiffreadVolume, 1, fileName, 'PixelRegion', {[1, inf], [1, inf], [floor(4*frames/10)+1, floor(5*frames/10)]});

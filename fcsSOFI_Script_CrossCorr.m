@@ -40,7 +40,7 @@ tmax = 40000; % End frame
 type = 4;
 
 % Initial Condition For Fitting
-D_stp = 1e5;    % Diffusion Coeficient
+D_stp = 50;    % Diffusion Coeficient (in micro m^2 / s)
 D2_stp = 1e6;   % 2d Diffusion Coeficient (For two compnent)
 A_stp = 1;      % A Value (for type 1 and 4)
 alpha_stp = .9; % Alpha Value (for type 3 and 6)
@@ -348,6 +348,9 @@ fcsData = reshape(fcsData, binSize, [], size(DataCombined, 3));
 fcsData = sum(fcsData, 1);
 fcsData = reshape(fcsData, size(DataCombined, 2) / binSize, [], size(DataCombined, 3));
 fcsData = pagetranspose(fcsData);
+
+pixelsize = pixelsize*binSize;
+sigmaBin = sigma/binSize;
 
 % Calculate Auto Correlation Curves
 [autoCorrelations] = fcsCorrelate(fcsData);
@@ -787,12 +790,12 @@ figureNumber = 1;
 figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
 plot(1:numel(DhighSOFIvaluesR2), DhighSOFIvaluesR2);
 title('Diffusion Vector') 
-
+%}
 % Plot Probability Distribution
 figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
 histogram(DhighSOFIvaluesR2);
 title('Probability distribution')
-%}
+
 
 % Plot Cumulative Distribution
 figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
