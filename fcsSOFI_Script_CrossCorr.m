@@ -349,8 +349,11 @@ fcsData = sum(fcsData, 1);
 fcsData = reshape(fcsData, size(DataCombined, 2) / binSize, [], size(DataCombined, 3));
 fcsData = pagetranspose(fcsData);
 
+[~, ~, ~, sigmaBin] = crossSofi(fcsData);
+
+
 pixelsize = pixelsize*binSize;
-sigmaBin = sigma/binSize;
+%sigmaBin = sigma/binSize;
 
 % Calculate Auto Correlation Curves
 [autoCorrelations] = fcsCorrelate(fcsData);
@@ -470,7 +473,7 @@ tauD = parameters(tuaDIndex, :); % in in seconds
 tauDmap = reshape(tauD, fcsSz);
     
 % Diffusion Coefficient
-w = pixelsize * sigma * 2.355; % Use PSFsample instead if you know the full width half mast;
+w = pixelsize * sigmaBin * 2.355; % Use PSFsample instead if you know the full width half mast;
 D = (w .^ 2) ./ (4 * tauD); %in micro meters^2/s
 D_corrected = abs(D);
 D_corrected(D_corrected > diffusionMax) = diffusionMax;
