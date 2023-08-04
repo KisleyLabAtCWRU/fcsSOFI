@@ -11,10 +11,10 @@ pixelsize = 0.109; % In micro meters (IX83); needed to accurately calculate D
 dT = 0.001; % Time between frames in s; needed to accurately calculate D
 
 % Whether you are using a .tiff file (other option is a .mat file) (1 = yes, 0 = no)
-useTiffFile = 0;
+useTiffFile = 1;
 
 % If using tiff file and using matlab 2021b or newer, tiffReadVolume is faster (1 = yes)
-tiffReadVol = 0;
+tiffReadVol = 1;
 
 % Number of files to load used together and length of each file (Will combine files if more than one)
 numberFiles = 1;
@@ -250,7 +250,7 @@ Data = Data(1:end-remain(1), 1:end-remain(2), :);
 
 % Bin The Data into bin sizes to allow for faster D detection
 % A little confusing to follow, but sums values in each bin
-fcsData = reshape(thrData, binSize, [], size(Data, 3));
+fcsData = reshape(Data, binSize, [], size(Data, 3));
 fcsData = sum(fcsData, 1);
 fcsData = reshape(fcsData, size(Data,1) / binSize, [], size(Data, 3));
 fcsData = pagetranspose(fcsData);
@@ -265,15 +265,17 @@ fcsData = pagetranspose(fcsData);
 % Start background subtration timer
 timeBack = tic;
 
-if ~useBCData
-    for i = 1:size(fcsData, 3) %i is the frame number
-        Bkg = LRG_SuperRes_LocalThrMap(fcsData(:, :, i), true); %local background calcualted with LRG code
-        thrDataFcs(:, :, i) = double(fcsData(:, :, i)) - double(Bkg); %background subtraction step
+thrDataFcs = zeros(size(fcsData));
+thrData = zeros(size(Data));
 
-        Bkg = LRG_SuperRes_LocalThrMap(Data(:, :, i), true); %local background calcualted with LRG code
-        thrData(:, :, i) = double(Data(:, :, i)) - double(Bkg); %background subtraction step
-    end
+for i = 1:size(fcsData, 3) %i is the frame number
+    Bkg = LRG_SuperRes_LocalThrMap(fcsData(:, :, i), true); %local background calcualted with LRG code
+    thrDataFcs(:, :, i) = double(fcsData(:, :, i)) - double(Bkg); %background subtraction step
+
+    Bkg = LRG_SuperRes_LocalThrMap(Data(:, :, i), true); %local background calcualted with LRG code
+    thrData(:, :, i) = double(Data(:, :, i)) - double(Bkg); %background subtraction step
 end
+
 DataCombined = thrData;
 fcsData = thrDataFcs;
 
