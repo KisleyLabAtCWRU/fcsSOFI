@@ -16,9 +16,6 @@ useTiffFile = 0;
 % If using tiff file and using matlab 2021b or newer, tiffReadVolume is faster (1 = yes)
 tiffReadVol = 0;
 
-% Use already background subtracted data. Must be using a mat file if yes (1 = yes)
-useBCData = 0;
-
 % Number of files to load used together and length of each file (Will combine files if more than one)
 numberFiles = 1;
 framesLength = 40000;
@@ -227,9 +224,12 @@ else % If data was already converted
     addpath(path);
     load(fileName);
     
+    % No Background Option
+    %{
     if useBCData
         Data = thrData;
     end
+    %}
 end
 
 fprintf(strcat(fname, ' loaded\n'));
@@ -239,19 +239,43 @@ time = toc(timeStart);
 timeOut = ['Loading File Complete, Execution Time: ', num2str(floor(time / 60)), ' Minutes, ', num2str(mod(time, 60)), ' Seconds'];
 disp(timeOut);
 
+%% Bin The Data
+
+% Set ROI
+Data = Data(ymin:ymax, xmin:xmax, tmin:tmax);
+
+% Make sure bin size fits
+remain = mod(size(Data), binSize);
+Data = Data(1:end-remain(1), 1:end-remain(2), :);
+
+% Bin The Data into bin sizes to allow for faster D detection
+% A little confusing to follow, but sums values in each bin
+fcsData = reshape(thrData, binSize, [], size(Data, 3));
+fcsData = sum(fcsData, 1);
+fcsData = reshape(fcsData, size(Data,1) / binSize, [], size(Data, 3));
+fcsData = pagetranspose(fcsData);
+fcsData = reshape(fcsData, binSize, [], size(Data, 3));
+fcsData = sum(fcsData, 1);
+fcsData = reshape(fcsData, size(Data, 2) / binSize, [], size(Data, 3));
+fcsData = pagetranspose(fcsData);
+
+
 %% Background Subtraction
 
 % Start background subtration timer
 timeBack = tic;
 
-thrData = Data; %will be the background subtracted dataset
 if ~useBCData
-    for i = 1:size(Data, 3) %i is the frame number
+    for i = 1:size(fcsData, 3) %i is the frame number
+        Bkg = LRG_SuperRes_LocalThrMap(fcsData(:, :, i), true); %local background calcualted with LRG code
+        thrDataFcs(:, :, i) = double(fcsData(:, :, i)) - double(Bkg); %background subtraction step
+
         Bkg = LRG_SuperRes_LocalThrMap(Data(:, :, i), true); %local background calcualted with LRG code
         thrData(:, :, i) = double(Data(:, :, i)) - double(Bkg); %background subtraction step
     end
 end
 DataCombined = thrData;
+fcsData = thrDataFcs;
 
 % Display time for background subtration
 time = toc(timeBack);
@@ -265,12 +289,14 @@ timeSofi = tic;
 
 %% start code and setup data 
 
+%{
 % Set ROI
 DataCombined = DataCombined(ymin:ymax, xmin:xmax, tmin:tmax);
 
 % Make sure bin size fits
 remain = mod(size(DataCombined), binSize);
 DataCombined = DataCombined(1:end-remain(1), 1:end-remain(2), :);
+%}
 
 % Produce average image
 avgim = mean(DataCombined, 3);
@@ -338,19 +364,7 @@ disp(timeOut);
 % start timer for fcs step
 timeFcs = tic;
 
-% Bin The Data into bin sizes to allow for faster D detection
-% A little confusing to follow, but sums values in each bin
-fcsData = reshape(DataCombined, binSize, [], size(DataCombined, 3));
-fcsData = sum(fcsData, 1);
-fcsData = reshape(fcsData, size(DataCombined,1) / binSize, [], size(DataCombined, 3));
-fcsData = pagetranspose(fcsData);
-fcsData = reshape(fcsData, binSize, [], size(DataCombined, 3));
-fcsData = sum(fcsData, 1);
-fcsData = reshape(fcsData, size(DataCombined, 2) / binSize, [], size(DataCombined, 3));
-fcsData = pagetranspose(fcsData);
-
 [~, ~, ~, sigmaBin] = crossSofi(fcsData);
-
 
 pixelsize = pixelsize*binSize;
 %sigmaBin = sigma/binSize;
@@ -793,12 +807,12 @@ figureNumber = 1;
 figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
 plot(1:numel(DhighSOFIvaluesR2), DhighSOFIvaluesR2);
 title('Diffusion Vector') 
-%}
+
 % Plot Probability Distribution
 figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
 histogram(DhighSOFIvaluesR2);
 title('Probability distribution')
-
+%}
 
 % Plot Cumulative Distribution
 figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
@@ -808,18 +822,14 @@ xlabel('Diffusion Coefficient (\mum^2s^{-1})')
 ylabel('Probability')
 
 
-%% Creatation of log(D) scale for plotting
-
-% Create log base Dmap
-Dmap2log = log10(Dmap_corrected);
-Dmap2log(Dmap2log == -Inf) = NaN;
+%% Filter Out Really Bad Fits in FCS Plot
 
 % Filter out poor fits if you want to here with an R2cutoff
 R2cutoff = 0.5; %set R^2 cutoff (0-1); == 0, no filtering
-Dmap2logAlpha = ones(size(Dmap2log)); % Used For Plotting
+DmapAlpha = ones(size(Dmap_corrected)); % Used For Plotting
 
-Dmap2log(R2map < R2cutoff) = NaN;
-Dmap2logAlpha(isnan(Dmap2log)) = 0;
+Dmap_corrected(R2map < R2cutoff) = NaN;
+DmapAlpha(isnan(Dmap_corrected)) = 0;
 
 
 %% Set the limits of the SOFI image
@@ -857,14 +867,14 @@ crossSofiMapDeconSat = rescale(crossSofiMapDeconSat); % Cross sofi decon
 % Need to fit D data ontop of SOFI data with extra pixels
 
 % Resize the binned data back up
-sizedDmap2log = imresize(Dmap2log, size(Dmap2log).*binSize, 'nearest');
-sizedDmap2logAlpha = imresize(Dmap2logAlpha, size(Dmap2log).*binSize, 'nearest');
+sizedDmap = imresize(Dmap_corrected, size(Dmap_corrected).*binSize, 'nearest');
+sizedDmapAlpha = imresize(DmapAlpha, size(Dmap_corrected).*binSize, 'nearest');
 
 % Resize the binned data to the cross sofi dimentions 
-crossDmap2log = imresize(Dmap2log, size(Dmap2log).*2.*binSize, 'nearest');
-crossDmap2logAlpha = imresize(Dmap2logAlpha, size(Dmap2log).*2.*binSize, 'nearest');
-crossDmap2log = crossDmap2log(3:end-3, 3:end-3);
-crossDmap2logAlpha = crossDmap2logAlpha(3:end-3, 3:end-3);
+crossDmap = imresize(Dmap_corrected, size(Dmap_corrected).*2.*binSize, 'nearest');
+crossDmapAlpha = imresize(DmapAlpha, size(Dmap_corrected).*2.*binSize, 'nearest');
+crossDmap = crossDmap(3:end-3, 3:end-3);
+crossDmapAlpha = crossDmapAlpha(3:end-3, 3:end-3);
 
 %% Finish the timer for image combination
 
@@ -911,39 +921,14 @@ if plotfigures == 1
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
     
     % Tua Diffusion Map
-    subplot(2, 2, 1); imagesc(tauDmap); colorbar; axis image; title('\tau_D map')
+    imagesc(tauDmap); colorbar; axis image; title('\tau_D map')
     
-    % Diffusion Map with nothing removed
-    subplot(2, 2, 2); imagesc(Dmap_corrected); colormap(customColorMap); 
-    colorbar; axis image; title('D map, nothing removed')
-
-    % Diffusion Map with poor fits removed
-    subplot(2, 2, 3); imagesc(Dmap_corrected); colormap(customColorMap);
-    colorbar; axis image; title('Fits of R^2 < 0.5 removed')
-
-    % Diffusion Map on a log base 10 scale
-    subplot(2, 2, 4); imagesc(Dmap2log); colormap(customColorMap);
-    colorbar; axis image; title('log scale c axis')
-
     % Second set of BinFitData subplots if using 2-comp model
     if type == 2
         figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
         
         % Tau Diffusion Map 2 Image
-        subplot(2, 2, 1); imagesc(tauD2map); axis image; title('D2: \tau_D map')
-        
-        % Diffusion Map 2 With Nothing Removed
-        subplot(2, 2, 2); imagesc(D2map_corrected); colormap(customColorMap);
-        axis image; title('D2: D map, nothing removed')
-        
-        % Diffution Map 2 with poor fits removed
-        subplot(2, 2, 3); imagesc(D2map_corrected); colormap(customColorMap);
-        axis image; title('D2: Fits of R^2 < 0.5 removed')
-        
-        % Diffusion Map 2 on a log base 10 scale
-        D2map2log = log10(D2map_corrected);
-        subplot(2, 2, 4); imagesc(D2map2log)
-        colormap(customColorMap); axis image; title('D2: log scale c axis')
+        imagesc(tauD2map); axis image; title('D2: \tau_D map')
     end
     
 
@@ -962,12 +947,12 @@ if plotfigures == 1
     % R-square Map
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
     imagesc(R2map); axis image; title('R^2 map');
-    colorbar; caxis([0 1]);
+    colorbar;
 
     % fcs figure creation
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-    DFigure = imagesc(sizedDmap2log); axis image; title('FCS: log(D)')
-    DFigure.AlphaData = sizedDmap2logAlpha; colormap(customColorMap);
+    DFigure = imagesc(sizedDmap); axis image; title('FCS: log(D)')
+    DFigure.AlphaData = sizedDmapAlpha; colormap(customColorMap);
     c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
     set(gca, 'Color', [0, 0, 0]) % Set background color to black
     set(gca, 'FontSize', 14); set(gca, 'xtick', [], 'ytick', []) % Removes axis tick marks
@@ -994,33 +979,33 @@ if plotfigures == 1
     
     % fcsSOFI figure creation 
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-    fcsSofiPlot = imagesc(sizedDmap2log); axis image; title('Combined fcsSOFI image')
-    fcsSofiPlot.AlphaData = sofiMapSat .* sizedDmap2logAlpha; % Uses the SOFI data as a transparency map
-    colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
+    fcsSofiPlot = imagesc(sizedDmap); axis image; title('Combined fcsSOFI image')
+    fcsSofiPlot.AlphaData = sofiMapSat .* sizedDmapAlpha; % Uses the SOFI data as a transparency map
+    colormap(customColorMap); c = colorbar; c.Label.String = 'D \mum^2s^{-1}';
     set(gca, 'Color', [0, 0, 0]) % Set background color to black
     set(gca, 'FontSize', 14); set(gca,'xtick',[],'ytick',[])
 
     % Decon fcsSOFI figure creation
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-    fcsSofiPlot = imagesc(sizedDmap2log); axis image; title('Combined fcsSOFI image with Decon')
-    fcsSofiPlot.AlphaData = sofiMapDeconSat .* sizedDmap2logAlpha; % Uses the SOFI data as a transparency map
-    colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
+    fcsSofiPlot = imagesc(sizedDmap); axis image; title('Combined fcsSOFI image with Decon')
+    fcsSofiPlot.AlphaData = sofiMapDeconSat .* sizedDmapAlpha; % Uses the SOFI data as a transparency map
+    colormap(customColorMap); c = colorbar; c.Label.String = 'D \mum^2s^{-1}';
     set(gca, 'Color', [0, 0, 0]) % Set background color to black
     set(gca, 'FontSize', 14); set(gca,'xtick',[],'ytick',[])
     
     % Cross fcsSOFI figure creation 
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-    fcsSofiPlot = imagesc(crossDmap2log); axis image; title('Combined Cross fcsSOFI image')
-    fcsSofiPlot.AlphaData = crossSofiMapSat .* crossDmap2logAlpha; % Uses the SOFI data as a transparency map
-    colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
+    fcsSofiPlot = imagesc(crossDmap); axis image; title('Combined Cross fcsSOFI image')
+    fcsSofiPlot.AlphaData = crossSofiMapSat .* crossDmapAlpha; % Uses the SOFI data as a transparency map
+    colormap(customColorMap); c = colorbar; c.Label.String = 'D \mum^2s^{-1}';
     set(gca, 'Color', [0, 0, 0]) % Set background color to black
     set(gca, 'FontSize', 14); set(gca,'xtick',[],'ytick',[])
     
     % Cross Decon fcsSOFI figure creation 
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-    fcsSofiPlot = imagesc(crossDmap2log); axis image; title('Combined Cross fcsSOFI image with Decon')
-    fcsSofiPlot.AlphaData = crossSofiMapDeconSat .* crossDmap2logAlpha; % Uses the SOFI data as a transparency map
-    colormap(customColorMap); c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
+    fcsSofiPlot = imagesc(crossDmap); axis image; title('Combined Cross fcsSOFI image with Decon')
+    fcsSofiPlot.AlphaData = crossSofiMapDeconSat .* crossDmapAlpha; % Uses the SOFI data as a transparency map
+    colormap(customColorMap); c = colorbar; c.Label.String = 'D \mum^2s^{-1}';
     set(gca, 'Color', [0, 0, 0]) % Set background color to black
     set(gca, 'FontSize', 14); set(gca,'xtick',[],'ytick',[])
 end
@@ -1083,7 +1068,6 @@ end
           fprintf('tauD =     %6.2e ± %6.2e\n', singleParams(3), ebars(3));
           fprintf('\n')
           fprintf('D =         %6.3e\n', Dmap_corrected(row_index, column_index))
-          fprintf('log10(D):  %6.3f\n\n', Dmap2log(row_index, column_index))
           fprintf('R-square:  %6.4f\n', R2map(row_index, column_index));
         
         elseif type == 2
@@ -1095,8 +1079,6 @@ end
           fprintf('\n')
           fprintf('D1:         %6.3e\n', Dmap_corrected(row_index, column_index))
           fprintf('D2:         %6.3e\n', D2map_corrected(row_index, column_index))
-          fprintf('log10(D1):  %6.3f\n', Dmap2log(row_index, column_index))
-          fprintf('log10(D2):  %6.3f\n\n', D2map2log(row_index, column_index))
           fprintf('R-square:  %6.4f\n', R2map(row_index, column_index));   
 
         elseif type == 3
@@ -1106,7 +1088,6 @@ end
           fprintf('alpha = %6.4f ± %6.4f\n', singleParams(4), ebars(4));
           fprintf('\n')
           fprintf('D =         %6.3e\n', Dmap_corrected(row_index, column_index))
-          fprintf('log10(D):  %6.3f\n\n', Dmap2log(row_index, column_index))
           fprintf('alpha:     %6.4f\n\n', alphamap(row_index, column_index))
           fprintf('R-square:  %6.4f\n', R2map(row_index, column_index));
           
@@ -1114,7 +1095,6 @@ end
           fprintf('tauD =     %6.2e\n ± %6.2e\n', tauDmap(row_index, column_index), ebars(1));
           fprintf('\n')
           fprintf('D =         %6.3e\n', Dmap_corrected(row_index, column_index))
-          fprintf('log10(D):  %6.3f\n\n', Dmap2log(row_index, column_index))
           fprintf('R-square:  %6.4f\n', R2map(row_index, column_index));    
         
         elseif type == 5
@@ -1122,7 +1102,6 @@ end
           fprintf('tauD =     %6.2e ± %6.2e\n', singleParams(3), ebars(3));
           fprintf('\n')
           fprintf('D =         %6.3e\n', Dmap_corrected(row_index, column_index))
-          fprintf('log10(D):  %6.3f\n\n', Dmap2log(row_index, column_index))
           fprintf('R-square:  %6.4f\n', R2map(row_index, column_index));
           
        elseif type == 6
@@ -1130,7 +1109,6 @@ end
           fprintf('alpha = %6.4f ± %6.4f\n', singleParams(2), ebars(2));
           fprintf('\n')
           fprintf('D =         %6.3e\n', Dmap_corrected(row_index, column_index))
-          fprintf('log10(D):  %6.3f\n\n', Dmap2log(row_index, column_index))
           fprintf('alpha:     %6.4f\n\n', alphamap(row_index, column_index))
           fprintf('R-square:  %6.4f\n', R2map(row_index, column_index));
         end
@@ -1163,10 +1141,9 @@ if savethedata == 1
     save(dataFileName, 'fitData', 'fitTimePoints', 'model_fit', 'parameters', ...
         'sofiMap', 'sofiMapDecon', 'crossSofiMap', 'crossSofiMapDecon', ...
         'sofiMapSat', 'sofiMapDeconSat', 'crossSofiMapSat', 'crossSofiMapDeconSat',...
-        'Dmap_corrected', 'R2map', 'chiMap', 'Dmap2log', ...
-        'Dmap2logAlpha', 'crossDmap2log', 'crossDmap2logAlpha', ...
-        'sizedDmap2log', 'sizedDmap2logAlpha', ...
-        'DhighSOFIvaluesR2', 'TimeArray', 'sigma', ...
+        'Dmap_corrected', 'DmapAlpha', 'sizedDmap', 'sizedDmapAlpha', ...
+        'crossDmap', 'crossDmapAlpha', 'R2map', 'chiMap', ...
+        'DhighSOFIvaluesR2', 'TimeArray', 'sigma', 'sigmaBin', ...
         'satMax', 'crossSatMax', 'satMin', 'dT', 'customColorMap', ...
         'D2map_corrected', 'alphamap', '-v7.3');
 
@@ -1174,11 +1151,18 @@ if savethedata == 1
     movefile(figureFileName, folderName);
     movefile(dataFileName, folderName);
 
+    if useTiffFile
+        movefile(fname, folderName);
+    end
+
+    % No Longer Saving BC
+    %{
     if ~useBCData
         backFileName = strcat(folderName, '_BC.mat');
         save(backFileName, 'thrData', '-v7.3');
         movefile(backFileName, folderName);
     end
+    %}
 
 end   
 
@@ -1187,5 +1171,5 @@ time = toc(timeStart);
 timeOut = ['Total Execution Time: ', num2str(floor(time / 60)), ' Minutes, ', num2str(mod(time, 60)), ' Seconds'];
 disp(timeOut);
 
-fit_timeOut = ['Total GPU Only Time: ', num2str(floor(fit_time / 60)), ' Minutes, ', num2str(mod(fit_time, 60)), ' Seconds'];
+fit_timeOut = ['Total Time in GPU Fit: ', num2str(floor(fit_time / 60)), ' Minutes, ', num2str(mod(fit_time, 60)), ' Seconds'];
 disp(fit_timeOut);
