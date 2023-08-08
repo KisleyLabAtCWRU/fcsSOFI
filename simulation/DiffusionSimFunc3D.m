@@ -6,11 +6,14 @@
 % added Levy flight
 %% SY 20200529
 % added two-component Brownian
-%% SY
+%% BW 20230808 
+% Make into function
 
 %{
 Simulates diffusion on a random binary pore map
 
+% %% NOT FULLY UP TO DATE WITH SCRIPT VERSION %% %
+% Currntly I beileive it is mostly just the pore map creation
 
 Inputes:
 diffType - 
@@ -36,7 +39,7 @@ poreType -
     Channels = 1, Pores = 2
 poreSettings - ALL PORE SETTINGS IN PIXELS
     If Channels (1):
-    [height, width, thickness, seperation]
+    [scaler, height, width, thickness, seperation, seperationIncrease]
     height - Overall pixel height of map
     width - Overall pixel width of map
     thickness - How many pixels thick a channel is
@@ -71,7 +74,7 @@ function [images, truth, poreMap] = DiffusionSimFunc3D(diffType, diffSettings, p
 
 %% User defined parameter
 % See movie frames, takes really long, but good for seeing sim settings
-showMovie = 1; % Yes = 1
+showMovie = 0; % Yes = 1
 
 %% Set Up Variables
 
@@ -92,14 +95,14 @@ switch type
 end
 
 % Pore Map Info
-poreMap = makeBinaryMap(poreType, poreSettings);
+poreMap = makeBinaryMap(poreType, poreSettings(2:end).*poreSettings(1));
 
 % Microscope Info
 % Cords are in (i, j, k), or (y, x, z)
 minCords = [1, 1, micSettings{1}];
 maxCords = [size(poreMap, 1), size(poreMap, 2), micSettings{2}];
 dT = micSettings{3};
-pixelSize = micSettings{4};
+pixelSize = micSettings{4} / poreSettings(1);
 nFrames = micSettings{5};
 nParticles = micSettings{6};
 detectRange = round(micSettings{7} ./ pixelSize);
@@ -132,7 +135,7 @@ for particle = 1:nParticles
     % Random start position
     ystart = randi([minCords(1), maxCords(1)]);
     xstart = randi([minCords(2), maxCords(2)]);
-    zstart = randi([-100, 0]);
+    zstart = randi([-500, 0]);
     while poreMap(ystart, xstart) == 0
          ystart=randi([minCords(1), maxCords(1)]);
          xstart=randi([minCords(2), maxCords(2)]);
@@ -185,10 +188,8 @@ for particle = 1:nParticles
 
             % If moves more than one pixel, must move in increments smaller
             % than stepSize to find final stopping point
-            stepIncrement = 1;
-            if stepSize(k) >= 1
-                stepIncrement = 100;
-            end
+            stepIncrement = round(abs(stepSize(k)));
+
             stepMove = (stepSize(k) / stepIncrement);
             
             % Checks that particle can move
@@ -240,14 +241,27 @@ end
 
 % fprintf("Finished \nAdding PSF... ")
 
+
+% Truth
+truth = zeros(maxCords(1), maxCords(2));
+
+% Makes Ground Truth
+for frame = 1:nFrames
+    for particle = 1:nParticles
+        truth(round(info(frame, particle, 1)), round(info(frame, particle, 2))) = truth(round(info(frame, particle, 1)), round(info(frame, particle, 2))) + 1;
+    end
+end
+
 %% PSF Addition %%
+maxCords = round(maxCords ./ poreSettings(1));
+info = info ./ poreSettings(1);
 
 % Set image size, frames for movie
 images = (bg .* rand(maxCords(1), maxCords(2), nFrames)) - bg/2; %create background for movie
 
 intensity = zeros(nParticles, 1);
 gauss = cell([nParticles, 1]);
-gaussR = 10;
+gaussR = round(stdGauss * 4);
 
 % Add PSF on top of particle locations (11 x 11 pixels in size)
 for frame = 1:nFrames
@@ -294,14 +308,7 @@ end
 
 % fprintf("Finished \n")
 
-truth = zeros(maxCords(1), maxCords(2));
 
-% Makes Ground Truth
-for frame = 1:nFrames
-    for particle = 1:nParticles
-        truth(round(info(frame, particle, 1)), round(info(frame, particle, 2))) = truth(round(info(frame, particle, 1)), round(info(frame, particle, 2))) + 1;
-    end
-end
 
 
 if showMovie

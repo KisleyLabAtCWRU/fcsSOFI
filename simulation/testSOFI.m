@@ -28,7 +28,7 @@ average = mean(data, 3);
 [deconAC, deconXC, deconAvg] = decon(average, {AC2, AC3, AC4}, {XC2, XC3}, sigma);
 
 truthSat = satAdj(truth, 0, 0.05);
-
+percents = NaN;
 %{
 AC2 = satAdj(AC2, 0, 0.5);
 AC3 = satAdj(AC3, 0, 0.5);

@@ -6,7 +6,8 @@
 % added Levy flight
 %% SY 20200529
 % added two-component Brownian
-%% SY
+%% BW 20230808 
+% Allow up and down diffusion
 
 close all
 clear;
@@ -24,8 +25,9 @@ showMovie = 0; % See movie frames, really long, Yes = 1
 % load binary 2D pore map image
 %load('C:\Users\User\Desktop\SY\Kisley-lab\Simulation Code\PAM_SEM_close2.mat')
 scaler = 100;
-poreMap = makeBinaryMap(1, [100, 100, 5, 3, 0.5] .* scaler); % Channels
-%poreMap = makeBinaryMap(2, [100, 100, 5, 5, 1] .* scaler ); % Rings
+poreMap = makeBinaryMap(1, [50, 50, 5, 5, 0] .* scaler); % Channels
+%poreMap = makeBinaryMap(2, [20, 20, 0.5, 2.5, 1] .* scaler ); % Rings
+%poreMap = makeBinaryMap(2, [20, 20, 1, 0, 5] .* scaler );
 %poreMap = makeBinaryMap(3, [100, 100, 200 / scaler, 3, 0.5] .* scaler); % Pores
 
 % Cords are in (i, j, k), or (y, x, z)
@@ -35,12 +37,12 @@ maxCords = [size(poreMap,1), size(poreMap,2), 0];
 % "microscope" and sample parameters
 dT = 0.002; % Time between frames in s
 pixelSize = 47.6 / scaler; % 47.6; % pixel size in nm
-nFrames = 2500;      % Number of frames
-np = 375;    % Number of Particles
+nFrames = 40000;      % Number of frames
+np = 200;    % Number of Particles
 detectRange = round([-200, 0] ./ pixelSize); % Detection range in nm of microscope [low, high]
 
 % PSF information
-stdGauss = 2.5; % sigma of simulated Gaussian PSF in pixels
+stdGauss = 1.7; % sigma of simulated Gaussian PSF in pixels
 int_part = 150/50*3; % intensity of the PSF; taken from shot noise, Poisson rand
 bg = 140/50*3*1.25; % max bg of image; bg/2 is average value (read noise)
 sbr=int_part/(bg/2);
@@ -49,7 +51,7 @@ SNR = int_part / sqrt((int_part + ((2*bg)^2)/12)); % Signal to Noise (mean / std
 % %%% Diffusion parameters %%% %
 % Brownian parameters
 type = 0; %Brownian = 0; Levy Flight = 1; Two-Component = 2;
-D = 1e6; % D in nm^2/s 
+D = 100; % D in micro m^2/s 
 extraSteps = 500; % How many steps are calculated inbetween frames
 
 % Two-Component Brownian parameters
@@ -95,7 +97,7 @@ for particle = 1:np
     % Random start position
     ystart = randi([minCords(1), maxCords(1)]);
     xstart = randi([minCords(2), maxCords(2)]);
-    zstart = 0;% randi([-500, 0]);
+    zstart = randi([-500, 0]);
     while poreMap(ystart, xstart) == 0
          ystart = randi([minCords(1), maxCords(1)]);
          xstart = randi([minCords(2), maxCords(2)]);
@@ -111,6 +113,7 @@ for particle = 1:np
     static_counter = 0;
     particle_off = 0;
     for frame = 2:nFrames
+
 
         % %% Distance of movement %% %
         % Brownian diffusion
