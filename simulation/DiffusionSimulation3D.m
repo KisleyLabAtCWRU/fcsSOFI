@@ -7,7 +7,7 @@
 %% SY 20200529
 % added two-component Brownian
 %% BW 20230808 
-% Allow up and down diffusion
+% Allow z-level diffusion
 
 close all
 clear;
