@@ -7,11 +7,11 @@ startloc = '\\kisleylab1\test\BenjaminWellnitz\fcsSOFI Master';
 % %% Input Data Settings %% %
 
 % Microscope Set Up
-pixelsize = 0.109; % In micro meters (IX83); needed to accurately calculate D
+pixelsize = 0.102; % In micro meters (IX83); needed to accurately calculate D
 dT = 0.001; % Time between frames in s; needed to accurately calculate D
 
 % Whether you are using a .tiff file (other option is a .mat file) (1 = yes, 0 = no)
-useTiffFile = 1;
+useTiffFile = 0;
 
 % If using tiff file and using matlab 2021b or newer, tiffReadVolume is faster (1 = yes)
 tiffReadVol = 1;
@@ -62,7 +62,7 @@ satMax = 1;
 crossSatMax = satMax + 0;
 
 % Bin Size for fcs Binning. Allow for faster D detection
-binSize = 1;
+binSize = 2;
 
 
 % %% Result Settings %% %
@@ -289,21 +289,14 @@ disp(timeOut);
 % Start timer before SOFI step
 timeSofi = tic;
 
-%% start code and setup data 
-
-%{
-% Set ROI
-DataCombined = DataCombined(ymin:ymax, xmin:xmax, tmin:tmax);
-
-% Make sure bin size fits
-remain = mod(size(DataCombined), binSize);
-DataCombined = DataCombined(1:end-remain(1), 1:end-remain(2), :);
-%}
+%% Calculate the correlation (2-3th orders, AC and XC)
+[crossSofiMap, ~, ~, sigma] = crossSofi(DataCombined);
+[sofiMap, ~, ~, ~, ~, ~, ~] = autoSofi(DataCombined);
 
 % Produce average image
 avgim = mean(DataCombined, 3);
 
-% Old fcs implimentation
+% Old SOFI implimentation
 %{
 % Reshape 2D image to 1D for analysis
 % shapes columnwise into a 1x(ymax-ymin+1)(xmax-xmin+1)
@@ -318,14 +311,7 @@ end
 
 %% Calculate the correlation (2-4th orders, AC and XC)
 [ACXC_all] = CalcCorr(innerpts, DataVector); % Calculate
-%}
 
-%% Calculate the correlation (2-3th orders, AC and XC)
-[crossSofiMap, ~, ~, sigma] = crossSofi(DataCombined);
-[sofiMap, ~, ~, ~, ~, ~, ~] = autoSofi(DataCombined);
-
-% Old fcs implimentation
-%{
 %% Calculate intensity for images by different methods     
 AC_G2 = zeros(1, numel(ACXC_all));
 for i = 1:numel(ACXC_all)
@@ -1175,3 +1161,22 @@ disp(timeOut);
 
 fit_timeOut = ['Total Time in GPU Fit: ', num2str(floor(fit_time / 60)), ' Minutes, ', num2str(mod(fit_time, 60)), ' Seconds'];
 disp(fit_timeOut);
+
+function [binnedData] = binData(data, binSize)
+    
+    % Make sure bin size fits
+    remain = mod(size(data), binSize);
+    data = data(1:end-remain(1), 1:end-remain(2), :);
+    
+    % Bin The Data into bin sizes to allow for faster D detection
+    % A little confusing to follow, but sums values in each bin
+    binnedData = reshape(data, binSize, [], size(data, 3));
+    binnedData = sum(binnedData, 1);
+    binnedData = reshape(binnedData, size(data,1) / binSize, [], size(data, 3));
+    binnedData = pagetranspose(binnedData);
+    binnedData = reshape(binnedData, binSize, [], size(data, 3));
+    binnedData = sum(binnedData, 1);
+    binnedData = reshape(binnedData, size(data, 2) / binSize, [], size(data, 3));
+    binnedData = pagetranspose(binnedData);
+   
+end
