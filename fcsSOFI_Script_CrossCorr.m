@@ -50,9 +50,6 @@ alpha_min = 0;
 diffusionMin = 0; % micro m^2 / s
 diffusionMax = Inf;
 
-% R Squared Cut off for cumulative distribution of D, beads=0.95, 76kDa=0.8, 2000kDa=0.9, BSA=0.88
-R2cutoff = 0.90;
-
 % Deconvolution on SOFI Image (1 = yes, 0 = no)
 doDecon = 1;
 
@@ -771,12 +768,32 @@ timeOut = ['FCS Complete, Execution Time: ', num2str(floor(time / 60)), ' Minute
 disp(timeOut);
 
 
-%% %%%%%%%%%%%%%%%%%%%% STEP 3: CombineTempSpat (fcsSOFI) %%%%%%%%%%%%%%%%%%%%%%%%%
+%% %%%%%%%%%%%%%%%%%%%% STEP 3: DataVisualization (fcsSOFI) %%%%%%%%%%%%%%%%%%%%%%%%%
 
 % start timer for fcsSOFI combination
 timeCombine = tic;
-    
+
 %% Diffusion CDF Creation
+
+% Need to size cross sofi down to match fcs size
+% Each fcs weight will be the total sum of sofi values in the fcs values location
+ecdfSOFI = padarray(crossSofiMap, [2, 2], "both");
+ecdfSOFI = padarray(ecdfSOFI, [1, 1], "post");
+ecdfSOFI = binData(ecdfSOFI, 2*binSize);
+
+[vals, ecdfProb] = weightedECDF(Dmap_corrected, ecdfSOFI);
+
+figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
+plot(vals, ecdfProb, 'k.')
+ylim([0 1])
+title("Weighted eCDF")
+xlabel('Diffusion Coefficient (\mum^2s^{-1})')
+ylabel('Probability')
+
+% Old Implimentation (not weighted, uses R2 values)
+%{
+% R Squared Cut off for cumulative distribution of D, beads=0.95, 76kDa=0.8, 2000kDa=0.9, BSA=0.88
+R2cutoff = 0.90;
 
 % Only values with good R2 values used
 DhighSOFIvaluesR2 = Dmap_corrected(R2 > R2cutoff);
@@ -809,16 +826,11 @@ title('Cumulative distribution')
 xlabel('Diffusion Coefficient (\mum^2s^{-1})')
 ylabel('Probability')
 
-
 %% Filter Out Really Bad Fits in FCS Plot
 
 % Filter out poor fits if you want to here with an R2cutoff
-R2cutoff = 0.5; %set R^2 cutoff (0-1); == 0, no filtering
-DmapAlpha = ones(size(Dmap_corrected)); % Used For Plotting
-
 Dmap_corrected(R2map < R2cutoff) = NaN;
-DmapAlpha(isnan(Dmap_corrected)) = 0;
-
+%}
 
 %% Set the limits of the SOFI image
 
@@ -850,21 +862,15 @@ sofiMapDeconSat = rescale(sofiMapDeconSat); % sofi decon
 crossSofiMapSat = rescale(crossSofiMapSat); % Cross sofi no decon
 crossSofiMapDeconSat = rescale(crossSofiMapDeconSat); % Cross sofi decon
 
-
 %% Creating Larger Dmap Images
-% Need to fit D data ontop of SOFI data with extra pixels
 
+% Need to fit D data ontop of SOFI data with extra pixels
 % Resize the binned data back up
 sizedDmap = imresize(Dmap_corrected, size(Dmap_corrected).*binSize, 'nearest');
-sizedDmapAlpha = imresize(DmapAlpha, size(Dmap_corrected).*binSize, 'nearest');
 
 % Resize the binned data to the cross sofi dimentions 
 crossDmap = imresize(Dmap_corrected, size(Dmap_corrected).*2.*binSize, 'nearest');
-crossDmapAlpha = imresize(DmapAlpha, size(Dmap_corrected).*2.*binSize, 'nearest');
 crossDmap = crossDmap(3:end-3, 3:end-3);
-crossDmapAlpha = crossDmapAlpha(3:end-3, 3:end-3);
-
-%% Finish the timer for image combination
 
 % display execution time of fcsSOFI combination
 time = toc(timeCombine);
@@ -940,7 +946,7 @@ if plotfigures == 1
     % fcs figure creation
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
     DFigure = imagesc(sizedDmap); axis image; title('FCS: log(D)')
-    DFigure.AlphaData = sizedDmapAlpha; colormap(customColorMap);
+    DFigure.AlphaData = ~isnan(sizedDmap); colormap(customColorMap);
     c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
     set(gca, 'Color', [0, 0, 0]) % Set background color to black
     set(gca, 'FontSize', 14); set(gca, 'xtick', [], 'ytick', []) % Removes axis tick marks
@@ -968,7 +974,7 @@ if plotfigures == 1
     % fcsSOFI figure creation 
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
     fcsSofiPlot = imagesc(sizedDmap); axis image; title('Combined fcsSOFI image')
-    fcsSofiPlot.AlphaData = sofiMapSat .* sizedDmapAlpha; % Uses the SOFI data as a transparency map
+    fcsSofiPlot.AlphaData = sofiMapSat .* ~isnan(sizedDmap); % Uses the SOFI data as a transparency map
     colormap(customColorMap); c = colorbar; c.Label.String = 'D \mum^2s^{-1}';
     set(gca, 'Color', [0, 0, 0]) % Set background color to black
     set(gca, 'FontSize', 14); set(gca,'xtick',[],'ytick',[])
@@ -976,7 +982,7 @@ if plotfigures == 1
     % Decon fcsSOFI figure creation
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
     fcsSofiPlot = imagesc(sizedDmap); axis image; title('Combined fcsSOFI image with Decon')
-    fcsSofiPlot.AlphaData = sofiMapDeconSat .* sizedDmapAlpha; % Uses the SOFI data as a transparency map
+    fcsSofiPlot.AlphaData = sofiMapDeconSat .* ~isnan(sizedDmap); % Uses the SOFI data as a transparency map
     colormap(customColorMap); c = colorbar; c.Label.String = 'D \mum^2s^{-1}';
     set(gca, 'Color', [0, 0, 0]) % Set background color to black
     set(gca, 'FontSize', 14); set(gca,'xtick',[],'ytick',[])
@@ -984,7 +990,7 @@ if plotfigures == 1
     % Cross fcsSOFI figure creation 
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
     fcsSofiPlot = imagesc(crossDmap); axis image; title('Combined Cross fcsSOFI image')
-    fcsSofiPlot.AlphaData = crossSofiMapSat .* crossDmapAlpha; % Uses the SOFI data as a transparency map
+    fcsSofiPlot.AlphaData = crossSofiMapSat .* ~isnan(crossDmap); % Uses the SOFI data as a transparency map
     colormap(customColorMap); c = colorbar; c.Label.String = 'D \mum^2s^{-1}';
     set(gca, 'Color', [0, 0, 0]) % Set background color to black
     set(gca, 'FontSize', 14); set(gca,'xtick',[],'ytick',[])
@@ -992,7 +998,7 @@ if plotfigures == 1
     % Cross Decon fcsSOFI figure creation 
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
     fcsSofiPlot = imagesc(crossDmap); axis image; title('Combined Cross fcsSOFI image with Decon')
-    fcsSofiPlot.AlphaData = crossSofiMapDeconSat .* crossDmapAlpha; % Uses the SOFI data as a transparency map
+    fcsSofiPlot.AlphaData = crossSofiMapDeconSat .* ~isnan(crossDmap); % Uses the SOFI data as a transparency map
     colormap(customColorMap); c = colorbar; c.Label.String = 'D \mum^2s^{-1}';
     set(gca, 'Color', [0, 0, 0]) % Set background color to black
     set(gca, 'FontSize', 14); set(gca,'xtick',[],'ytick',[])
@@ -1129,8 +1135,7 @@ if savethedata == 1
     save(dataFileName, 'fitData', 'fitTimePoints', 'model_fit', 'parameters', ...
         'sofiMap', 'sofiMapDecon', 'crossSofiMap', 'crossSofiMapDecon', ...
         'sofiMapSat', 'sofiMapDeconSat', 'crossSofiMapSat', 'crossSofiMapDeconSat',...
-        'Dmap_corrected', 'DmapAlpha', 'sizedDmap', 'sizedDmapAlpha', ...
-        'crossDmap', 'crossDmapAlpha', 'R2map', 'chiMap', ...
+        'Dmap_corrected', 'sizedDmap', 'crossDmap', 'R2map', 'chiMap', ...
         'DhighSOFIvaluesR2', 'TimeArray', 'sigma', 'sigmaBin', 'binSize', ...
         'satMax', 'crossSatMax', 'satMin', 'dT', 'customColorMap', ...
         'D2map_corrected', 'alphamap', '-v7.3');
