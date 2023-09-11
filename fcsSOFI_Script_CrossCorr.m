@@ -37,7 +37,7 @@ tmax = 40000; % End frame
 type = 4;
 
 % Initial Condition For Fitting
-D_stp = 50;    % Diffusion Coeficient (in micro m^2 / s)
+D_stp = 10;     % Diffusion Coeficient (in micro m^2 / s)
 D2_stp = 1e6;   % 2d Diffusion Coeficient (For two compnent)
 A_stp = 1;      % A Value (for type 1 and 4)
 alpha_stp = .9; % Alpha Value (for type 3 and 6)
@@ -246,16 +246,7 @@ remain = mod(size(Data), binSize);
 Data = Data(1:end-remain(1), 1:end-remain(2), :);
 
 % Bin The Data into bin sizes to allow for faster D detection
-% A little confusing to follow, but sums values in each bin
-fcsData = reshape(Data, binSize, [], size(Data, 3));
-fcsData = sum(fcsData, 1);
-fcsData = reshape(fcsData, size(Data,1) / binSize, [], size(Data, 3));
-fcsData = pagetranspose(fcsData);
-fcsData = reshape(fcsData, binSize, [], size(Data, 3));
-fcsData = sum(fcsData, 1);
-fcsData = reshape(fcsData, size(Data, 2) / binSize, [], size(Data, 3));
-fcsData = pagetranspose(fcsData);
-
+fcsData = binData(Data, binSize);
 
 %% Background Subtraction
 
@@ -473,7 +464,7 @@ tauDmap = reshape(tauD, fcsSz);
     
 % Diffusion Coefficient
 w = pixelsize * sigmaBin * 2.355; % Use PSFsample instead if you know the full width half mast;
-D = (w .^ 2) ./ (4 * tauD); %in micro meters^2/s
+D = (w .^ 2) ./ (4 * tauD); % In micro meters^2/s
 D_corrected = abs(D);
 D_corrected(D_corrected > diffusionMax) = diffusionMax;
 D_corrected(D_corrected < diffusionMin) = diffusionMin;
@@ -947,7 +938,7 @@ if plotfigures == 1
     figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
     DFigure = imagesc(sizedDmap); axis image; title('FCS: log(D)')
     DFigure.AlphaData = ~isnan(sizedDmap); colormap(customColorMap);
-    c = colorbar; c.Label.String = 'log(D/(\mum^2s^{-1}))';
+    c = colorbar; c.Label.String = 'D \mum^2s^{-1}';
     set(gca, 'Color', [0, 0, 0]) % Set background color to black
     set(gca, 'FontSize', 14); set(gca, 'xtick', [], 'ytick', []) % Removes axis tick marks
     
@@ -1166,6 +1157,7 @@ disp(timeOut);
 
 fit_timeOut = ['Total Time in GPU Fit: ', num2str(floor(fit_time / 60)), ' Minutes, ', num2str(mod(fit_time, 60)), ' Seconds'];
 disp(fit_timeOut);
+
 
 function [binnedData] = binData(data, binSize)
     
