@@ -1,7 +1,8 @@
 clear; close all hidden; clc;
 %% User Input
 % Start Location of file prompter
-startloc = '\\kisleylab1\test\BenjaminWellnitz\fcsSOFI Master';
+%startloc = '\\kisleylab1\test\BenjaminWellnitz\fcsSOFI Master';
+startloc = '\\129.22.135.181\Test\MaiAntarasen\Experimental_data\test-data\Experimental_mat_file';
 
 
 % %% Input Data Settings %% %
@@ -59,7 +60,7 @@ satMax = 1;
 crossSatMax = satMax + 0;
 
 % Bin Size for fcs Binning. Allow for faster D detection
-binSize = 2;
+binSize = 1;
 
 
 % %% Result Settings %% %
@@ -772,10 +773,10 @@ ecdfSOFI = padarray(crossSofiMap, [2, 2], "both");
 ecdfSOFI = padarray(ecdfSOFI, [1, 1], "post");
 ecdfSOFI = binData(ecdfSOFI, 2*binSize);
 
-[vals, ecdfProb] = weightedECDF(Dmap_corrected, ecdfSOFI);
-
+[dVals, ecdfProb] = weightedECDF(Dmap_corrected, ecdfSOFI);
+figureNumber = 1; % Used to keep track of figures to save
 figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
-plot(vals, ecdfProb, 'k.')
+plot(dVals, ecdfProb, 'k.')
 ylim([0 1])
 title("Weighted eCDF")
 xlabel('Diffusion Coefficient (\mum^2s^{-1})')
@@ -797,7 +798,6 @@ TimeArray = unique(DhighSOFIvaluesR2); % All posible values of diffusion data
 [DWellFinal, IndexFinal] = cumuldist(DhighSOFIvaluesR2, TimeArray);
 
 % Used to keep track of figures to save
-figureNumber = 1;
 %{
 % Plot Diffusion Data
 figureArray(figureNumber) = figure; figureNumber = figureNumber + 1;
@@ -1127,7 +1127,7 @@ if savethedata == 1
         'sofiMap', 'sofiMapDecon', 'crossSofiMap', 'crossSofiMapDecon', ...
         'sofiMapSat', 'sofiMapDeconSat', 'crossSofiMapSat', 'crossSofiMapDeconSat',...
         'Dmap_corrected', 'sizedDmap', 'crossDmap', 'R2map', 'chiMap', ...
-        'DhighSOFIvaluesR2', 'TimeArray', 'sigma', 'sigmaBin', 'binSize', ...
+        'dVals', 'ecdfProb', 'sigma', 'sigmaBin', 'binSize', ...
         'satMax', 'crossSatMax', 'satMin', 'dT', 'customColorMap', ...
         'D2map_corrected', 'alphamap', '-v7.3');
 
