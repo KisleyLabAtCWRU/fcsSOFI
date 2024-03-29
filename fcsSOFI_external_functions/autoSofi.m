@@ -9,8 +9,8 @@ Outputs:
 AC2, AC3, AC4 - 2nd, 3rd, and 4th order auto cumulents
 AG4 - 4th order auto correlation
 AC2Corrected, AC3Corrected, AG4Corrected - The diffusion corrected version
-    of the autocorrelation values. Still under development. Made from ideas 
-    from probe diffusion paper.
+    of the autocorrelation values. Still under development
+    Made from ideas from probe diffusion paper
 
 data must be in the format height by width by frames.
 Ex: In a 5x10x30 each frame is 5 pixels tall and 10 pixels wide and there

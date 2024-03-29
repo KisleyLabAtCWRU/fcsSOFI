@@ -25,8 +25,8 @@ function [DwellFinal2, IndexFinal2]=cumuldist(Dwell,TimeArray)
 
 index = 1:1:numel(Dwell);
 Varsort = sort(Dwell);
-index = index/max(index);
-index = 1-index;
+index=index/max(index);
+index=1-index;
 
 VarsortKeep=Varsort(1);
 indexKeep=index(1);

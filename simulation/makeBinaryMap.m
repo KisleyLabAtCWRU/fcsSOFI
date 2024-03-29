@@ -47,21 +47,21 @@ Type 3: Pores
     horizontal and verical one) to create the elips shape. Positions of the
     pores are generated from a uniform random distribution.
 %}
-function [binaryMap] = makeBinaryMap(type, settings)
+function [binaryMap] = makeBinaryMap(type, settings, fdir)
 
 switch(type)
     case 1 
-        binaryMap = makeChannels(settings);
+        binaryMap = makeChannels(settings, fdir);
     case 2
-        binaryMap = makeRings(settings);
+        binaryMap = makeRings(settings, fdir);
     case 3 
-        binaryMap = makePores(settings);
+        binaryMap = makePores(settings, fdir);
 end
 
 end
 
 
-function [binaryMap] = makeChannels(settings)
+function [binaryMap] = makeChannels(settings, fdir)
     height = settings(1);
     width = settings(2);
     thickness = settings(3);
@@ -79,10 +79,16 @@ function [binaryMap] = makeChannels(settings)
     if (xMarker < width) % Add part of last channel if room
         binaryMap(:, xMarker:end) = 1;
     end
+
+    parameters = ["height";"width";"thickness";"seperation";"seperationIncrease"];
+    value_parameters = [height;width;thickness;seperation;seperationIncrease];
+    table_parameter = table(parameters,value_parameters);
+    writetable(table_parameter, strcat(fdir,'/pore_parameter-table.txt'),'Delimiter',' ');
+
 end
 
 
-function [binaryMap] = makeRings(settings)
+function [binaryMap] = makeRings(settings, fdir)
     height = settings(1);
     width = settings(2);
     thickness = settings(3);
@@ -100,19 +106,25 @@ function [binaryMap] = makeRings(settings)
         rMarker = rMarker + thickness + seperation; % Place start of next ring
         seperation = seperation + seperationIncrease; % Increase speration
     end
+
+    parameters = ["height";"width";"thickness";"seperation";"seperationIncrease"];
+    value_parameters = [height;width;thickness;seperation;seperationIncrease];
+    table_parameter = table(parameters,value_parameters);
+    writetable(table_parameter, strcat(fdir,'/pore_parameter-table.txt'),'Delimiter',' ');
 end
 
 
-function [binaryMap] = makePores(settings)
+function [binaryMap] = makePores(settings, fdir)
 
     height = settings(1);
     width = settings(2);
     numPores = settings(3);
-    poreR = settings(5); % Average Pore Radius
-    poreSigma = settings(4); % Pore Radius Standard Deviation
+    poreR = settings(4); % Average Pore Radius
+    poreSigma = settings(5); % Pore Radius Standard Deviation
 
     binaryMap = zeros(height, width);
-
+    seed = 32;
+    rng(seed);
     for n = 1:numPores
         poreHR = round(normrnd(poreR, poreSigma));
         poreVR = round(normrnd(poreR, poreSigma));
@@ -132,4 +144,10 @@ function [binaryMap] = makePores(settings)
         pore = zeros(size(x));
         pore((((x.*cos(theta)+y.*sin(theta)).^2/poreHR^2) + ((y.*cos(theta)-x.*sin(theta)).^2/poreVR^2)) < 1) = 1;
     end
+
+    
+    parameters = ["height";"width";"numPores";"poreR";"poreSigma"];
+    value_parameters = [height;width;numPores;poreR;poreSigma];
+    table_parameter = table(parameters,value_parameters);
+    writetable(table_parameter, strcat(fdir,'/pore_parameter-table.txt'),'Delimiter',' ');
 end

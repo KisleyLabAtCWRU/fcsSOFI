@@ -8,50 +8,51 @@
 % added two-component Brownian
 %% BW 20230808 
 % Allow z-level diffusion
+%% MA 20231001
+% Apply direct convolution using fspecial function
 
 close all
 clear;
 
 %% User defined parameters
-savedata = 0; %yes = 1;no = 0
-fdir='C:\Users\User\Desktop\SY\Kisley-lab\Simulation Code\'; %directory to save data
+savedata = 1; %yes = 1;no = 0
+% fdir='C:\Users\User\Desktop\SY\Kisley-lab\Simulation Code\'; %directory to save data
 snum='69'; % file number for saved file
-createmovie = 0; %yes = 1;no = 0
-moviename = 'P'; %save name for .avi file
-showMovie = 0; % See movie frames, really long, Yes = 1
+
+createmovie =0; %yes = 1;no = 0
+create_truth_movie  = 0;%yes = 1;no = 0
+pore_type = "Rings";
+showMovie = createmovie; % See movie frames, really long, Yes = 1
+show_truth_Movie = create_truth_movie;
+addpath(genpath(strcat(pwd,"\fcsSOFI_external_functions")))
 
 % %%% Simulation details %%% %
 % image information
 % load binary 2D pore map image
 %load('C:\Users\User\Desktop\SY\Kisley-lab\Simulation Code\PAM_SEM_close2.mat')
-scaler = 100;
-poreMap = makeBinaryMap(1, [50, 50, 5, 5, 0] .* scaler); % Channels
-%poreMap = makeBinaryMap(2, [20, 20, 0.5, 2.5, 1] .* scaler ); % Rings
-%poreMap = makeBinaryMap(2, [20, 20, 1, 0, 5] .* scaler );
-%poreMap = makeBinaryMap(3, [100, 100, 200 / scaler, 3, 0.5] .* scaler); % Pores
 
-% Cords are in (i, j, k), or (y, x, z)
-minCords = [1, 1, -100000];
-maxCords = [size(poreMap,1), size(poreMap,2), 0];
+%scaler to simulation a structure beyond nanoscale
+scaler = 100;
 
 % "microscope" and sample parameters
 dT = 0.002; % Time between frames in s
-pixelSize = 47.6 / scaler; % 47.6; % pixel size in nm
-nFrames = 40000;      % Number of frames
-np = 200;    % Number of Particles
+pixelSize = 102 / scaler ; % 47.6; % pixel size in nm
+nFrames = 10000;      % Number of frames
+np = 20;    % Number of Particles
 detectRange = round([-200, 0] ./ pixelSize); % Detection range in nm of microscope [low, high]
 
 % PSF information
-stdGauss = 1.7; % sigma of simulated Gaussian PSF in pixels
+stdGauss = 2; % sigma of simulated Gaussian PSF in pixels
 int_part = 150/50*3; % intensity of the PSF; taken from shot noise, Poisson rand
 bg = 140/50*3*1.25; % max bg of image; bg/2 is average value (read noise)
-sbr=int_part/(bg/2);
+%bg = 1; %manually input value
+sbr= int_part/(bg/2);
 SNR = int_part / sqrt((int_part + ((2*bg)^2)/12)); % Signal to Noise (mean / std)
 
 % %%% Diffusion parameters %%% %
 % Brownian parameters
 type = 0; %Brownian = 0; Levy Flight = 1; Two-Component = 2;
-D = 100; % D in micro m^2/s 
+D = 10e6; % D in nm^2/s 
 extraSteps = 500; % How many steps are calculated inbetween frames
 
 % Two-Component Brownian parameters
@@ -63,7 +64,7 @@ P2 = 0.1; %Won't actually be used but here for clarity
 % Anomalous parameters
 alpha = .8; % For anomalous
 
-% Blinking Settings
+% Blinking Settingss
 blink = 0; % Turn on blinking; 1 = yes, 0 = no
 offOnTime = [0.300, 0.030]; % [off time, on time] in s
 
@@ -71,6 +72,58 @@ offOnTime = [0.300, 0.030]; % [off time, on time] in s
 addbleaching = 0; %yes = 1; no = 0
 bleachtime = .1; %in seconds
 tol = 10; %particle motion tolerance
+
+
+%%Save parameter for later use%%
+currentDateTime = datestr(now, 'yyyymmdd_HHMMSS');
+%select directory for saving
+%folder convention: Date/time_poreType_nframes_np_D(\mum^2s^-1)
+fdir = strcat('\\129.22.135.181\Test\MaiAntarasen\data\', currentDateTime, '_' + pore_type+ '_nframes' +string(nFrames) + '_np' + string(np) + '_D' + string(D/1e6) + '_t');
+if exist(fdir, 'dir') 
+    disp(['Folder ''' fdir ''' already exists.']);
+else
+    mkdir(fdir);
+    disp(['Folder ''' fdir ''' created.']);
+end
+
+% name and create a pore map
+if pore_type == "Channels"
+    %setting = [25, 25, 0.25, 4, 1] .* scaler; %current channel
+    %setting = [25, 25, 3, 3, 0] .* scaler;
+    setting = [50, 50, 10,20, 0] .* scaler;%for SI
+    %setting = [25, 25, 3, 3, 5] .* scaler; %JPCB experiment
+    % setting = [100, 100, 10, 10, 0] .* scaler;
+    %structure_label = 1;
+    poreMap = makeBinaryMap(1, setting, fdir);
+end
+
+if pore_type == "Rings"
+    setting = [15, 15, 1, 8, 0].*scaler;
+    %setting = [50, 50, 10, 5, 0] .* scaler;
+    poreMap = makeBinaryMap(2, setting, fdir);
+end
+
+if pore_type == "Pores"
+    %setting = [25, 25, 1 / scaler, 3, 0.5] .* scaler;
+    %setting = [100, 100, 50/scaler, 10, 0.5] .* scaler; % ususal parameter\
+    setting = [52, 52, 6 / scaler, 10, 3] .* scaler; %small/big pore for SI
+    %structure_label = 3;
+    poreMap = makeBinaryMap(3, setting, fdir); % Pores
+
+end
+
+%set poreMap Structure
+if pore_type == "BeadsinWater"
+    %poreMap = ones(25*scaler);
+    poreMap = ones(50*scaler); %for SI
+end
+
+
+% Cords are in (i, j, k), or (y, x, z)
+% z means in and out focus
+% -100000 mean infinitely diffusion in z
+minCords = [1, 1, -100000];
+maxCords = [size(poreMap,1), size(poreMap,2), 0];
 
 % %%% End user input %%%% %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -91,9 +144,11 @@ blinkInfo(:, 4) = rand([np, 1]) * max(offOnTime);
 
 fprintf("Simulating Particle Movement... ")
 
+seed = 42;
+rng(seed);
 % Iterate through each particle
 for particle = 1:np
-    
+
     % Random start position
     ystart = randi([minCords(1), maxCords(1)]);
     xstart = randi([minCords(2), maxCords(2)]);
@@ -113,7 +168,6 @@ for particle = 1:np
     static_counter = 0;
     particle_off = 0;
     for frame = 2:nFrames
-
 
         % %% Distance of movement %% %
         % Brownian diffusion
@@ -148,7 +202,6 @@ for particle = 1:np
 
         % Move the position
         for k = kOrder
-
             % If moves more than one pixel, must move in increments smaller
             % than stepSize to find final stopping point
             stepIncrement = round(abs(stepSize(k)));
@@ -173,18 +226,18 @@ for particle = 1:np
             end
         end
 
-        % %% Blinking %% %
-        if blink
-            intarr(particle, frame) = intarr(particle, frame) * (blinkInfo(particle, 3)-1);
+        % % %% Blinking %% %
+        % if blink
+        %     intarr(particle, frame) = intarr(particle, frame) * (blinkInfo(particle, 3)-1);
     
-            blinkInfo(particle, 4) = blinkInfo(particle, 4) + dT;
-            % If off/on time length > current time
-            if blinkInfo(particle, blinkInfo(particle, 3)) >= blinkInfo(particle, 4)
-                blinkInfo(particle, 4) = 0; % Set Clock to zero
-                blinkInfo(particle, blinkInfo(particle, 3)) = exprnd(offOnTime(blinkInfo(particle, 3))); % Set new off/on time
-                blinkInfo(particle, 3) = mod(blinkInfo(particle, 3), 2) + 1; % Swap off/on state
-            end
-        end
+        %     blinkInfo(particle, 4) = blinkInfo(particle, 4) + dT;
+        %     % If off/on time length > current time
+        %     if blinkInfo(particle, blinkInfo(particle, 3)) >= blinkInfo(particle, 4)
+        %         blinkInfo(particle, 4) = 0; % Set Clock to zero
+        %         blinkInfo(particle, blinkInfo(particle, 3)) = exprnd(offOnTime(blinkInfo(particle, 3))); % Set new off/on time
+        %         blinkInfo(particle, 3) = mod(blinkInfo(particle, 3), 2) + 1; % Swap off/on state
+        %     end
+        % end
         % Bleaching not currently implimented with 3D version
         %{
         if addbleaching == 1
@@ -210,132 +263,130 @@ for particle = 1:np
             end
         end
         %}
-    
     end
 end
-
 fprintf("Finished \nAdding PSF... ")
 
+%{
 %% Create Ground Truth %%
+maxCords = round(maxCords ./ scaler); % Scale everything back down
+info = info ./ scaler;
 
+%% Truth image generating %%
 truth = zeros(maxCords(1), maxCords(2));
+truth_image = zeros(maxCords(1), maxCords(2), nFrames);
 
+for frame = 1:nFrames
+    for particle = 1:np
+        truth(ceil(info(frame, particle, 1)), ceil(info(frame, particle, 2))) = truth(ceil(info(frame, particle, 1)), ceil(info(frame, particle, 2))) + 1;
+        truth_image(ceil(info(frame, particle, 1)), ceil(info(frame, particle, 2)), frame) = truth_image(ceil(info(frame, particle, 1)), ceil(info(frame, particle, 2)), frame) + 1;
+    end
+end
+%}
+%% Create Ground Truth (this is orignally from Ben's code so there is no scaling before saving truth image)%% 
+truth = zeros(maxCords(1), maxCords(2));
 for frame = 1:nFrames
     for particle = 1:np
         truth(round(info(frame, particle, 1)), round(info(frame, particle, 2))) = truth(round(info(frame, particle, 1)), round(info(frame, particle, 2))) + 1;
     end
 end
 
-%% PSF Addition %%
-
-% Set image size, frames for movie
-movies = [];
 maxCords = round(maxCords ./ scaler); % Scale everything back down
 info = info ./ scaler;
-images = (bg .* rand(maxCords(1), maxCords(2), nFrames)) - bg/2; %create background for movie
 
-intensity = zeros(np, 1);
-gauss = cell([np, 1]);
-gaussR = round(stdGauss * 4); % Create a guassian to fit the whole range
+%%Create ground truth movie%%
+truth_movie_name = strcat(fdir, '/ground_truth_movie' ,'.tif');
+truth_image_binary = zeros(maxCords(1), maxCords(2), nFrames);
+truth_image_int = zeros(maxCords(1), maxCords(2), nFrames);
 
-% Add PSF on top of particle locations (includes 4 std of the guassian)
 for frame = 1:nFrames
     for particle = 1:np
-        intensity(particle) = poissrnd(intarr(particle, frame), 1, 1); % Shot noise variation in signal
-        yloc = round(info(frame, particle, 1)); % Scales down and rounds location 
-        xloc = round(info(frame, particle, 2));
-        zloc = round(info(frame, particle, 3));
-        yShift = info(frame, particle, 1) - yloc; % Center Gaussian PSF at correct subpixel position
-        xShift = info(frame, particle, 2) - xloc;
-        
-        % Create guassian
-        gauss{particle} = makeGauss(gaussR, [xShift, yShift], stdGauss, intensity(particle), zloc, detectRange);
-        yLowLim = yloc - gaussR;
-        yUpLim = yloc + gaussR;
-        xLowLim = xloc - gaussR;
-        xUpLim = xloc + gaussR;
-
-        % Check if particle is near edge and adjust gaussian to stay in bounds
-        if (yloc < minCords(1) + gaussR) % To Close to top
-            gauss{particle}(1:gaussR-yloc+1, :) = [];
-            yLowLim = minCords(1);
+        % if info(frame, particle, 1) >= 0 && info(frame, particle, 2) >= 0
+        % %truth_image_binary(ceil(info(frame, particle, 1)), ceil(info(frame, particle, 2)), frame) = truth_image_binary(ceil(info(frame, particle, 1)), ceil(info(frame, particle, 2)), frame) + 1;
+        %     truth_image_binary(round(info(frame, particle, 1)), round(info(frame, particle, 2)), frame) = truth_image_binary(round(info(frame, particle, 1)), round(info(frame, particle, 2)), frame) + 1;
+        %     truth_image_int(round(info(frame, particle, 1)), round(info(frame, particle, 2)), frame) =  poissrnd(intarr(particle, frame), 1, 1)*truth_image_binary(round(info(frame, particle, 1)), round(info(frame, particle, 2)), frame);
+        % end
+        %struth_image_binary(ceil(info(frame, particle, 1)), ceil(info(frame, particle, 2)), frame) = truth_image_binary(ceil(info(frame, particle, 1)), ceil(info(frame, particle, 2)), frame) + 1;
+      
+        if info(frame, particle, 3) >= detectRange(1) && info(frame, particle, 3) <= detectRange(2)
+            truth_image_binary(ceil(info(frame, particle, 1)), ceil(info(frame, particle, 2)), frame) = truth_image_binary(ceil(info(frame, particle, 1)), ceil(info(frame, particle, 2)), frame) + 1;
+            truth_image_int(ceil(info(frame, particle, 1)), ceil(info(frame, particle, 2)), frame) = poissrnd(intarr(particle, frame), 1, 1)*truth_image_binary(ceil(info(frame, particle, 1)), ceil(info(frame, particle, 2)), frame);
         end
-
-        if (yloc > maxCords(1) - gaussR) % To Close to bottom
-            gauss{particle}(2+gaussR+maxCords(1)-yloc:2*gaussR+1, :) = [];
-            yUpLim = maxCords(1);
-        end
-
-        if (xloc < minCords(2) + gaussR) % To Close to left
-            gauss{particle}(:, 1:gaussR-xloc+1) = [];
-            xLowLim = minCords(2);
-        end
-
-        if (xloc > maxCords(2) - gaussR) % To Close to right
-            gauss{particle}(:, 2+gaussR+maxCords(2)-xloc:2*gaussR+1) = [];
-            xUpLim = maxCords(2);
-        end
-
-        images(yLowLim:yUpLim, xLowLim:xUpLim, frame) = (images(yLowLim:yUpLim, xLowLim:xUpLim, frame) + gauss{particle});
-
     end
 end
 
-fprintf("Finished \n")
-
-if showMovie
+movies = [];
+if show_truth_Movie
+    fprintf('Generating ground truth image array! \n');
     for frame = 1:nFrames
-        imagesc(images(:,:,frame))
+        imagesc(truth_image_binary(:,:,frame))
         colormap(gray)
         movies=[movies getframe];
     end
 end
 
-% Save
-if savedata==1
-    Data=images;
-    save(strcat(fdir,'dataset',snum), 'Data', 'coords');
+if create_truth_movie
+    %     moviename=strcat(snum,'movie.avi');
+        writerObj = VideoWriter(strcat(truth_movie_name,'.avi'));
+        open(writerObj);
+        writeVideo(writerObj,movies);
+        close(writerObj);
 end
-if createmovie==1
-%     moviename=strcat(snum,'movie.avi');
-    writerObj = VideoWriter(strcat(moviename,'.avi'));
-    open(writerObj);
-    writeVideo(writerObj,movies);
-    close(writerObj);
+fprintf("\n");
+fprintf('Done Generating ground truth image array! \n');
+
+movies = [];%clear this for movie in the convolved data
+guass_kernel = int_part*fspecial('gaussian', ceil(stdGauss+15), stdGauss);
+h = guass_kernel/max(guass_kernel,[],'all'); %gaussian psf not really need this
+% figure;
+% imagesc(h);
+% colormap('gray');
+
+figure;
+images = truth_image_int;
+% convolve_images_bg = zeros(size(images));
+bg_matrix = (bg .* rand(maxCords(1), maxCords(2), nFrames)) - bg/2;
+%bg_matrix = (bg .* randn(maxCords(1), maxCords(2), nFrames)) - bg/2;
+dark_noise = 1.8;
+%bg_matrix = bg.*normrnd(0,dark_noise,size(images));
+
+for frame = 1:nFrames
+        convolve_images_bg(:,:,frame) = conv2(images(:,:,frame), h, 'same');
 end
 
-images = double(images);
+convolve_images_bg = poissrnd(convolve_images_bg) + bg_matrix;
+%convolve_images_bg = poissrnd(convolve_images_bg) + bg_matrix;
 
-testSOFI(images, truth, poreMap, 1);
+fprintf("Finished adding convolution and background noise \n")
 
-%{
-Creates a 2D gaussian from a slice of a 3D gaussian.
-
-gaussR: radius of matrix returned, ignores center pixel. Returns 2*radius+1
-        square matrix
-center: The center from which the gaussian will be computed. Must be in
-        form [x, y]
-sigma:  The standard deviation of the guassian returned
-zLevel: Which z slice of the 3D guassian returned
-%}
-function gauss = makeGauss(gaussR, center, sigma, max, zLevel, detectRange)
-    
-
-    if (zLevel >= detectRange(1) && zLevel <= detectRange(2))
-        [x, y] = meshgrid(-gaussR:gaussR);
-        
-        
-        if zLevel < 0
-            sigma = sigma * (1 + zLevel / detectRange(1) * 0.75);
-        elseif zLevel > 0
-            sigma = sigma * (1 + zLevel / detectRange(2) * 0.75);
-        end
-        
-        xPart = ((x - center(1)) ./ sigma) .^ 2;
-        yPart = ((y - center(2)) ./ sigma) .^ 2;
-
-        gauss = max .* exp(-(xPart + yPart) ./ 2);
-    else
-        gauss = zeros(gaussR * 2 + 1);
+movie_name = strcat(fdir, '/convolved_movie','.tif') ; 
+if showMovie
+    for frame = 1:nFrames
+        imagesc(convolve_images_bg(:,:,frame))
+        colormap(gray)
+        movies=[movies getframe];
     end
 end
+
+% Save data in mat_dataset for later use of fcsSOFI analysis
+dataset_name = strcat(fdir, '/mat_dataset');
+if savedata
+    Data=convolve_images_bg;
+    % save(strcat(fdir,'dataset',snum), 'Data', 'coords');
+    save(dataset_name, 'Data', '-v7.3');
+end
+
+if createmovie
+    %     moviename=strcat(snum,'movie.avi');
+        writerObj = VideoWriter(strcat(movie_name,'.avi'));
+        open(writerObj);
+        writeVideo(writerObj,movies);
+        close(writerObj);
+end
+
+parameters = ["PoreTypes";"Type";"D";"pixelSize";"nFrames";"np";"dT";"stdGauss";"int_part";"bg";"scaler"];
+value_parameters = [pore_type;type;D;pixelSize;nFrames;np;dT;stdGauss;int_part;bg;scaler];
+table_parameter = table(parameters,value_parameters);
+writetable(table_parameter, strcat(fdir,'/parameter-table.txt'),'Delimiter',' ');
+
+testSOFI(double(convolve_images_bg), truth, poreMap, 1, fdir); %using simulated data to see the resolved image using AC2 and XC2 quickly

@@ -5,6 +5,8 @@ oneRun. There is also a section which compares all the SOFI images and find
 the percent similarity to the origonal binary map, this section does not
 work with current simulation code because teh binarly map is now scaled up
 
+MAKE SURE THE EXTERNAL FUNCTIONS ARE ADDED TO YOUR PATH
+
 Inputes:
 data - The image stack to compute the SOFI anylsis on
 truth - The image stack containing all the true point source locations
@@ -15,29 +17,29 @@ Output:
 percents - An array containing all the percent similariries to the true
 sigma - The PSF sigma estimate from the SOFI calculations
 %}
-function [percents, sigma] = testSOFI(data, truth, poreMap, oneRun)
+function [percents, sigma, std_sigma] = testSOFI(data, truth, poreMap, oneRun, fdir)
 
 %fprintf("Calculating SOFI information... ")
 
 data = double(data);
 
+
 %% SOFI Calculations
 average = mean(data, 3);
 [AC2, AC3, AC4, AG4, AC2Corrected, AC3Corrected, AG4Corrected] = autoSofi(data);
-[XC2, XC3, XC2Corrected, sigma] = crossSofi(data);
+[XC2, XC2_nodistance_factor, XC3, XC2Corrected, sigma,std_sigma] = crossSofi(data);
 [deconAC, deconXC, deconAvg] = decon(average, {AC2, AC3, AC4}, {XC2, XC3}, sigma);
 
 truthSat = satAdj(truth, 0, 0.05);
 percents = NaN;
-%{
-AC2 = satAdj(AC2, 0, 0.5);
-AC3 = satAdj(AC3, 0, 0.5);
-AC2Corrected = satAdj(AC2Corrected, 0, 0.5);
-AC3Corrected = satAdj(AC3Corrected, 0, 0.5);
-%}
+
+parameter = ["PSF XC"];
+value_parameters = [sigma];
+table_parameter = table(parameter,value_parameters);
+writetable(table_parameter, strcat(fdir,'/PSF_XC.txt'),'Delimiter',' ');
+
 
 %fprintf("Finished \n")
-
 
 %% Compare Images
 truthBinary = double(imbinarize(truth, 0));
@@ -91,13 +93,15 @@ if oneRun
     fprintf('Average Accuracy: %f \n', averagePercent)
     fprintf('Average Decon Accuracy: %f \n', deconAverageAC2Percent)
 %}
+    save(strcat(fdir,"\XC2_nodistance_factor.mat"),"XC2_nodistance_factor")
     fprintf('PSF Estimate std: %f \n', sigma)
+    fprintf('std of PSF: %f \n', std_sigma)
     
     %% Plot Everything
     
     % Average Images
     figure('Name', 'Average Images', 'Units', 'normalized', 'Position', [0.705208333333333,0.019444444444444,0.3125,0.314814814814815]);
-    
+
     subplot(1, 2, 1)
     imagesc(average)
     colormap(gray)
@@ -110,6 +114,8 @@ if oneRun
     title("Average Decon")
     axis image
     
+    saveas(gcf, strcat(fdir,'\average_image.fig'));
+
     % AC Images
     figure('Name', 'AC Images', 'Units', 'normalized', 'Position', [0.689583333333333,0.3,0.307291666666667,0.615740740740741])
     
@@ -149,6 +155,10 @@ if oneRun
     title("AC4 Decon")
     axis image
     
+    %saveas(figure, 'AC_image.fig');
+    saveas(gcf, strcat(fdir,'\AC_image.fig'));
+
+
     % XC Images
     figure('Name', 'XC Images', 'Units', 'normalized', 'Position', [0.365625,0.002777777777778,0.3421875,0.585185185185185])
     
@@ -157,12 +167,18 @@ if oneRun
     colormap(gray)
     title("XC2")
     axis image
+
+
     
     subplot(2, 2, 2)
     imagesc(deconXC{1})
     colormap(gray)
     title("XC2 Decon")
     axis image
+    % save('savedeconXC2.mat','deconXC{1}');
+    % imwrite(deconXC{1},"deconXC.tif")
+
+    
     
     subplot(2, 2, 3)
     imagesc(XC3)
@@ -175,15 +191,17 @@ if oneRun
     colormap(gray)
     title("XC3 Decon")
     axis image
-
+    saveas(gcf, strcat(fdir,'\XC_image.fig'));
     % Line Sections
     scaler = length(poreMap) / length(AC2);
-    
+    save(strcat(fdir,"\Average.mat"),"average")
     XC2 = padarray(XC2, [2, 2]);
+    disp(size(XC2))
     XC3 = padarray(XC3, [3, 3]);
     deconXC{1} = padarray(deconXC{1}, [2, 2]);
     deconXC{2} = padarray(deconXC{2}, [3, 3]);
     posArrayXC2 = scaler+1:scaler/2:size(poreMap, 2)+scaler/2;
+
     posArrayXC3 = scaler+1:scaler/3:size(poreMap, 2)+scaler/3;
     posArrayAC = scaler+1:scaler:size(poreMap, 2)+scaler;
     posArrayPore = 1:1:size(poreMap, 2);
@@ -210,13 +228,13 @@ if oneRun
     plot(posArrayPore, poreMap(25, :) ./ max(poreMap(25, :)), '-k', 'DisplayName', 'Binary Map')
     plot(posArrayAC, avgLine ./ max(avgLine), '--k.', 'DisplayName', 'Average')
     plot(posArrayXC2, XC2Line ./ max(XC2Line), '-b.', 'DisplayName', 'XC2')
-    plot(posArrayXC3, XC3Line ./ max(XC3Line), '-c.', 'DisplayName', 'XC3')
+    %plot(posArrayXC3, XC3Line ./ max(XC3Line), '-c.', 'DisplayName', 'XC3')
     plot(posArrayAC, AC2Line ./ max(AC2Line), '-g.', 'DisplayName', 'AC2')
-    plot(posArrayAC, AC3Line ./ max(AC3Line), '-r.', 'DisplayName', 'AC3')
+    %plot(posArrayAC, AC3Line ./ max(AC3Line), '-r.', 'DisplayName', 'AC3')
     legend
     title('SOFI Line Sections')
     hold off
-
+  
     subplot(2, 1, 2)
     hold on
     plot(posArrayPore, poreMap(25, :) ./ max(poreMap(25, :)), '-k', 'DisplayName', 'Binary Map')
@@ -229,6 +247,7 @@ if oneRun
     title('Decon SOFI Line Sections')
     hold off
 
+    saveas(gcf, strcat(fdir,'\linesection_image.fig'));
 
     figure('Name', 'Corrected Line Sections')
 
@@ -245,7 +264,7 @@ if oneRun
     title('Corrected AC SOFI Line Sections')
     hold off
     %}
-
+    
     % Real Images
     figure('Name', 'Real Images', 'Units', 'normalized', 'Position', [0.0546875, 0.600925925925926, 0.652083333333333, 0.316666666666667])
     
@@ -267,6 +286,7 @@ if oneRun
     title("Pore Map")
     axis image
 
+    %Ssaveas(gcf, strcat(fdir,'\pore_map.fig'));
 
     % Corrected AC Images
     figure('Name', 'Corrected AC Images')
@@ -313,7 +333,8 @@ if oneRun
     title("AG4 Corrected")
     axis image
 
-    
+    saveas(gcf, strcat(fdir,'\AC_corrected_image.fig'));
+
     figure('Name', 'Corrected XC Images')
 
     subplot(2, 1, 1)
@@ -322,12 +343,57 @@ if oneRun
     title("XC2")
     axis image
 
+
     subplot(2, 1, 2)
     imagesc(XC2Corrected)
     colormap(gray)
     title("AX2 Corrected")
     axis image
 
+    %save xc2 image
+    saveas(gcf, strcat(fdir,'\XC2_corrected_image.fig'));
+
+    figure();
+    imagesc(XC2/max(XC2(:)));
+    title("XC2");
+    colormap(gray);
+    colorbar
+    axis image;
+    save(strcat(fdir,"\XC2.mat"),"XC2")
+    saveas(gcf, strcat(fdir,'\paper_XC2_image.png'));
+
+    figure();
+    imagesc(AC2/max(AC2(:)));
+    title("AC2")
+    colormap(gray);
+    colorbar
+    axis image;
+    save(strcat(fdir,"\AC2.mat"),"AC2")
+    saveas(gcf, strcat(fdir,'\paper_AC2_image.png'));
+    
+    figure()
+    hold on
+    plot(posArrayPore, poreMap(25, :) ./ max(poreMap(25, :)), '-k', 'DisplayName', 'Binary Map')
+    plot(posArrayAC, avgLine ./ max(avgLine), '--k.', 'DisplayName', 'Average')
+    plot(posArrayXC2, XC2Line ./ max(XC2Line), '-b.', 'DisplayName', 'XC2')
+    plot(posArrayAC, AC2Line ./ max(AC2Line), '-g.', 'DisplayName', 'AC2')
+    xlabel('pixel')
+    legend
+    exportgraphics(gcf,strcat(fdir,'\paper_line_section_image.png'),'Resolution',300)
+    saveas(gcf, strcat(fdir,'\paper_line_section_image.fig'));
+    hold off
+    
+    figure();
+    imagesc(poreMap);
+    colormap(gray);
+    %title("Pore Map")
+    xlabel('pixel');
+    axis image;
+    save(strcat(fdir,"\poreMap.mat"),"poreMap")
+    saveas(gcf, strcat(fdir,'\paper_poremap.png'));
+
+    all_figures = findall(0, 'Type', 'figure');
+    set(all_figures, 'Visible', 'off');    
 end
 end
 
