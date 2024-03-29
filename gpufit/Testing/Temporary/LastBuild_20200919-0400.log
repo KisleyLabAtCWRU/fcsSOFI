@@ -1,38 +1,38 @@
-Microsoft (R) Build Engine version 16.7.0+b89cb5fde for .NET Framework
-Copyright (C) Microsoft Corporation. All rights reserved.
-
-  Building NVCC (Device) object Gpufit/CMakeFiles/Gpufit.dir/Debug/Gpufit_generated_lm_fit_cuda.cu.obj
-  lm_fit_cuda.cu
-CUSTOMBUILD : nvcc warning : The 'compute_35', 'compute_37', 'compute_50', 'sm_35', 'sm_37' and 'sm_50' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning). [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\Gpufit.vcxproj]
-CUSTOMBUILD : nvcc warning : The 'compute_35', 'compute_37', 'compute_50', 'sm_35', 'sm_37' and 'sm_50' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning). [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\Gpufit.vcxproj]
-  lm_fit_cuda.cu
-  Building NVCC (Device) object Gpufit/CMakeFiles/Gpufit.dir/Debug/Gpufit_generated_cuda_kernels.cu.obj
-  cuda_kernels.cu
-CUSTOMBUILD : nvcc warning : The 'compute_35', 'compute_37', 'compute_50', 'sm_35', 'sm_37' and 'sm_50' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning). [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\Gpufit.vcxproj]
-CUSTOMBUILD : nvcc warning : The 'compute_35', 'compute_37', 'compute_50', 'sm_35', 'sm_37' and 'sm_50' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning). [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\Gpufit.vcxproj]
-  cuda_kernels.cu
-  Building NVCC (Device) object Gpufit/CMakeFiles/Gpufit.dir/Debug/Gpufit_generated_info.cu.obj
-  info.cu
-CUSTOMBUILD : nvcc warning : The 'compute_35', 'compute_37', 'compute_50', 'sm_35', 'sm_37' and 'sm_50' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning). [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\Gpufit.vcxproj]
-CUSTOMBUILD : nvcc warning : The 'compute_35', 'compute_37', 'compute_50', 'sm_35', 'sm_37' and 'sm_50' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning). [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\Gpufit.vcxproj]
-  info.cu
-  Building NVCC (Device) object Gpufit/CMakeFiles/Gpufit.dir/Debug/Gpufit_generated_gpu_data.cu.obj
-  gpu_data.cu
-CUSTOMBUILD : nvcc warning : The 'compute_35', 'compute_37', 'compute_50', 'sm_35', 'sm_37' and 'sm_50' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning). [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\Gpufit.vcxproj]
-CUSTOMBUILD : nvcc warning : The 'compute_35', 'compute_37', 'compute_50', 'sm_35', 'sm_37' and 'sm_50' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning). [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\Gpufit.vcxproj]
-  gpu_data.cu
-  Building NVCC (Device) object Gpufit/CMakeFiles/Gpufit.dir/Debug/Gpufit_generated_cuda_gaussjordan.cu.obj
-  cuda_gaussjordan.cu
-CUSTOMBUILD : nvcc warning : The 'compute_35', 'compute_37', 'compute_50', 'sm_35', 'sm_37' and 'sm_50' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning). [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\Gpufit.vcxproj]
-CUSTOMBUILD : nvcc warning : The 'compute_35', 'compute_37', 'compute_50', 'sm_35', 'sm_37' and 'sm_50' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning). [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\Gpufit.vcxproj]
-  cuda_gaussjordan.cu
-  Gpufit.vcxproj -> F:\Homework\Physics\KisleyLab\BUILD\gpufit\Debug\Gpufit.dll
-  Building Custom Rule F:/Homework/Physics/KisleyLab/fcsSOFI_SourceCode_NamVo_20202408/Gpufit/matlab/CMakeLists.txt
-  GpufitCudaAvailableMex.vcxproj -> F:\Homework\Physics\KisleyLab\BUILD\gpufit\Debug\GpufitCudaAvailableMex.mexw64
-  GpufitMex.vcxproj -> F:\Homework\Physics\KisleyLab\BUILD\gpufit\Debug\GpufitMex.mexw64
-  Creating Gpufit Matlab package
-  Cpufit.vcxproj -> F:\Homework\Physics\KisleyLab\BUILD\gpufit\Debug\Cpufit.dll
-  CpufitMex.vcxproj -> F:\Homework\Physics\KisleyLab\BUILD\gpufit\Debug\CpufitMex.mexw64
-  Adding Cpufit to Matlab package
-  Error removing directory "F:/Homework/Physics/KisleyLab/BUILD/gpufit/Debug/pyGpufit".
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppCommon.targets(234,5): error MSB6006: "cmd.exe" exited with code 1. [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\python\PYTHON_PACKAGE.vcxproj]
+Microsoft (R) Build Engine version 16.7.0+b89cb5fde for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+  Building NVCC (Device) object Gpufit/CMakeFiles/Gpufit.dir/Debug/Gpufit_generated_lm_fit_cuda.cu.obj
+  lm_fit_cuda.cu
+CUSTOMBUILD : nvcc warning : The 'compute_35', 'compute_37', 'compute_50', 'sm_35', 'sm_37' and 'sm_50' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning). [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\Gpufit.vcxproj]
+CUSTOMBUILD : nvcc warning : The 'compute_35', 'compute_37', 'compute_50', 'sm_35', 'sm_37' and 'sm_50' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning). [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\Gpufit.vcxproj]
+  lm_fit_cuda.cu
+  Building NVCC (Device) object Gpufit/CMakeFiles/Gpufit.dir/Debug/Gpufit_generated_cuda_kernels.cu.obj
+  cuda_kernels.cu
+CUSTOMBUILD : nvcc warning : The 'compute_35', 'compute_37', 'compute_50', 'sm_35', 'sm_37' and 'sm_50' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning). [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\Gpufit.vcxproj]
+CUSTOMBUILD : nvcc warning : The 'compute_35', 'compute_37', 'compute_50', 'sm_35', 'sm_37' and 'sm_50' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning). [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\Gpufit.vcxproj]
+  cuda_kernels.cu
+  Building NVCC (Device) object Gpufit/CMakeFiles/Gpufit.dir/Debug/Gpufit_generated_info.cu.obj
+  info.cu
+CUSTOMBUILD : nvcc warning : The 'compute_35', 'compute_37', 'compute_50', 'sm_35', 'sm_37' and 'sm_50' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning). [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\Gpufit.vcxproj]
+CUSTOMBUILD : nvcc warning : The 'compute_35', 'compute_37', 'compute_50', 'sm_35', 'sm_37' and 'sm_50' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning). [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\Gpufit.vcxproj]
+  info.cu
+  Building NVCC (Device) object Gpufit/CMakeFiles/Gpufit.dir/Debug/Gpufit_generated_gpu_data.cu.obj
+  gpu_data.cu
+CUSTOMBUILD : nvcc warning : The 'compute_35', 'compute_37', 'compute_50', 'sm_35', 'sm_37' and 'sm_50' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning). [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\Gpufit.vcxproj]
+CUSTOMBUILD : nvcc warning : The 'compute_35', 'compute_37', 'compute_50', 'sm_35', 'sm_37' and 'sm_50' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning). [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\Gpufit.vcxproj]
+  gpu_data.cu
+  Building NVCC (Device) object Gpufit/CMakeFiles/Gpufit.dir/Debug/Gpufit_generated_cuda_gaussjordan.cu.obj
+  cuda_gaussjordan.cu
+CUSTOMBUILD : nvcc warning : The 'compute_35', 'compute_37', 'compute_50', 'sm_35', 'sm_37' and 'sm_50' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning). [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\Gpufit.vcxproj]
+CUSTOMBUILD : nvcc warning : The 'compute_35', 'compute_37', 'compute_50', 'sm_35', 'sm_37' and 'sm_50' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning). [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\Gpufit.vcxproj]
+  cuda_gaussjordan.cu
+  Gpufit.vcxproj -> F:\Homework\Physics\KisleyLab\BUILD\gpufit\Debug\Gpufit.dll
+  Building Custom Rule F:/Homework/Physics/KisleyLab/fcsSOFI_SourceCode_NamVo_20202408/Gpufit/matlab/CMakeLists.txt
+  GpufitCudaAvailableMex.vcxproj -> F:\Homework\Physics\KisleyLab\BUILD\gpufit\Debug\GpufitCudaAvailableMex.mexw64
+  GpufitMex.vcxproj -> F:\Homework\Physics\KisleyLab\BUILD\gpufit\Debug\GpufitMex.mexw64
+  Creating Gpufit Matlab package
+  Cpufit.vcxproj -> F:\Homework\Physics\KisleyLab\BUILD\gpufit\Debug\Cpufit.dll
+  CpufitMex.vcxproj -> F:\Homework\Physics\KisleyLab\BUILD\gpufit\Debug\CpufitMex.mexw64
+  Adding Cpufit to Matlab package
+  Error removing directory "F:/Homework/Physics/KisleyLab/BUILD/gpufit/Debug/pyGpufit".
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppCommon.targets(234,5): error MSB6006: "cmd.exe" exited with code 1. [F:\Homework\Physics\KisleyLab\BUILD\gpufit\Gpufit\python\PYTHON_PACKAGE.vcxproj]
