@@ -1,14 +1,14 @@
 clear; close all hidden; clc;warning off
 %% User Input
 % Start Location of file prompter
-startloc = '\\129.22.135.181\Test\Surajit\Microscope\01172024';%'\\129.22.135.181\Test\StephanieKramer\LSM Data\20240415\Area 3';
-FinalFileName = 'A8B1_R2_0';
+startloc = '\\129.22.135.181\Test';
+FinalFileName = 'Sample_01';
 
 % %% Input Data Settings %% %
 
 % Microscope Set Up
-pixelsize = 0.102; % In micro meters (0.102 IX83; 0.160 IX73; 0.180 LSM); needed to accurately calculate D
-dT = 0.05; % Time between frames in s; needed to accurately calculate D
+pixelsize = 0.180; % In micro meters (0.102 IX83; 0.160 IX73; 0.180 LSM); needed to accurately calculate D
+dT = 0.005; % Time between frames in s; needed to accurately calculate D
 zstep = 0.1; %Z-step between frames (um)
 
 % File format
@@ -21,18 +21,18 @@ numberFCSSOFIRuns = 7; % Number of fcsSOFI runs (how many different files for fc
 numberFiles = 1;% Number of files to cancatnate together for each fcsSOFI image (Will combine files if more than one)
 
 % File info
-framesLength = 1000; % Total length of each file
+framesLength = 30000; % Total length of each file
 
 % Region of interest in pixels (of all files added together)
 ymin = 1;
-ymax = 512;
+ymax = 100;
 xmin = 1;
-xmax = 512;
+xmax = 100;
 tmin = 1; % Start frame
-tmax = 1000; % End frame
+tmax = 30000; % End frame
 
 % R Squared Cut off for cumulative distribution of D, beads=0.95, 76kDa=0.8, 2000kDa=0.9, BSA=0.88
-R2cutoff = 0;
+R2cutoff = 0.5;
 
 % SOFI scaling, Normalized (0-1) data will be cut off and re-nomarlized at these values
 satMin = 0;
@@ -61,14 +61,14 @@ diffusionMin = 0; % micro m^2 / s
 diffusionMax = Inf;
 
 % Deconvolution on SOFI Image (1 = yes, 0 = no)
-doDecon = 1;
-doDecon3D = 0;
+doDecon = 0;
+doDecon3D = 1;
 
 % Bin Size for fcs Binning. Allow for faster D detection
 binSize = 1;
 
 % 3D Reconstruction? (1 = yes)
-Reconstruction = 0;
+Reconstruction = 1;
 
 % %% Result Settings %% %
 
