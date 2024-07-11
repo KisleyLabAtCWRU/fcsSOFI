@@ -1,5 +1,5 @@
 # fcsSOFI
-https://zenodo.org/doi/10.5281/zenodo.12726410
+[![DOI](https://zenodo.org/badge/250000925.svg)](https://zenodo.org/doi/10.5281/zenodo.12726410)
 
 This repository hosts and tracks current progress on the Kisley Lab fcsSOFI update project. 
 Please cite: DOI:10.1021/acs.jpcb.3c00941 
